@@ -1,0 +1,71 @@
+- !<AssetImportMetadata/59321705-a38e-4753-9952-1409f8d420ea>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> a7adc232-5741-406a-8799-87c8b6a2c243
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/a7adc232-5741-406a-8799-87c8b6a2c243>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: bfe374f2-55be-4c75-bfb9-d52af7f07d49
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    cellPrefab: false
+    cellSize: false
+    cellSpacing: false
+    gridParent: false
+    gridSize: false
+    ship1Prefab: false
+    ship2Prefab: false
+    ship3Prefab: false
+    ship4Prefab: false
+    shipHeightOffset: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cellPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship1Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship2Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship3Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship4Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      gridSize: !<float> 10.000000
+      cellSize: !<float> 1.000000
+      cellSpacing: 0.100000
+      gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      shipHeightOffset: 0.500000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Asset.ObjectPrefab cellPrefab
+    - // @input Asset.ObjectPrefab ship1Prefab
+    - // @input Asset.ObjectPrefab ship2Prefab
+    - // @input Asset.ObjectPrefab ship3Prefab
+    - // @input Asset.ObjectPrefab ship4Prefab
+    - // @input float gridSize = 10
+    - // @input float cellSize = 1
+    - // @input float cellSpacing = 0.1
+    - // @input SceneObject gridParent
+    - // @input float shipHeightOffset = 0.5
