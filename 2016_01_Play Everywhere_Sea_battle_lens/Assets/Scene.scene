@@ -581,6 +581,7 @@
   ScriptInputsDefault:
     gridSize: true
     shipHeightOffset: true
+    useRandomPlacement: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -595,6 +596,7 @@
       cellSpacing: !<float> 1.000000
       gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
       shipHeightOffset: 0.500000
+      useRandomPlacement: true
   ScriptTypes:
     "":
       {}
