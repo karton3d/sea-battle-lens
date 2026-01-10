@@ -3,6 +3,7 @@
   objects:
     - !<own> 00000000-0000-0065-0000-000000000064
     - !<own> 0005641c-028d-459a-0000-000000014b4d
+    - !<own> 44ffc02c-6792-47bd-a879-d9e56108913a
     - !<own> 6d34475f-5e98-4c4f-8784-cd2dc3dda9a5
     - !<own> dcede660-de62-4244-9306-28fea4829179
     - !<own> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
@@ -357,6 +358,21 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<SceneObject/44ffc02c-6792-47bd-a879-d9e56108913a>
+  PrefabRemaps:
+    []
+  Name: IntroScreen
+  Enabled: false
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 58508188-dc04-4573-b276-5b8e09297e43
 - !<SceneObject/48fae487-09d9-4aeb-9148-198f3b15e0cb>
   PrefabRemaps:
     []
@@ -490,6 +506,22 @@
   ScriptTypes:
     "":
       {}
+- !<ScriptComponent/58508188-dc04-4573-b276-5b8e09297e43>
+  PrefabRemaps:
+    []
+  Name: IntroScreen
+  Enabled: true
+  ScriptAsset: !<reference> 30bda10d-b3b7-4211-a845-4a0d795c0743
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      {}
+  ScriptTypes:
+    "":
+      {}
 - !<ScreenRegionComponent/58aef579-6080-4a71-bcad-7e71f45441a7>
   PrefabRemaps:
     []
@@ -604,7 +636,7 @@
   PrefabRemaps:
     []
   Name: Turn Based
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -713,7 +745,7 @@
   PrefabRemaps:
     []
   Name: Turn Based Player Info
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}

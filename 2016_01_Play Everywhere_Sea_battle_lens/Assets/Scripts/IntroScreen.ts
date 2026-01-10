@@ -67,19 +67,19 @@ export class IntroScreen extends BaseScriptComponent {
     setupButtons() {
         // Single Player button
         if (this.singlePlayerButton) {
-            const interaction = this.singlePlayerButton.getComponent("Component.Interaction") as InteractionComponent;
+            const interaction = this.singlePlayerButton.getComponent("Component.Touch") as InteractionComponent;
             if (!interaction) {
                 // Add interaction component if not present
-                const newInteraction = this.singlePlayerButton.createComponent("Component.Interaction") as InteractionComponent;
+                const newInteraction = this.singlePlayerButton.createComponent("Component.Touch") as InteractionComponent;
                 // Note: InteractionComponent setup may require additional configuration
             }
         }
         
         // Play with Friend button
         if (this.playWithFriendButton) {
-            const interaction = this.playWithFriendButton.getComponent("Component.Interaction") as InteractionComponent;
+            const interaction = this.playWithFriendButton.getComponent("Component.Touch") as InteractionComponent;
             if (!interaction) {
-                const newInteraction = this.playWithFriendButton.createComponent("Component.Interaction") as InteractionComponent;
+                const newInteraction = this.playWithFriendButton.createComponent("Component.Touch") as InteractionComponent;
             }
         }
     }
