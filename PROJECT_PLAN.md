@@ -8,10 +8,40 @@
 **Target Audience:** Gen Z, meme lovers, casual gamers (13+)
 
 ### Concept
-A viral, meme-filled twist on the classic Battleship game. Instead of ships, players hide and hunt for wacky 3D objects (cows, toilets, sneakers, flying eyes, etc.) on a grid. The game uses X-ray scanning mechanics (UFO saucer) to reveal hidden objects, creating a fun, shareable AR experience.
+A viral, meme-filled twist on the classic Battleship game. Instead of ships, players hide and hunt for wacky 3D objects on a grid. The game uses X-ray scanning mechanics to reveal hidden objects, creating a fun, shareable AR experience.
 
 ### Development Strategy
-**Prototype First, Polish Later**: Focus on creating a fully functional prototype with basic text-based UI, then add visual polish, animations, textures, and effects in the final phase.
+**Prototype First, Polish Later**: Create a fully functional prototype with minimal UI (text + UI Buttons), then add visual polish in the final phase.
+
+---
+
+## Architecture Overview
+
+### Game Modes
+Both modes use **identical game mechanics**, only the opponent differs:
+- **Single Player**: AI opponent (random cell selection with same rules)
+- **Multiplayer**: Real opponent via Turn-Based component
+
+### Core Components
+```
+GameManager
+├── GameState (tracks everything)
+├── GridManager (generates and manages grids)
+├── TurnManager (handles turn logic for both modes)
+│   ├── AIOpponent (for Single Player)
+│   └── TurnBasedOpponent (for Multiplayer)
+├── UIManager (text + buttons)
+└── SoundManager (future)
+```
+
+### Game Flow (Same for Both Modes)
+1. **Intro Screen** → Select mode
+2. **Setup** → Generate random placement, show player's grid
+3. **Game Loop**:
+   - Player's turn → tap opponent's cell → show result
+   - Opponent's turn → AI or real player → show result
+   - Repeat until win condition
+4. **Game Over** → Show winner, restart option
 
 ---
 
@@ -19,357 +49,357 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 
 ### ✅ Phase 1: Core Systems (COMPLETED)
 - [x] Grid generation system
-- [x] Ship/object placement system
-- [x] Basic collision detection
+- [x] Object placement system
+- [x] Collision detection
 - [x] Random object placement algorithm
 
 ---
 
-## 🎮 PROTOTYPE PHASE (Current Focus)
+## 🎮 PROTOTYPE PHASE
 
-**Goal:** Create a fully playable prototype with basic text-based UI. All visual polish (animations, textures, effects) will be added later.
-
-### Phase 2: Basic Game Setup (PROTOTYPE)
-**Priority:** HIGH  
-**Status:** IN PROGRESS
-
-**Tasks:**
-- [x] Random object placement ✅
-- [ ] **Text-based intro screen** (simple text: "Meme Fleet Battle", "Single Player", "Play with Friend")
-- [ ] **Text-based game setup** ("Your objects are placed", "Start" button as text)
-- [ ] **Two grid display** (player grid + opponent grid side by side)
-- [ ] **Text status messages** ("Your turn", "Opponent's turn", "Select a cell")
-
-**UI Elements (Text Only):**
-- Text object for game title
-- Text objects for buttons (tappable areas)
-- Text objects for status messages
-- Text objects for hints/instructions
-
----
-
-### Phase 3: Cell Interaction (PROTOTYPE)
+### Phase 2: Game State & Manager
 **Priority:** HIGH  
 **Status:** TODO
 
 **Tasks:**
-- [ ] Add InteractionComponent to grid cells
+- [ ] Create `GameManager.ts` - central game controller
+- [ ] Create `GameState.ts` - game state management
+- [ ] Define game states: INTRO, SETUP, PLAYING, GAME_OVER
+- [ ] Define turn states: PLAYER_TURN, OPPONENT_TURN, WAITING
+- [ ] Track player grid (objects + shots received)
+- [ ] Track opponent grid (player's shots + hidden objects)
+- [ ] Track destroyed objects count
+- [ ] Track current turn
+
+**GameState Structure:**
+```typescript
+interface GameState {
+    mode: 'single' | 'multiplayer';
+    phase: 'intro' | 'setup' | 'playing' | 'gameover';
+    turn: 'player' | 'opponent';
+    
+    playerGrid: CellState[][];      // Player's objects + opponent's shots
+    opponentGrid: CellState[][];    // Player's shots (objects hidden until hit)
+    
+    playerObjects: ShipInfo[];      // Player's objects info
+    opponentObjects: ShipInfo[];    // Opponent's objects (hidden in multiplayer)
+    
+    playerDestroyedCount: number;
+    opponentDestroyedCount: number;
+    totalObjectCells: number;       // 20 cells total (4+3+3+2+2+2+1+1+1+1)
+    
+    winner: 'player' | 'opponent' | null;
+}
+```
+
+---
+
+### Phase 3: UI System (PROTOTYPE)
+**Priority:** HIGH  
+**Status:** TODO
+
+**Tasks:**
+- [ ] Create `UIManager.ts` - handles all UI updates
+- [ ] Create Text object for status messages
+- [ ] Use UI Button components for buttons (not text)
+- [ ] Implement screen management (show/hide)
+
+**UI Elements:**
+- **Text Objects**: Title, status messages, hints, results
+- **UI Buttons**: "Single Player", "Play with Friend", "Start", "Play Again"
+- **Grid Labels**: "Your Grid", "Opponent Grid"
+
+**Screens:**
+1. **Intro Screen**: Title + 2 buttons
+2. **Setup Screen**: Status text + Start button
+3. **Game Screen**: Turn info + hint + result text
+4. **Game Over Screen**: Winner text + Play Again button
+
+---
+
+### Phase 4: Cell Interaction & Shot Logic
+**Priority:** HIGH  
+**Status:** TODO
+
+**Tasks:**
+- [ ] Add InteractionComponent to opponent grid cells
 - [ ] Implement cell tap detection
-- [ ] **Text feedback** ("Hit!", "Miss!", "Already shot")
-- [ ] Update cell state (hit/miss/empty)
-- [ ] Mark cells as shot (prevent re-tapping)
-- [ ] **Text display of shot results** (show hit/miss in text)
+- [ ] Process shot: check if hit or miss
+- [ ] Update cell visual state (can be simple color change)
+- [ ] Prevent tapping already-shot cells
+- [ ] Check if object is fully destroyed
+- [ ] Update UI with result
+- [ ] Check win condition after each shot
 
-**No Visual Effects Yet:**
-- No highlighting animations
-- No particle effects
-- No color changes (use text only)
-- Simple state tracking
+**Cell States:**
+- `UNKNOWN` - not shot yet (opponent grid only)
+- `EMPTY` - shot, no object (miss)
+- `HIT` - shot, has object (hit)
+- `OBJECT` - has object (player grid only, visible)
+- `DESTROYED` - object fully destroyed
+
+**Shot Flow:**
+1. Player taps cell on opponent grid
+2. Check cell state (must be UNKNOWN)
+3. Check if opponent has object at that position
+4. Update cell state (HIT or EMPTY)
+5. If HIT, check if object fully destroyed
+6. Update destroyed count
+7. Check win condition
+8. Switch turn (or continue if hit, depending on rules)
 
 ---
 
-### Phase 4: Game Logic (PROTOTYPE)
+### Phase 5: Single Player Mode (AI Opponent)
+**Priority:** HIGH  
+**Status:** TODO
+
+**Rationale:** Implement AI first - easier to test locally without Turn-Based system.
+
+**Tasks:**
+- [ ] Create `AIOpponent.ts` - AI logic
+- [ ] AI generates random shot (cell not yet shot)
+- [ ] AI waits brief delay (simulate thinking)
+- [ ] AI shot uses same logic as player shot
+- [ ] AI checks win condition
+- [ ] Update UI with AI's move result
+
+**AI Logic (Simple Random):**
+```typescript
+function getAIShot(): {x: number, y: number} {
+    // Get all cells not yet shot
+    const availableCells = getUnknownCells(playerGrid);
+    // Pick random cell
+    return randomChoice(availableCells);
+}
+```
+
+**Turn Flow (Single Player):**
+1. Player's turn → player taps → show result → check win
+2. If not win → brief delay → AI's turn
+3. AI's turn → AI selects cell → show result → check win
+4. If not win → Player's turn
+5. Repeat until someone wins
+
+---
+
+### Phase 6: Win Condition & Game Over
 **Priority:** HIGH  
 **Status:** TODO
 
 **Tasks:**
-- [ ] Hit/miss detection logic
-- [ ] Track which cells have objects
-- [ ] Track which cells have been shot
-- [ ] **Text display of object status** ("Object found at (x,y)", "Object destroyed")
-- [ ] Check if object is fully revealed (all cells hit)
-- [ ] Mark objects as destroyed
-- [ ] **Text display of destroyed objects** ("4-cell object destroyed!")
+- [ ] Check win after each shot
+- [ ] Win when all 20 opponent cells with objects are hit
+- [ ] Display winner (text)
+- [ ] Show "Play Again" button
+- [ ] Reset game on Play Again
 
-**Game State:**
-- Player grid state (objects + shots)
-- Opponent grid state (shots only, objects hidden)
-- Turn state (whose turn it is)
-- Game over state
+**Win Check:**
+```typescript
+function checkWin(destroyedCells: number): boolean {
+    return destroyedCells >= TOTAL_OBJECT_CELLS; // 20 cells
+}
+```
 
 ---
 
-### Phase 5: Turn-Based Integration (PROTOTYPE)
-**Priority:** HIGH  
+### Phase 7: Multiplayer Mode (Turn-Based)
+**Priority:** MEDIUM  
 **Status:** TODO
 
+**Rationale:** Add multiplayer after Single Player works perfectly.
+
 **Tasks:**
-- [ ] Research Turn-Based component API ✅ (see TURN_BASED_RESEARCH.md)
-- [ ] Create `TurnBasedManager.ts` script
-- [ ] Integrate with Turn-Based component
+- [ ] Create `TurnBasedManager.ts` - Turn-Based integration
+- [ ] Initialize Turn-Based component
 - [ ] Store game state in turn data
 - [ ] Restore game state from turn data
-- [ ] **Text display of turn info** ("Player 1's turn", "Waiting for opponent...")
-- [ ] Handle turn submission
-- [ ] Handle turn reception
-- [ ] **Text display of opponent's moves** ("Opponent shot (x,y) - Hit!")
+- [ ] Submit turn after player's shot
+- [ ] Receive and process opponent's turn
+- [ ] Handle turn start/end callbacks
+- [ ] Handle game over callback
 
-**Turn Flow:**
-- Turn start: show text message
-- Player action: tap cell
-- Turn end: submit turn data
-- Turn received: process opponent's move
-- Display results in text
+**Turn Data Format:**
+```typescript
+interface TurnData {
+    shotX: number;
+    shotY: number;
+    result: 'hit' | 'miss';
+    destroyedObject: number | null;  // Object length if destroyed
+    gameState: SerializedGameState;
+}
+```
+
+**Multiplayer Flow:**
+1. Game start: Both players generate random placement
+2. Turn start: Show opponent's last move (if any)
+3. Player taps cell → process shot → submit turn
+4. Wait for opponent's turn
+5. Receive opponent's turn → process → show result
+6. Repeat until win
 
 ---
 
-### Phase 6: Win Condition (PROTOTYPE)
+### Phase 8: Game Flow Polish
 **Priority:** MEDIUM  
 **Status:** TODO
 
 **Tasks:**
-- [ ] Detect all objects destroyed
-- [ ] **Text victory message** ("You won!", "You lost!")
-- [ ] Game over state
-- [ ] **Text restart option** ("Play Again" as text)
-- [ ] Reset game functionality
+- [ ] Smooth transitions between screens
+- [ ] Proper timing for AI moves
+- [ ] Clear feedback for all actions
+- [ ] Error handling
+- [ ] Edge cases (disconnection, timeout)
 
 ---
 
-### Phase 7: Single Player Mode (PROTOTYPE)
-**Priority:** MEDIUM  
-**Status:** TODO
+## 🎨 POLISH PHASE (After Prototype)
 
-**Tasks:**
-- [ ] AI opponent (random cell selection)
-- [ ] AI turn logic
-- [ ] **Text display of AI moves** ("AI shot (x,y) - Miss!")
-- [ ] Same game flow as multiplayer but with AI
+### Phase 9: Visual Polish - UI
+- [ ] Styled UI buttons
+- [ ] Background images
+- [ ] Styled title
+- [ ] UI panels/frames
+- [ ] Icons for objects
 
----
+### Phase 10: Visual Polish - Grid
+- [ ] Cell highlighting on hover/selection
+- [ ] Hit cell visual (color, glow)
+- [ ] Miss cell visual (cross, mark)
+- [ ] Grid appearance improvements
 
-## 🎨 POLISH PHASE (After Prototype Works)
+### Phase 11: Visual Polish - Objects
+- [ ] Meme 3D models
+- [ ] Materials and textures
+- [ ] X-ray reveal effect
+- [ ] Destruction animations
 
-**Goal:** Add visual polish, animations, textures, effects, and audio to the working prototype.
+### Phase 12: Visual Polish - Effects
+- [ ] UFO scanning effect
+- [ ] Particle effects
+- [ ] Screen transitions
+- [ ] Victory effects
 
-### Phase 8: Visual Polish - UI
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] Replace text buttons with styled UI buttons
-- [ ] Add background images/textures
-- [ ] Style game title (3D text or logo)
-- [ ] Add UI panels/frames
-- [ ] Improve text styling and fonts
-- [ ] Add icons for objects
-
----
-
-### Phase 8: Visual Polish - Grid & Cells
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] Add cell highlighting on selection
-- [ ] Visual feedback for hit cells (color change, glow)
-- [ ] Visual feedback for miss cells (mark, cross)
-- [ ] Visual feedback for shot cells (disabled state)
-- [ ] Improve grid appearance
-
----
-
-### Phase 9: Visual Polish - Objects
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] Create meme object 3D models (cow, toilet, sneaker, eye)
-- [ ] Create 1x1, 2x1, 3x1, 4x1 versions
-- [ ] Add materials and textures
-- [ ] X-ray reveal effect (shader)
-- [ ] Object destruction animations (fly up, dissolve)
-- [ ] Object icons when fully guessed
-
----
-
-### Phase 10: Visual Polish - Effects
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] UFO saucer 3D model and animation
-- [ ] X-ray scanning beam effect
-- [ ] Particle effects for hits
-- [ ] Particle effects for misses
-- [ ] Particle effects for object destruction
-- [ ] Victory confetti effect
-
----
-
-### Phase 11: Visual Polish - Animations
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] Screen transition animations
-- [ ] Field slide animation
-- [ ] Cell highlight animations
-- [ ] Button press animations
-- [ ] Smooth camera movements
-
----
-
-### Phase 12: Audio
-**Priority:** LOW (After prototype)  
-**Status:** TODO
-
-**Tasks:**
-- [ ] Button tap sounds
-- [ ] Cell tap sounds
-- [ ] Hit sounds
-- [ ] Miss sounds
-- [ ] Object destroy sounds
-- [ ] Victory sounds
+### Phase 13: Audio
+- [ ] UI sounds
+- [ ] Hit/miss sounds
+- [ ] Victory/defeat sounds
 - [ ] Background music
 
 ---
 
-## Current Prototype Task List
+## Scripts to Create
 
-### Immediate Next Steps (In Order)
+### Core Scripts
+1. **`GameManager.ts`** - Central game controller
+2. **`GameState.ts`** - Game state management
+3. **`UIManager.ts`** - UI updates and screen management
+4. **`TurnManager.ts`** - Turn logic (abstract)
+5. **`AIOpponent.ts`** - AI for single player
+6. **`TurnBasedManager.ts`** - Multiplayer integration
 
-1. **Text-Based Intro Screen** ⏳ CURRENT
-   - [ ] Create simple text objects for title
-   - [ ] Create text objects for buttons ("Single Player", "Play with Friend")
-   - [ ] Add tap handlers to text buttons
-   - [ ] Connect to game start methods
-
-2. **Text-Based Game Setup**
-   - [ ] Show text: "Your objects are placed"
-   - [ ] Show text button: "Start"
-   - [ ] Generate random placement
-   - [ ] Display both grids (player + opponent)
-
-3. **Cell Interaction System**
-   - [ ] Add InteractionComponent to cells
-   - [ ] Implement tap detection
-   - [ ] Show text feedback ("Hit!", "Miss!")
-   - [ ] Update game state
-
-4. **Game Logic**
-   - [ ] Hit/miss detection
-   - [ ] Object tracking
-   - [ ] Destroyed object detection
-   - [ ] Text status updates
-
-5. **Turn-Based Integration**
-   - [ ] Create TurnBasedManager
-   - [ ] Integrate with Turn-Based component
-   - [ ] Store/restore game state
-   - [ ] Text turn messages
-
-6. **Win Condition**
-   - [ ] Victory detection
-   - [ ] Text victory message
-   - [ ] Restart functionality
+### Existing Scripts
+- **`GridGenerator.ts`** ✅ - Grid and object placement
 
 ---
 
-## Prototype UI Text Elements Needed
+## Immediate Task List (In Order)
 
-### Intro Screen
-- **Title Text**: "Meme Fleet Battle"
-- **Button Text 1**: "Single Player"
-- **Button Text 2**: "Play with Friend"
-- **Hint Text**: "Tap to start"
+### 1. GameManager & GameState
+- [ ] Create `GameManager.ts`
+- [ ] Create game state structure
+- [ ] Basic state transitions
 
-### Game Setup
-- **Status Text**: "Your objects are placed"
-- **Button Text**: "Start"
-- **Grid Labels**: "Your Grid" / "Opponent Grid"
+### 2. UIManager
+- [ ] Create `UIManager.ts`
+- [ ] Setup Text objects for messages
+- [ ] Setup UI Buttons
+- [ ] Implement screen show/hide
 
-### Gameplay
-- **Turn Text**: "Your turn" / "Opponent's turn" / "Waiting..."
-- **Hint Text**: "Tap a cell to shoot"
-- **Result Text**: "Hit!" / "Miss!" / "Already shot"
-- **Object Text**: "4-cell object destroyed!"
-- **Status Text**: "Objects left: 10"
+### 3. Intro Screen
+- [ ] Title text
+- [ ] Single Player button (UI Button)
+- [ ] Play with Friend button (UI Button)
+- [ ] Button handlers → start game
 
-### Game Over
-- **Victory Text**: "You won!" / "You lost!"
-- **Button Text**: "Play Again"
+### 4. Setup Screen
+- [ ] Generate random placement
+- [ ] Show "Objects placed" message
+- [ ] Start button → begin game
 
----
+### 5. Game Screen (Cell Interaction)
+- [ ] Add InteractionComponent to cells
+- [ ] Tap detection
+- [ ] Shot processing
+- [ ] Result display
 
-## Technical Implementation Notes
+### 6. Single Player AI
+- [ ] AI opponent logic
+- [ ] AI turn execution
+- [ ] Turn switching
 
-### Text Objects
-- Use `Text` or `Text3D` components
-- Position in screen space or world space
-- Make tappable with InteractionComponent
-- Update text content programmatically
+### 7. Win Condition
+- [ ] Win detection
+- [ ] Game over screen
+- [ ] Restart functionality
 
-### State Management
-- Simple game state object
-- Track: grids, shots, objects, turn, game over
-- Serialize for Turn-Based component
-
-### No Visual Effects Yet
-- No animations (except basic show/hide)
-- No particle effects
-- No shader effects
-- No color changes (use text)
-- Simple, functional prototype
-
----
-
-## Asset Requirements (Prototype Phase)
-
-### Minimal Assets Needed:
-- [x] Grid cell prefab (Box) ✅
-- [x] Object prefabs (1x1, 2x1, 3x1, 4x1) ✅
-- [ ] Text components (Text or Text3D)
-- [ ] Basic materials (for visibility)
-
-### Assets Deferred to Polish Phase:
-- Meme object 3D models
-- Textures and materials
-- Particle effects
-- Audio files
-- UI sprites
-- Animations
+### 8. Multiplayer (Turn-Based)
+- [ ] Turn-Based integration
+- [ ] State serialization
+- [ ] Turn submission/reception
 
 ---
 
-## Success Criteria for Prototype
+## Success Criteria
 
-✅ **Prototype is complete when:**
-1. Can start single player game
-2. Can start multiplayer game (Turn-Based)
-3. Can tap cells to shoot
-4. Hit/miss detection works
-5. Objects can be destroyed
-6. Win condition works
-7. Game can be restarted
-8. All feedback is via text (no visual effects needed)
+### Prototype Complete When:
+1. ✅ Can select Single Player or Multiplayer
+2. ✅ Random object placement works
+3. ✅ Can tap cells to shoot
+4. ✅ Hit/miss detection works
+5. ✅ Objects can be destroyed
+6. ✅ AI opponent works (Single Player)
+7. ✅ Turn-Based works (Multiplayer)
+8. ✅ Win condition works
+9. ✅ Game can be restarted
+10. ✅ All feedback via text + basic UI
+
+---
+
+## Technical Notes
+
+### Same Mechanics for Both Modes
+- AI uses exact same shot logic as player
+- AI uses exact same rules (can't shoot same cell twice)
+- AI uses exact same win condition
+- Only difference: AI selects cell randomly, player taps
+
+### Grid Structure
+- 10x10 grid
+- Objects: 1×4, 2×3, 3×2, 4×1 (total 20 cells)
+- No touching (even diagonally)
+
+### UI Components
+- **Text**: Status, hints, results
+- **UI Button**: All interactive buttons
+- **InteractionComponent**: Grid cells
 
 ---
 
 ## Version History
 
-- **v0.1** - Initial prototype with grid and fixed ship placement ✅
-- **v0.2** - Random placement + Intro screen (in progress)
-- **v0.3** - Full prototype with text UI and gameplay (target)
-- **v1.0** - Polished version with all visual effects (future)
+- **v0.1** - Grid + random placement ✅
+- **v0.2** - Game manager + UI system (in progress)
+- **v0.3** - Single Player with AI (target)
+- **v0.4** - Multiplayer with Turn-Based
+- **v1.0** - Polished version
 
 ---
 
 ## Notes
 
-- **Prototype First**: Focus on functionality, not visuals
-- **Text-Based UI**: All UI feedback via text objects
-- **No Animations**: Basic show/hide only
-- **No Effects**: Particles, shaders, etc. come later
-- **Working Game**: Must be fully playable before polish
-- **Turn-Based**: Must work with Snap's Turn-Based system
-
----
-
-## Next Immediate Task
-
-**Create Text-Based Intro Screen:**
-1. Create Text objects for title and buttons
-2. Add InteractionComponent to button texts
-3. Connect tap handlers
-4. Test navigation to game setup
+- **Single Player First**: Easier to test, no network dependency
+- **Same Mechanics**: AI = random player, identical rules
+- **UI Buttons**: Use proper UI Button components
+- **Text for Feedback**: All game feedback via Text objects
+- **Prototype Focus**: Functionality over visuals
