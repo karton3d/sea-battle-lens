@@ -26,7 +26,14 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
-    {}
+    backgroundObject: false
+    gameManager: false
+    playWithFriendButton: false
+    previewArea: false
+    screenContainer: false
+    singlePlayerButton: false
+    titleObject: false
+    transitionDuration: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -36,10 +43,23 @@
   Attachments:
     []
   DefaultScriptInputs:
-    -
-      {}
+    - backgroundObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      titleObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      previewArea: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      singlePlayerButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      playWithFriendButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      screenContainer: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      transitionDuration: 0.500000
   ScriptTypes:
     -
       {}
   InputLines:
-    []
+    - // @input SceneObject backgroundObject
+    - // @input SceneObject titleObject
+    - // @input SceneObject previewArea
+    - // @input SceneObject singlePlayerButton
+    - // @input SceneObject playWithFriendButton
+    - // @input SceneObject screenContainer
+    - // @input SceneObject gameManager
+    - // @input float transitionDuration = 0.5
