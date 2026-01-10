@@ -18,7 +18,7 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 - [x] Grid generation system
 - [x] Ship/object placement system
 - [x] Basic collision detection
-- [ ] **Random object placement algorithm** (CURRENT TASK)
+- [x] **Random object placement algorithm** ✅ COMPLETED
 
 ### Phase 2: Intro Screen & Menu System
 - [ ] Welcome screen with game preview
@@ -80,17 +80,23 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 
 ### 1. Random Placement System
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Tasks:**
-- [ ] Create `RandomPlacement.ts` script
-- [ ] Implement random position generation
-- [ ] Implement random orientation (horizontal/vertical)
-- [ ] Add collision detection (no touching, no overlapping)
-- [ ] Add minimum distance between objects
-- [ ] Validate placement rules (classic Battleship rules)
-- [ ] Test with all object sizes (1x1, 2x1, 3x1, 4x1)
-- [ ] Ensure proper distribution across grid
+- [x] Implement random position generation ✅
+- [x] Implement random orientation (horizontal/vertical) ✅
+- [x] Add collision detection (no touching, no overlapping) ✅
+- [x] Validate placement rules (classic Battleship rules) ✅
+- [x] Test with all object sizes (1x1, 2x1, 3x1, 4x1) ✅
+- [x] Ensure proper distribution across grid ✅
+
+**Implementation:**
+- Added `placeShipsRandomly()` method to `GridGenerator.ts`
+- Added `canPlaceShip()` method with full validation (bounds, overlap, no touching)
+- Added `useRandomPlacement` input parameter (default: true)
+- Implements classic Battleship rules: objects cannot touch (even diagonally)
+- Maximum 1000 attempts per ship to avoid infinite loops
+- Falls back to test placement if random placement fails
 
 **Required Objects:**
 - 1x 4-cell object

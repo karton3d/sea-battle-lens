@@ -26,6 +26,9 @@ export class SeaBattleGrid extends BaseScriptComponent {
     // Height offset for ships above grid
     @input shipHeightOffset: number = 0.5;
     
+    // Use random placement (true) or fixed test placement (false)
+    @input useRandomPlacement: boolean = true;
+    
     // Grid cells
     private gridCells: SceneObject[] = [];
     
@@ -47,8 +50,16 @@ export class SeaBattleGrid extends BaseScriptComponent {
         // Generate visual grid
         this.generateGrid();
         
-        // Place test ships
-        this.placeTestShips();
+        // Place ships (random or fixed test positions)
+        if (this.useRandomPlacement) {
+            const success = this.placeShipsRandomly();
+            if (!success) {
+                print("SeaBattleGrid: Random placement failed, falling back to test placement");
+                this.placeTestShips();
+            }
+        } else {
+            this.placeTestShips();
+        }
     }
     
     /**
@@ -124,27 +135,9 @@ export class SeaBattleGrid extends BaseScriptComponent {
             return null;
         }
         
-        // Check bounds
-        if (horizontal) {
-            if (gridX + length > this.gridSize || gridX < 0 || gridY < 0 || gridY >= this.gridSize) {
-                print(`SeaBattleGrid: Ship out of bounds`);
-                return null;
-            }
-        } else {
-            if (gridY + length > this.gridSize || gridX < 0 || gridX >= this.gridSize || gridY < 0) {
-                print(`SeaBattleGrid: Ship out of bounds`);
-                return null;
-            }
-        }
-        
-        // Check overlap
-        for (let i = 0; i < length; i++) {
-            const x = horizontal ? gridX + i : gridX;
-            const y = horizontal ? gridY : gridY + i;
-            if (this.shipGrid[x][y]) {
-                print(`SeaBattleGrid: Ship overlap at (${x}, ${y})`);
-                return null;
-            }
+        // Check if placement is valid (bounds, overlap, touching)
+        if (!this.canPlaceShip(gridX, gridY, length, horizontal)) {
+            return null;
         }
         
         // Mark cells as occupied
@@ -210,7 +203,7 @@ export class SeaBattleGrid extends BaseScriptComponent {
     }
     
     /**
-     * Place test ships
+     * Place test ships (fixed positions for testing)
      */
     placeTestShips() {
         // Clear previous ships
@@ -237,6 +230,118 @@ export class SeaBattleGrid extends BaseScriptComponent {
         this.placeShip(5, 9, 1, true);
         
         print(`SeaBattleGrid: Test ships placed (total: ${this.placedShips.length})`);
+    }
+    
+    /**
+     * Place ships randomly with classic Battleship rules
+     * Objects cannot touch (even diagonally) and cannot overlap
+     */
+    placeShipsRandomly(): boolean {
+        // Clear previous ships
+        this.clearShips();
+        this.initShipGrid();
+        
+        // Define ships to place: [length, count]
+        const shipsToPlace: Array<[number, number]> = [
+            [4, 1],  // 1x 4-cell ship
+            [3, 2],  // 2x 3-cell ships
+            [2, 3],  // 3x 2-cell ships
+            [1, 4]   // 4x 1-cell ships
+        ];
+        
+        let totalPlaced = 0;
+        const maxAttempts = 1000; // Maximum attempts per ship
+        
+        // Place each type of ship
+        for (const [length, count] of shipsToPlace) {
+            for (let i = 0; i < count; i++) {
+                let placed = false;
+                let attempts = 0;
+                
+                // Try to place ship with random position and orientation
+                while (!placed && attempts < maxAttempts) {
+                    attempts++;
+                    
+                    // Random position
+                    const gridX = Math.floor(Math.random() * this.gridSize);
+                    const gridY = Math.floor(Math.random() * this.gridSize);
+                    
+                    // Random orientation (50% chance horizontal)
+                    const horizontal = Math.random() < 0.5;
+                    
+                    // Try to place ship
+                    if (this.canPlaceShip(gridX, gridY, length, horizontal)) {
+                        const ship = this.placeShip(gridX, gridY, length, horizontal);
+                        if (ship) {
+                            placed = true;
+                            totalPlaced++;
+                            print(`SeaBattleGrid: Randomly placed ${length}-cell ship #${i + 1} at (${gridX}, ${gridY}), ${horizontal ? "horizontal" : "vertical"}`);
+                        }
+                    }
+                }
+                
+                if (!placed) {
+                    print(`SeaBattleGrid: ERROR - Failed to place ${length}-cell ship #${i + 1} after ${maxAttempts} attempts`);
+                    return false;
+                }
+            }
+        }
+        
+        print(`SeaBattleGrid: Randomly placed all ships (total: ${totalPlaced})`);
+        return true;
+    }
+    
+    /**
+     * Check if a ship can be placed at the given position
+     * Returns true if placement is valid (no overlap, no touching, within bounds)
+     */
+    canPlaceShip(gridX: number, gridY: number, length: number, horizontal: boolean): boolean {
+        // Check bounds
+        if (horizontal) {
+            if (gridX + length > this.gridSize || gridX < 0 || gridY < 0 || gridY >= this.gridSize) {
+                return false;
+            }
+        } else {
+            if (gridY + length > this.gridSize || gridX < 0 || gridX >= this.gridSize || gridY < 0) {
+                return false;
+            }
+        }
+        
+        // Check all cells the ship would occupy and their neighbors
+        for (let i = 0; i < length; i++) {
+            const x = horizontal ? gridX + i : gridX;
+            const y = horizontal ? gridY : gridY + i;
+            
+            // Check if cell is already occupied
+            if (this.shipGrid[x][y]) {
+                return false;
+            }
+            
+            // Check all 8 neighbors (including diagonals) for "no touching" rule
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    const neighborX = x + dx;
+                    const neighborY = y + dy;
+                    
+                    // Skip if out of bounds
+                    if (neighborX < 0 || neighborX >= this.gridSize || neighborY < 0 || neighborY >= this.gridSize) {
+                        continue;
+                    }
+                    
+                    // Skip the cell itself
+                    if (dx === 0 && dy === 0) {
+                        continue;
+                    }
+                    
+                    // Check if neighbor is occupied (violates "no touching" rule)
+                    if (this.shipGrid[neighborX][neighborY]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
     
     /**

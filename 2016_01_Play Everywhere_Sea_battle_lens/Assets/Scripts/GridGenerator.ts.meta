@@ -36,6 +36,7 @@
     ship3Prefab: false
     ship4Prefab: false
     shipHeightOffset: false
+    useRandomPlacement: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -55,6 +56,7 @@
       cellSpacing: 0.100000
       gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       shipHeightOffset: 0.500000
+      useRandomPlacement: true
   ScriptTypes:
     -
       {}
@@ -69,3 +71,4 @@
     - // @input float cellSpacing = 0.1
     - // @input SceneObject gridParent
     - // @input float shipHeightOffset = 0.5
+    - // @input bool useRandomPlacement = true
