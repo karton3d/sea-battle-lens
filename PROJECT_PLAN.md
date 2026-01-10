@@ -397,19 +397,22 @@ interface TurnData {
 | Win Condition & Game Over | ✅ |
 | Hit/Miss marker prefab system (code) | ✅ |
 
-### 🔄 IN PROGRESS
+### ✅ RECENTLY COMPLETED (2026-01-10)
 | Task | Status |
 |------|--------|
-| Create marker prefabs in Lens Studio | 🔄 |
-| Test cell tapping on opponent grid | 🔄 |
-| Verify marker spawning on hit/miss | 🔄 |
+| Create marker prefabs in Lens Studio | ✅ |
+| Test cell tapping on opponent grid | ✅ |
+| Verify marker spawning on hit/miss | ✅ |
+| Ship destruction detection & message | ✅ |
+| Win condition detection & game over | ✅ |
+| Markers use prefab size (no forced scaling) | ✅ |
+| Full game loop (player → AI → win) tested | ✅ |
 
 ### ⬜ NOT STARTED
 | Task | Status |
 |------|--------|
-| Test full game loop (player → AI → win) | ⬜ |
-| Debug any remaining issues | ⬜ |
 | Multiplayer (Turn-Based integration) | ⬜ |
+| Visual polish phase | ⬜ |
 
 ---
 
@@ -420,9 +423,9 @@ interface TurnData {
 |---|------|--------|
 | 1 | Can select Single Player or Multiplayer | ✅ Done |
 | 2 | Random object placement works | ✅ Done |
-| 3 | Can tap cells to shoot | 🔄 Testing |
+| 3 | Can tap cells to shoot | ✅ Done |
 | 4 | Hit/miss detection works | ✅ Done |
-| 5 | Hit/miss visual markers | 🔄 Code done, need prefabs |
+| 5 | Hit/miss visual markers | ✅ Done |
 | 6 | Objects can be destroyed | ✅ Done |
 | 7 | AI opponent works (Single Player) | ✅ Done |
 | 8 | Turn-Based works (Multiplayer) | ⬜ TODO |
@@ -432,7 +435,7 @@ interface TurnData {
 
 **Legend:** ✅ Done | 🔄 In Progress | ⬜ Not Started
 
-**Current Progress: 8/11 complete, 2 in progress, 1 not started**
+**Current Progress: 10/11 complete — Single Player READY! 🎮**
 
 ---
 
@@ -462,13 +465,13 @@ interface TurnData {
 |---------|-------------|--------|
 | v0.1 | Grid + random placement | ✅ Done |
 | v0.2 | Game manager + UI system | ✅ Done |
-| v0.3 | Single Player with AI | 🔄 Testing |
+| v0.3 | Single Player with AI | ✅ Done |
 | v0.4 | Multiplayer with Turn-Based | ⬜ TODO |
 | v1.0 | Polished version | ⬜ TODO |
 
-### Current Version: v0.3-dev
+### Current Version: v0.3
 **Date:** 2026-01-10  
-**Status:** 🔄 Testing Single Player game loop
+**Status:** ✅ Single Player mode COMPLETE
 
 ---
 
@@ -524,10 +527,20 @@ Scene
 ### Resolved Issues:
 - ✅ IntroScreen.ts and UIManager.ts removed (functionality in GameManager)
 - ✅ Hit/miss marker system added
+- ✅ GameManager synced with GridGenerator (uses hasShipAt() for hit detection)
+- ✅ Markers use prefab's original scale (no forced scaling)
+- ✅ Ship destruction messages displayed
+- ✅ Win condition triggers game over correctly
 
-### Current Testing (2026-01-10):
-- Testing OpponentGrid generation
-- Testing cell tap → marker spawn flow
+### Completed Testing (2026-01-10):
+- ✅ Single Player full game loop works
+- ✅ Hit/miss markers spawn correctly
+- ✅ AI opponent plays correctly
+- ✅ Win detection and game over screen
+
+### Next Steps:
+- Multiplayer (Turn-Based integration)
+- Visual polish
 
 ### Component Names
 - Use `"Component.Touch"` for InteractionComponent (not "Component.InteractionComponent")
