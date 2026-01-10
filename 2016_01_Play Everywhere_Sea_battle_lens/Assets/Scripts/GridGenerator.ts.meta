@@ -29,6 +29,8 @@
     cellPrefab: false
     cellSize: false
     cellSpacing: false
+    enableCellTapping: false
+    gameManager: false
     gridParent: false
     gridSize: false
     ship1Prefab: false
@@ -57,6 +59,8 @@
       gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       shipHeightOffset: 0.500000
       useRandomPlacement: true
+      enableCellTapping: false
+      gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
   ScriptTypes:
     -
       {}
@@ -72,3 +76,5 @@
     - // @input SceneObject gridParent
     - // @input float shipHeightOffset = 0.5
     - // @input bool useRandomPlacement = true
+    - // @input bool enableCellTapping
+    - // @input SceneObject gameManager

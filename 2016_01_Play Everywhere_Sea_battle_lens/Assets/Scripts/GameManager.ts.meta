@@ -1,0 +1,86 @@
+- !<AssetImportMetadata/05f4cbfc-483b-447e-a928-fcdae03f66db>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 1690b4dc-d677-431e-b976-2a9063d718f7
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 1690b4dc-d677-431e-b976-2a9063d718f7
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 6ebcdd09-7c1e-43ba-80c3-36333ac189ca
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/6ebcdd09-7c1e-43ba-80c3-36333ac189ca>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 2a9fb2f6-586d-40d0-b4de-d00e4ce4eb20
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    aiDelay: false
+    gameOverScreen: false
+    gameScreen: false
+    gridSize: false
+    hintText: false
+    introScreen: false
+    multiplayerButton: false
+    opponentGridGenerator: false
+    playAgainButton: false
+    playerGridGenerator: false
+    resultText: false
+    setupScreen: false
+    singlePlayerButton: false
+    startButton: false
+    statusText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - gridSize: !<float> 10.000000
+      playerGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      opponentGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      statusText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      hintText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      resultText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      singlePlayerButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      multiplayerButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      startButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      introScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      setupScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameOverScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      aiDelay: !<float> 1000.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input float gridSize = 10
+    - // @input SceneObject playerGridGenerator
+    - // @input SceneObject opponentGridGenerator
+    - // @input Component.Text statusText
+    - // @input Component.Text hintText
+    - // @input Component.Text resultText
+    - // @input SceneObject singlePlayerButton
+    - // @input SceneObject multiplayerButton
+    - // @input SceneObject startButton
+    - // @input SceneObject playAgainButton
+    - // @input SceneObject introScreen
+    - // @input SceneObject setupScreen
+    - // @input SceneObject gameScreen
+    - // @input SceneObject gameOverScreen
+    - // @input float aiDelay = 1000

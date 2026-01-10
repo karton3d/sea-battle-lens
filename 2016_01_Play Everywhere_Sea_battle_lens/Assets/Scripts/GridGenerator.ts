@@ -29,8 +29,15 @@ export class SeaBattleGrid extends BaseScriptComponent {
     // Use random placement (true) or fixed test placement (false)
     @input useRandomPlacement: boolean = true;
     
-    // Grid cells
+    // Enable cell tapping (for opponent's grid)
+    @input enableCellTapping: boolean = false;
+    
+    // Reference to GameManager (optional, for cell tap callbacks)
+    @input gameManager: SceneObject = null;
+    
+    // Grid cells [x][y] -> SceneObject
     private gridCells: SceneObject[] = [];
+    private gridCells2D: SceneObject[][] = [];
     
     // Placed ships
     private placedShips: SceneObject[] = [];
@@ -40,6 +47,9 @@ export class SeaBattleGrid extends BaseScriptComponent {
     
     // Distance between cell centers
     private cellDistance: number = 0;
+    
+    // Callback for cell tap (set by GameManager)
+    public onCellTap: ((x: number, y: number) => void) | null = null;
     
     onAwake() {
         this.cellDistance = this.cellSize + this.cellSpacing;
@@ -76,10 +86,21 @@ export class SeaBattleGrid extends BaseScriptComponent {
     }
     
     /**
+     * Initialize 2D cell array
+     */
+    initGridCells2D() {
+        this.gridCells2D = [];
+        for (let x = 0; x < this.gridSize; x++) {
+            this.gridCells2D[x] = [];
+        }
+    }
+    
+    /**
      * Generate visual grid
      */
     generateGrid() {
         this.clearGrid();
+        this.initGridCells2D();
         
         if (!this.cellPrefab) {
             print("SeaBattleGrid: cellPrefab is not assigned!");
@@ -105,11 +126,59 @@ export class SeaBattleGrid extends BaseScriptComponent {
                 transform.setLocalPosition(position);
                 transform.setLocalScale(new vec3(this.cellSize, this.cellSize, this.cellSize));
                 
+                // Store in 2D array for easy access
+                this.gridCells2D[x][y] = cell;
                 this.gridCells.push(cell);
+                
+                // Add interaction component if tapping enabled
+                if (this.enableCellTapping) {
+                    this.setupCellInteraction(cell, x, y);
+                }
             }
         }
         
-        print(`SeaBattleGrid: Grid ${this.gridSize}x${this.gridSize} created`);
+        print(`SeaBattleGrid: Grid ${this.gridSize}x${this.gridSize} created (tapping: ${this.enableCellTapping})`);
+    }
+    
+    /**
+     * Setup interaction component for a cell
+     */
+    setupCellInteraction(cell: SceneObject, gridX: number, gridY: number) {
+        // Try to get existing interaction component or create new one
+        let interaction = cell.getComponent("Component.InteractionComponent") as InteractionComponent;
+        if (!interaction) {
+            interaction = cell.createComponent("Component.InteractionComponent") as InteractionComponent;
+        }
+        
+        if (interaction) {
+            // Store grid coordinates for callback
+            const x = gridX;
+            const y = gridY;
+            
+            interaction.onTap.add(() => {
+                this.handleCellTap(x, y);
+            });
+        }
+    }
+    
+    /**
+     * Handle cell tap
+     */
+    handleCellTap(x: number, y: number) {
+        print(`SeaBattleGrid: Cell tapped at (${x}, ${y})`);
+        
+        // Call callback if set
+        if (this.onCellTap) {
+            this.onCellTap(x, y);
+        }
+        
+        // Call GameManager if reference exists
+        if (this.gameManager) {
+            const gm = this.gameManager.getComponent("Component.ScriptComponent");
+            if (gm && typeof (gm as any).onCellTapped === 'function') {
+                (gm as any).onCellTapped(x, y);
+            }
+        }
     }
     
     /**
@@ -381,5 +450,44 @@ export class SeaBattleGrid extends BaseScriptComponent {
         this.clearShips();
         this.initShipGrid();
         this.generateGrid();
+    }
+    
+    /**
+     * Get cell SceneObject at grid position
+     */
+    getCellAt(x: number, y: number): SceneObject | null {
+        if (x < 0 || x >= this.gridSize || y < 0 || y >= this.gridSize) {
+            return null;
+        }
+        return this.gridCells2D[x] ? this.gridCells2D[x][y] : null;
+    }
+    
+    /**
+     * Update cell visual state (change material or add marker)
+     * For prototype: just log state change
+     */
+    setCellState(x: number, y: number, state: 'hit' | 'miss' | 'unknown') {
+        const cell = this.getCellAt(x, y);
+        if (!cell) return;
+        
+        // For prototype, just rename cell to indicate state
+        cell.name = `Cell_${x}_${y}_${state}`;
+        print(`SeaBattleGrid: Cell (${x}, ${y}) state changed to ${state}`);
+        
+        // TODO: In polish phase, change material/color based on state
+    }
+    
+    /**
+     * Get all grid cells
+     */
+    getAllCells(): SceneObject[] {
+        return this.gridCells;
+    }
+    
+    /**
+     * Get grid size
+     */
+    getGridSize(): number {
+        return this.gridSize;
     }
 }

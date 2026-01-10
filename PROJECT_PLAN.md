@@ -164,13 +164,43 @@ interface GameState {
 - [ ] AI checks win condition
 - [ ] Update UI with AI's move result
 
-**AI Logic (Simple Random):**
+**AI Logic (Smart Hunt Mode):**
 ```typescript
+// AI has two modes:
+// 1. HUNT: Random shots to find objects
+// 2. TARGET: After hit, shoot adjacent cells to destroy object
+
+interface AIState {
+    mode: 'hunt' | 'target';
+    targetCells: {x, y}[];  // Cells to try when in target mode
+    hitCells: {x, y}[];     // Current object's hit cells
+}
+
 function getAIShot(): {x: number, y: number} {
-    // Get all cells not yet shot
-    const availableCells = getUnknownCells(playerGrid);
-    // Pick random cell
-    return randomChoice(availableCells);
+    if (aiState.mode === 'target' && aiState.targetCells.length > 0) {
+        // Target mode: shoot next adjacent cell
+        return aiState.targetCells.pop();
+    }
+    // Hunt mode: random cell
+    return randomChoice(getUnknownCells(playerGrid));
+}
+
+function onAIHit(x, y) {
+    aiState.mode = 'target';
+    aiState.hitCells.push({x, y});
+    // Add adjacent cells (up, down, left, right) to target list
+    addAdjacentCells(x, y, aiState.targetCells);
+    // If 2+ hits, prioritize cells in line (determine direction)
+    if (aiState.hitCells.length >= 2) {
+        filterTargetsByDirection(aiState);
+    }
+}
+
+function onAIDestroyedObject() {
+    // Object destroyed, back to hunt mode
+    aiState.mode = 'hunt';
+    aiState.targetCells = [];
+    aiState.hitCells = [];
 }
 ```
 
