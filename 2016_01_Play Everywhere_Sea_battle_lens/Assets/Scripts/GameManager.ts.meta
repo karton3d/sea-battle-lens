@@ -51,8 +51,13 @@
     []
   DefaultScriptInputs:
     - gridSize: !<float> 10.000000
+      aiDelay: !<float> 1000.000000
       playerGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       opponentGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      introScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      setupScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameOverScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       statusText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       hintText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       resultText: !<reference.Text> 00000000-0000-0000-0000-000000000000
@@ -60,18 +65,18 @@
       multiplayerButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       startButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      introScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      setupScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      gameScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      gameOverScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      aiDelay: !<float> 1000.000000
   ScriptTypes:
     -
       {}
   InputLines:
     - // @input float gridSize = 10
+    - // @input float aiDelay = 1000
     - // @input SceneObject playerGridGenerator
     - // @input SceneObject opponentGridGenerator
+    - // @input SceneObject introScreen
+    - // @input SceneObject setupScreen
+    - // @input SceneObject gameScreen
+    - // @input SceneObject gameOverScreen
     - // @input Component.Text statusText
     - // @input Component.Text hintText
     - // @input Component.Text resultText
@@ -79,8 +84,3 @@
     - // @input SceneObject multiplayerButton
     - // @input SceneObject startButton
     - // @input SceneObject playAgainButton
-    - // @input SceneObject introScreen
-    - // @input SceneObject setupScreen
-    - // @input SceneObject gameScreen
-    - // @input SceneObject gameOverScreen
-    - // @input float aiDelay = 1000

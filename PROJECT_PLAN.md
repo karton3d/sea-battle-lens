@@ -13,6 +13,13 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 ### Development Strategy
 **Prototype First, Polish Later**: Create a fully functional prototype with minimal UI (text + UI Buttons), then add visual polish in the final phase.
 
+### Status Legend
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Done / Completed |
+| 🔄 | In Progress |
+| ⬜ | Not Started / TODO |
+
 ---
 
 ## Architecture Overview
@@ -47,11 +54,16 @@ GameManager
 
 ## Development Phases
 
-### ✅ Phase 1: Core Systems (COMPLETED)
-- [x] Grid generation system
-- [x] Object placement system
-- [x] Collision detection
-- [x] Random object placement algorithm
+### Phase 1: Core Systems
+**Status:** ✅ COMPLETED
+
+**Tasks:**
+| Task | Status |
+|------|--------|
+| Grid generation system | ✅ |
+| Object placement system | ✅ |
+| Collision detection | ✅ |
+| Random object placement algorithm | ✅ |
 
 ---
 
@@ -59,17 +71,19 @@ GameManager
 
 ### Phase 2: Game State & Manager
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Tasks:**
-- [ ] Create `GameManager.ts` - central game controller
-- [ ] Create `GameState.ts` - game state management
-- [ ] Define game states: INTRO, SETUP, PLAYING, GAME_OVER
-- [ ] Define turn states: PLAYER_TURN, OPPONENT_TURN, WAITING
-- [ ] Track player grid (objects + shots received)
-- [ ] Track opponent grid (player's shots + hidden objects)
-- [ ] Track destroyed objects count
-- [ ] Track current turn
+| Task | Status |
+|------|--------|
+| Create `GameManager.ts` - central game controller | ✅ |
+| Game state integrated into GameManager | ✅ |
+| Define game states: INTRO, SETUP, PLAYING, GAME_OVER | ✅ |
+| Define turn states: PLAYER_TURN, OPPONENT_TURN, WAITING | ✅ |
+| Track player grid (objects + shots received) | ✅ |
+| Track opponent grid (player's shots + hidden objects) | ✅ |
+| Track destroyed objects count (playerHits, opponentHits) | ✅ |
+| Track current turn | ✅ |
 
 **GameState Structure:**
 ```typescript
@@ -96,13 +110,15 @@ interface GameState {
 
 ### Phase 3: UI System (PROTOTYPE)
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Tasks:**
-- [ ] Create `UIManager.ts` - handles all UI updates
-- [ ] Create Text object for status messages
-- [ ] Use UI Button components for buttons (not text)
-- [ ] Implement screen management (show/hide)
+| Task | Status |
+|------|--------|
+| UI logic integrated into GameManager (no separate UIManager) | ✅ |
+| Create Text objects (StatusText, HintText, ResultText) | ✅ |
+| Use UI Button components (SinglePlayerBtn, MultiplayerBtn, etc.) | ✅ |
+| Implement screen management (show/hide) | ✅ |
 
 **UI Elements:**
 - **Text Objects**: Title, status messages, hints, results
@@ -119,17 +135,24 @@ interface GameState {
 
 ### Phase 4: Cell Interaction & Shot Logic
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Tasks:**
-- [ ] Add InteractionComponent to opponent grid cells
-- [ ] Implement cell tap detection
-- [ ] Process shot: check if hit or miss
-- [ ] Update cell visual state (can be simple color change)
-- [ ] Prevent tapping already-shot cells
-- [ ] Check if object is fully destroyed
-- [ ] Update UI with result
-- [ ] Check win condition after each shot
+| Task | Status |
+|------|--------|
+| Add InteractionComponent to opponent grid cells | ✅ |
+| Implement cell tap detection (handleCellTap) | ✅ |
+| Process shot: check if hit or miss | ✅ |
+| Update cell visual state (hit/miss marker prefabs) | ✅ |
+| Prevent tapping already-shot cells | ✅ |
+| Check if object is fully destroyed | ✅ |
+| Update UI with result | ✅ |
+| Check win condition after each shot | ✅ |
+
+**Hit/Miss Markers:**
+- `hitMarkerPrefab` — spawned when player hits an object
+- `missMarkerPrefab` — spawned when player hits empty cell
+- Markers spawn above the cell at `cellSize + 0.5` height
 
 **Cell States:**
 - `UNKNOWN` - not shot yet (opponent grid only)
@@ -152,17 +175,19 @@ interface GameState {
 
 ### Phase 5: Single Player Mode (AI Opponent)
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Rationale:** Implement AI first - easier to test locally without Turn-Based system.
 
 **Tasks:**
-- [ ] Create `AIOpponent.ts` - AI logic
-- [ ] AI generates random shot (cell not yet shot)
-- [ ] AI waits brief delay (simulate thinking)
-- [ ] AI shot uses same logic as player shot
-- [ ] AI checks win condition
-- [ ] Update UI with AI's move result
+| Task | Status |
+|------|--------|
+| AI logic integrated into GameManager | ✅ |
+| AI generates random shot — getAIShot() | ✅ |
+| AI waits brief delay — aiDelay + DelayedCallbackEvent | ✅ |
+| AI shot uses same logic as player — processShot() | ✅ |
+| AI checks win condition — checkWin() | ✅ |
+| Update UI with AI's move result | ✅ |
 
 **AI Logic (Smart Hunt Mode):**
 ```typescript
@@ -215,14 +240,16 @@ function onAIDestroyedObject() {
 
 ### Phase 6: Win Condition & Game Over
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** ✅ COMPLETED
 
 **Tasks:**
-- [ ] Check win after each shot
-- [ ] Win when all 20 opponent cells with objects are hit
-- [ ] Display winner (text)
-- [ ] Show "Play Again" button
-- [ ] Reset game on Play Again
+| Task | Status |
+|------|--------|
+| Check win after each shot — checkWin() | ✅ |
+| Win when all 20 cells hit (TOTAL_OBJECT_CELLS = 20) | ✅ |
+| Display winner text | ✅ |
+| Show "Play Again" button | ✅ |
+| Reset game on Play Again | ✅ |
 
 **Win Check:**
 ```typescript
@@ -235,19 +262,21 @@ function checkWin(destroyedCells: number): boolean {
 
 ### Phase 7: Multiplayer Mode (Turn-Based)
 **Priority:** MEDIUM  
-**Status:** TODO
+**Status:** ⬜ NOT STARTED
 
 **Rationale:** Add multiplayer after Single Player works perfectly.
 
 **Tasks:**
-- [ ] Create `TurnBasedManager.ts` - Turn-Based integration
-- [ ] Initialize Turn-Based component
-- [ ] Store game state in turn data
-- [ ] Restore game state from turn data
-- [ ] Submit turn after player's shot
-- [ ] Receive and process opponent's turn
-- [ ] Handle turn start/end callbacks
-- [ ] Handle game over callback
+| Task | Status |
+|------|--------|
+| Create `TurnBasedManager.ts` - Turn-Based integration | ⬜ |
+| Initialize Turn-Based component | ⬜ |
+| Store game state in turn data | ⬜ |
+| Restore game state from turn data | ⬜ |
+| Submit turn after player's shot | ⬜ |
+| Receive and process opponent's turn | ⬜ |
+| Handle turn start/end callbacks | ⬜ |
+| Handle game over callback | ⬜ |
 
 **Turn Data Format:**
 ```typescript
@@ -272,127 +301,138 @@ interface TurnData {
 
 ### Phase 8: Game Flow Polish
 **Priority:** MEDIUM  
-**Status:** TODO
+**Status:** ⬜ NOT STARTED
 
 **Tasks:**
-- [ ] Smooth transitions between screens
-- [ ] Proper timing for AI moves
-- [ ] Clear feedback for all actions
-- [ ] Error handling
-- [ ] Edge cases (disconnection, timeout)
+| Task | Status |
+|------|--------|
+| Smooth transitions between screens | ⬜ |
+| Proper timing for AI moves | ⬜ |
+| Clear feedback for all actions | ⬜ |
+| Error handling | ⬜ |
+| Edge cases (disconnection, timeout) | ⬜ |
 
 ---
 
 ## 🎨 POLISH PHASE (After Prototype)
 
-### Phase 9: Visual Polish - UI
-- [ ] Styled UI buttons
-- [ ] Background images
-- [ ] Styled title
-- [ ] UI panels/frames
-- [ ] Icons for objects
+### Phase 9: Visual Polish - UI ⬜
+| Task | Status |
+|------|--------|
+| Styled UI buttons | ⬜ |
+| Background images | ⬜ |
+| Styled title | ⬜ |
+| UI panels/frames | ⬜ |
+| Icons for objects | ⬜ |
 
-### Phase 10: Visual Polish - Grid
-- [ ] Cell highlighting on hover/selection
-- [ ] Hit cell visual (color, glow)
-- [ ] Miss cell visual (cross, mark)
-- [ ] Grid appearance improvements
+### Phase 10: Visual Polish - Grid ⬜
+| Task | Status |
+|------|--------|
+| Cell highlighting on hover/selection | ⬜ |
+| Hit cell visual (color, glow) | ⬜ |
+| Miss cell visual (cross, mark) | ⬜ |
+| Grid appearance improvements | ⬜ |
 
-### Phase 11: Visual Polish - Objects
-- [ ] Meme 3D models
-- [ ] Materials and textures
-- [ ] X-ray reveal effect
-- [ ] Destruction animations
+### Phase 11: Visual Polish - Objects ⬜
+| Task | Status |
+|------|--------|
+| Meme 3D models | ⬜ |
+| Materials and textures | ⬜ |
+| X-ray reveal effect | ⬜ |
+| Destruction animations | ⬜ |
 
-### Phase 12: Visual Polish - Effects
-- [ ] UFO scanning effect
-- [ ] Particle effects
-- [ ] Screen transitions
-- [ ] Victory effects
+### Phase 12: Visual Polish - Effects ⬜
+| Task | Status |
+|------|--------|
+| UFO scanning effect | ⬜ |
+| Particle effects | ⬜ |
+| Screen transitions | ⬜ |
+| Victory effects | ⬜ |
 
-### Phase 13: Audio
-- [ ] UI sounds
-- [ ] Hit/miss sounds
-- [ ] Victory/defeat sounds
-- [ ] Background music
-
----
-
-## Scripts to Create
-
-### Core Scripts
-1. **`GameManager.ts`** - Central game controller
-2. **`GameState.ts`** - Game state management
-3. **`UIManager.ts`** - UI updates and screen management
-4. **`TurnManager.ts`** - Turn logic (abstract)
-5. **`AIOpponent.ts`** - AI for single player
-6. **`TurnBasedManager.ts`** - Multiplayer integration
-
-### Existing Scripts
-- **`GridGenerator.ts`** ✅ - Grid and object placement
+### Phase 13: Audio ⬜
+| Task | Status |
+|------|--------|
+| UI sounds | ⬜ |
+| Hit/miss sounds | ⬜ |
+| Victory/defeat sounds | ⬜ |
+| Background music | ⬜ |
 
 ---
 
-## Immediate Task List (In Order)
+## Scripts Status
 
-### 1. GameManager & GameState
-- [ ] Create `GameManager.ts`
-- [ ] Create game state structure
-- [ ] Basic state transitions
+### Active Scripts ✅
+| Script | Description | Status |
+|--------|-------------|--------|
+| `GameManager.ts` | Central game controller, state, AI, turns, UI | ✅ Complete |
+| `GridGenerator.ts` | Grid generation, ship placement, cell interaction, markers | ✅ Complete |
 
-### 2. UIManager
-- [ ] Create `UIManager.ts`
-- [ ] Setup Text objects for messages
-- [ ] Setup UI Buttons
-- [ ] Implement screen show/hide
+### Removed Scripts (functionality merged into GameManager)
+- ~~`UIManager.ts`~~ — merged into GameManager
+- ~~`IntroScreen.ts`~~ — merged into GameManager
 
-### 3. Intro Screen
-- [ ] Title text
-- [ ] Single Player button (UI Button)
-- [ ] Play with Friend button (UI Button)
-- [ ] Button handlers → start game
+### Pending Scripts
+| Script | Description | Status |
+|--------|-------------|--------|
+| `TurnBasedManager.ts` | Multiplayer Turn-Based integration | 📋 TODO |
 
-### 4. Setup Screen
-- [ ] Generate random placement
-- [ ] Show "Objects placed" message
-- [ ] Start button → begin game
+### Architecture Notes
+- **GameState** integrated into GameManager (no separate file)
+- **AI Logic** integrated into GameManager (hunt/target modes)
+- **Turn Logic** integrated into GameManager for Single Player
+- **UI Management** integrated into GameManager (screens, buttons, text)
 
-### 5. Game Screen (Cell Interaction)
-- [ ] Add InteractionComponent to cells
-- [ ] Tap detection
-- [ ] Shot processing
-- [ ] Result display
+---
 
-### 6. Single Player AI
-- [ ] AI opponent logic
-- [ ] AI turn execution
-- [ ] Turn switching
+## Immediate Task List (Current Sprint)
 
-### 7. Win Condition
-- [ ] Win detection
-- [ ] Game over screen
-- [ ] Restart functionality
+### ✅ COMPLETED
+| Task | Status |
+|------|--------|
+| GameManager & GameState | ✅ |
+| UI Management (integrated into GameManager) | ✅ |
+| Intro Screen (buttons, handlers) | ✅ |
+| Setup Screen (random placement, Start button) | ✅ |
+| Single Player AI (hunt/target modes) | ✅ |
+| Win Condition & Game Over | ✅ |
+| Hit/Miss marker prefab system (code) | ✅ |
 
-### 8. Multiplayer (Turn-Based)
-- [ ] Turn-Based integration
-- [ ] State serialization
-- [ ] Turn submission/reception
+### 🔄 IN PROGRESS
+| Task | Status |
+|------|--------|
+| Create marker prefabs in Lens Studio | 🔄 |
+| Test cell tapping on opponent grid | 🔄 |
+| Verify marker spawning on hit/miss | 🔄 |
+
+### ⬜ NOT STARTED
+| Task | Status |
+|------|--------|
+| Test full game loop (player → AI → win) | ⬜ |
+| Debug any remaining issues | ⬜ |
+| Multiplayer (Turn-Based integration) | ⬜ |
 
 ---
 
 ## Success Criteria
 
 ### Prototype Complete When:
-1. ✅ Can select Single Player or Multiplayer
-2. ✅ Random object placement works
-3. ✅ Can tap cells to shoot
-4. ✅ Hit/miss detection works
-5. ✅ Objects can be destroyed
-6. ✅ AI opponent works (Single Player)
-7. ✅ Turn-Based works (Multiplayer)
-8. ✅ Win condition works
-9. ✅ Game can be restarted
-10. ✅ All feedback via text + basic UI
+| # | Task | Status |
+|---|------|--------|
+| 1 | Can select Single Player or Multiplayer | ✅ Done |
+| 2 | Random object placement works | ✅ Done |
+| 3 | Can tap cells to shoot | 🔄 Testing |
+| 4 | Hit/miss detection works | ✅ Done |
+| 5 | Hit/miss visual markers | 🔄 Code done, need prefabs |
+| 6 | Objects can be destroyed | ✅ Done |
+| 7 | AI opponent works (Single Player) | ✅ Done |
+| 8 | Turn-Based works (Multiplayer) | ⬜ TODO |
+| 9 | Win condition works | ✅ Done |
+| 10 | Game can be restarted | ✅ Done |
+| 11 | All feedback via text + basic UI | ✅ Done |
+
+**Legend:** ✅ Done | 🔄 In Progress | ⬜ Not Started
+
+**Current Progress: 8/11 complete, 2 in progress, 1 not started**
 
 ---
 
@@ -418,11 +458,17 @@ interface TurnData {
 
 ## Version History
 
-- **v0.1** - Grid + random placement ✅
-- **v0.2** - Game manager + UI system (in progress)
-- **v0.3** - Single Player with AI (target)
-- **v0.4** - Multiplayer with Turn-Based
-- **v1.0** - Polished version
+| Version | Description | Status |
+|---------|-------------|--------|
+| v0.1 | Grid + random placement | ✅ Done |
+| v0.2 | Game manager + UI system | ✅ Done |
+| v0.3 | Single Player with AI | 🔄 Testing |
+| v0.4 | Multiplayer with Turn-Based | ⬜ TODO |
+| v1.0 | Polished version | ⬜ TODO |
+
+### Current Version: v0.3-dev
+**Date:** 2026-01-10  
+**Status:** 🔄 Testing Single Player game loop
 
 ---
 
@@ -430,6 +476,65 @@ interface TurnData {
 
 - **Single Player First**: Easier to test, no network dependency
 - **Same Mechanics**: AI = random player, identical rules
-- **UI Buttons**: Use proper UI Button components
+- **UI Buttons**: Use proper UI Button components (with Component.Touch)
 - **Text for Feedback**: All game feedback via Text objects
 - **Prototype Focus**: Functionality over visuals
+
+---
+
+## Scene Hierarchy (Lens Studio)
+
+```
+Scene
+├── Camera Object
+├── Lighting
+├── Prefabs (Box, 4x1, 3x1, 2x1, 1x1, HitMarker, MissMarker)
+├── Turn Based, Turn Based Player Info
+├── Orthographic Camera
+│   └── Screens
+│       ├── IntroScreen (TitleText, SinglePlayerBtn, MultiplayerBtn)
+│       ├── SetupScreen (StatusText, StartBtn)
+│       ├── GameScreen (StatusText, HintText, ResultText)
+│       └── GameOverScreen (StatusText, PlayAgainBtn)
+├── GameRoot
+│   ├── GameManager (script)
+│   └── Grids
+│       ├── PlayerGrid (script: GridGenerator)
+│       └── OpponentGrid (script: GridGenerator)
+└── World
+```
+
+### GridGenerator Settings
+| Setting | PlayerGrid | OpponentGrid |
+|---------|------------|--------------|
+| Auto Generate | false | false |
+| Enable Cell Tapping | false | true |
+| Hit Marker Prefab | HitMarker | HitMarker |
+| Miss Marker Prefab | MissMarker | MissMarker |
+| Position X (Transform) | 0 | ~20 (offset to the right) |
+
+### Marker Prefabs (Create in Lens Studio)
+- **HitMarker** — визуальный индикатор попадания (например красный X или огонь)
+- **MissMarker** — визуальный индикатор промаха (например синий круг или всплеск воды)
+
+---
+
+## Known Issues / Debug Notes
+
+### Resolved Issues:
+- ✅ IntroScreen.ts and UIManager.ts removed (functionality in GameManager)
+- ✅ Hit/miss marker system added
+
+### Current Testing (2026-01-10):
+- Testing OpponentGrid generation
+- Testing cell tap → marker spawn flow
+
+### Component Names
+- Use `"Component.Touch"` for InteractionComponent (not "Component.InteractionComponent")
+- Use `"Component.ScriptComponent"` to get script components
+
+### Prefabs Needed
+1. **Cell prefab** — grid cell (cube)
+2. **Ship prefabs** — 1x1, 2x1, 3x1, 4x1
+3. **HitMarker prefab** — shows on hit (red X, fire, explosion)
+4. **MissMarker prefab** — shows on miss (blue circle, water splash)

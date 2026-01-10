@@ -55,34 +55,34 @@ interface GameState {
 @component
 export class GameManager extends BaseScriptComponent {
     
-    // Grid size
+    // ==================== GAME SETTINGS ====================
     @input gridSize: number = 10;
-    
-    // Reference to player's grid generator
-    @input playerGridGenerator: SceneObject;
-    
-    // Reference to opponent's grid generator
-    @input opponentGridGenerator: SceneObject;
-    
-    // UI Text objects
-    @input statusText: Text;
-    @input hintText: Text;
-    @input resultText: Text;
-    
-    // UI Buttons (SceneObjects with InteractionComponent)
-    @input singlePlayerButton: SceneObject;
-    @input multiplayerButton: SceneObject;
-    @input startButton: SceneObject;
-    @input playAgainButton: SceneObject;
-    
-    // Screen containers
-    @input introScreen: SceneObject;
-    @input setupScreen: SceneObject;
-    @input gameScreen: SceneObject;
-    @input gameOverScreen: SceneObject;
-    
-    // AI delay (ms)
     @input aiDelay: number = 1000;
+    
+    // ==================== GRIDS ====================
+    @input playerGridGenerator: SceneObject = null;
+    @input opponentGridGenerator: SceneObject = null;
+    
+    // ==================== SCREENS ====================
+    @input introScreen: SceneObject = null;
+    @input setupScreen: SceneObject = null;
+    @input gameScreen: SceneObject = null;
+    @input gameOverScreen: SceneObject = null;
+    
+    // ==================== UI TEXT ====================
+    @input statusText: Text = null;
+    @input hintText: Text = null;
+    @input resultText: Text = null;
+    
+    // ==================== INTRO BUTTONS ====================
+    @input singlePlayerButton: SceneObject = null;
+    @input multiplayerButton: SceneObject = null;
+    
+    // ==================== SETUP BUTTONS ====================
+    @input startButton: SceneObject = null;
+    
+    // ==================== GAMEOVER BUTTONS ====================
+    @input playAgainButton: SceneObject = null;
     
     // Game state
     private state: GameState;
@@ -96,8 +96,116 @@ export class GameManager extends BaseScriptComponent {
     onAwake() {
         this.initializeState();
         this.setupButtons();
+        
+        // Hide grids initially
+        this.hideGrids();
+        
         this.showScreen('intro');
         print("GameManager: Initialized");
+        print(`GameManager: playerGrid=${this.playerGridGenerator ? 'set' : 'null'}, opponentGrid=${this.opponentGridGenerator ? 'set' : 'null'}`);
+    }
+    
+    /**
+     * Get grid script component from SceneObject
+     */
+    private getGridScript(gridObject: SceneObject): any {
+        if (!gridObject) return null;
+        const scripts = gridObject.getComponents("Component.ScriptComponent");
+        for (let i = 0; i < scripts.length; i++) {
+            const script = scripts[i] as any;
+            if (script && typeof script.generate === 'function') {
+                return script;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Hide both grids (hide visual content, not the script object)
+     */
+    hideGrids() {
+        // Call hide() method on grid scripts instead of disabling the object
+        const playerScript = this.getGridScript(this.playerGridGenerator);
+        if (playerScript && typeof playerScript.hide === 'function') {
+            playerScript.hide();
+        }
+        
+        const opponentScript = this.getGridScript(this.opponentGridGenerator);
+        if (opponentScript && typeof opponentScript.hide === 'function') {
+            opponentScript.hide();
+        }
+        
+        print("GameManager: Grids hidden");
+    }
+    
+    /**
+     * Show player grid
+     */
+    showPlayerGrid() {
+        const playerScript = this.getGridScript(this.playerGridGenerator);
+        if (playerScript && typeof playerScript.show === 'function') {
+            playerScript.show();
+            print("GameManager: Player grid shown");
+        }
+    }
+    
+    /**
+     * Show opponent grid
+     */
+    showOpponentGrid() {
+        const opponentScript = this.getGridScript(this.opponentGridGenerator);
+        if (opponentScript && typeof opponentScript.show === 'function') {
+            opponentScript.show();
+            print("GameManager: Opponent grid shown");
+        }
+    }
+    
+    /**
+     * Update cell visual state (spawn hit/miss marker)
+     */
+    updateCellVisual(gridObject: SceneObject, x: number, y: number, state: 'hit' | 'miss') {
+        const gridScript = this.getGridScript(gridObject);
+        if (gridScript && typeof gridScript.setCellState === 'function') {
+            gridScript.setCellState(x, y, state);
+            print(`GameManager: Updated cell (${x}, ${y}) visual to ${state}`);
+        } else {
+            print(`GameManager: WARNING - Could not update cell visual, setCellState not found`);
+        }
+    }
+    
+    /**
+     * Generate grids (call generate() method on grid scripts)
+     */
+    generateGrids() {
+        print("GameManager: generateGrids() called");
+        
+        // Generate player grid
+        if (this.playerGridGenerator) {
+            print(`GameManager: playerGridGenerator found: ${this.playerGridGenerator.name}`);
+            const playerScript = this.getGridScript(this.playerGridGenerator);
+            if (playerScript) {
+                playerScript.generate();
+                print("GameManager: Player grid generated successfully");
+            } else {
+                print("GameManager: ERROR - Player grid script not found!");
+            }
+        } else {
+            print("GameManager: ERROR - playerGridGenerator is null!");
+        }
+        
+        // Generate opponent grid
+        if (this.opponentGridGenerator) {
+            print(`GameManager: opponentGridGenerator found: ${this.opponentGridGenerator.name}`);
+            const opponentScript = this.getGridScript(this.opponentGridGenerator);
+            if (opponentScript) {
+                opponentScript.generate();
+                print("GameManager: Opponent grid generated successfully");
+            } else {
+                print("GameManager: ERROR - Opponent grid script not found!");
+            }
+        } else {
+            print("GameManager: ERROR - opponentGridGenerator is null!");
+        }
     }
     
     /**
@@ -146,33 +254,49 @@ export class GameManager extends BaseScriptComponent {
     setupButtons() {
         // Single Player button
         if (this.singlePlayerButton) {
-            const interaction = this.singlePlayerButton.getComponent("Component.InteractionComponent") as InteractionComponent;
+            let interaction = this.singlePlayerButton.getComponent("Component.Touch") as InteractionComponent;
+            if (!interaction) {
+                interaction = this.singlePlayerButton.createComponent("Component.Touch") as InteractionComponent;
+            }
             if (interaction) {
                 interaction.onTap.add(() => this.onSinglePlayerTap());
+                print("GameManager: Single Player button setup");
             }
         }
         
         // Multiplayer button
         if (this.multiplayerButton) {
-            const interaction = this.multiplayerButton.getComponent("Component.InteractionComponent") as InteractionComponent;
+            let interaction = this.multiplayerButton.getComponent("Component.Touch") as InteractionComponent;
+            if (!interaction) {
+                interaction = this.multiplayerButton.createComponent("Component.Touch") as InteractionComponent;
+            }
             if (interaction) {
                 interaction.onTap.add(() => this.onMultiplayerTap());
+                print("GameManager: Multiplayer button setup");
             }
         }
         
         // Start button
         if (this.startButton) {
-            const interaction = this.startButton.getComponent("Component.InteractionComponent") as InteractionComponent;
+            let interaction = this.startButton.getComponent("Component.Touch") as InteractionComponent;
+            if (!interaction) {
+                interaction = this.startButton.createComponent("Component.Touch") as InteractionComponent;
+            }
             if (interaction) {
                 interaction.onTap.add(() => this.onStartTap());
+                print("GameManager: Start button setup");
             }
         }
         
         // Play Again button
         if (this.playAgainButton) {
-            const interaction = this.playAgainButton.getComponent("Component.InteractionComponent") as InteractionComponent;
+            let interaction = this.playAgainButton.getComponent("Component.Touch") as InteractionComponent;
+            if (!interaction) {
+                interaction = this.playAgainButton.createComponent("Component.Touch") as InteractionComponent;
+            }
             if (interaction) {
                 interaction.onTap.add(() => this.onPlayAgainTap());
+                print("GameManager: Play Again button setup");
             }
         }
     }
@@ -263,11 +387,18 @@ export class GameManager extends BaseScriptComponent {
         this.state.phase = 'setup';
         this.showScreen('setup');
         
-        // Generate random placement for both grids
+        // Generate and show grids
+        this.generateGrids();
+        this.showPlayerGrid();
+        // Don't show opponent grid yet in setup (only player's objects visible)
+        
+        // Generate random placement for both grids (game state)
         this.generatePlacements();
         
         this.updateStatus("Your objects are placed!");
         this.updateHint("Tap Start to begin");
+        
+        print("GameManager: Setup phase started");
     }
     
     /**
@@ -423,6 +554,10 @@ export class GameManager extends BaseScriptComponent {
         this.state.turn = 'player';
         this.showScreen('game');
         
+        // Show both grids for gameplay
+        this.showPlayerGrid();
+        this.showOpponentGrid();
+        
         this.updateStatus("Your turn");
         this.updateHint("Tap opponent's cell to shoot");
         this.updateResult("");
@@ -452,6 +587,9 @@ export class GameManager extends BaseScriptComponent {
         // Process shot
         const result = this.processShot(x, y, this.state.opponentGrid, this.state.opponentShips, true);
         
+        // Update visual marker on opponent's grid
+        this.updateCellVisual(this.opponentGridGenerator, x, y, result === 'miss' ? 'miss' : 'hit');
+        
         // Check win
         if (this.checkWin('player')) {
             this.endGame('player');
@@ -473,43 +611,47 @@ export class GameManager extends BaseScriptComponent {
     }
     
     /**
-     * Process a shot on grid
+     * Process a shot on grid - uses GridGenerator's hasShipAt for real ship positions
      */
     processShot(x: number, y: number, grid: CellState[][], ships: ShipInfo[], isPlayerShot: boolean): 'hit' | 'miss' | 'destroyed' {
-        // Check if there's a ship at this position
-        const ship = this.findShipAt(x, y, ships);
+        // Determine which grid to check
+        const gridObject = isPlayerShot ? this.opponentGridGenerator : this.playerGridGenerator;
         
-        if (ship) {
+        // Check if there's a ship at this position using GridGenerator's actual data
+        const hasShip = this.checkShipAtPosition(gridObject, x, y);
+        
+        if (hasShip) {
             // Hit!
             grid[x][y] = 'hit';
-            ship.hitCells++;
             
             if (isPlayerShot) {
                 this.state.playerHits++;
+                print(`GameManager: Player hit at (${x}, ${y})! Total hits: ${this.state.playerHits}/${this.TOTAL_OBJECT_CELLS}`);
             } else {
                 this.state.opponentHits++;
+                print(`GameManager: AI hit at (${x}, ${y})! Total hits: ${this.state.opponentHits}/${this.TOTAL_OBJECT_CELLS}`);
             }
             
-            // Check if ship destroyed
-            if (ship.hitCells >= ship.length) {
-                ship.destroyed = true;
-                // Mark all cells as destroyed
-                for (const cell of ship.cells) {
-                    grid[cell.x][cell.y] = 'destroyed';
-                }
-                this.updateResult(`HIT! ${ship.length}-cell object destroyed!`);
-                print(`GameManager: Ship ${ship.id} destroyed!`);
-                return 'destroyed';
-            } else {
-                this.updateResult("HIT!");
-                return 'hit';
-            }
+            this.updateResult("HIT!");
+            return 'hit';
         } else {
             // Miss
             grid[x][y] = 'empty';
             this.updateResult("Miss");
             return 'miss';
         }
+    }
+    
+    /**
+     * Check if there's a ship at position using GridGenerator's hasShipAt
+     */
+    checkShipAtPosition(gridObject: SceneObject, x: number, y: number): boolean {
+        const gridScript = this.getGridScript(gridObject);
+        if (gridScript && typeof gridScript.hasShipAt === 'function') {
+            return gridScript.hasShipAt(x, y);
+        }
+        print(`GameManager: WARNING - Could not check ship at (${x}, ${y}), hasShipAt not found`);
+        return false;
     }
     
     /**
@@ -558,6 +700,9 @@ export class GameManager extends BaseScriptComponent {
         
         // Process shot on player's grid
         const result = this.processShot(shot.x, shot.y, this.state.playerGrid, this.state.playerShips, false);
+        
+        // Update visual marker on player's grid
+        this.updateCellVisual(this.playerGridGenerator, shot.x, shot.y, result === 'miss' ? 'miss' : 'hit');
         
         // Update AI state based on result
         this.updateAIState(shot.x, shot.y, result);
@@ -695,7 +840,13 @@ export class GameManager extends BaseScriptComponent {
      */
     checkWin(who: 'player' | 'opponent'): boolean {
         const hits = who === 'player' ? this.state.playerHits : this.state.opponentHits;
-        return hits >= this.TOTAL_OBJECT_CELLS;
+        const won = hits >= this.TOTAL_OBJECT_CELLS;
+        
+        if (won) {
+            print(`GameManager: ${who} WON! Hits: ${hits}/${this.TOTAL_OBJECT_CELLS}`);
+        }
+        
+        return won;
     }
     
     /**
@@ -720,6 +871,21 @@ export class GameManager extends BaseScriptComponent {
      */
     resetGame() {
         this.initializeState();
+        
+        // Hide grids
+        this.hideGrids();
+        
+        // Reset grid scripts
+        const playerScript = this.getGridScript(this.playerGridGenerator);
+        if (playerScript && typeof playerScript.resetGame === 'function') {
+            playerScript.resetGame();
+        }
+        
+        const opponentScript = this.getGridScript(this.opponentGridGenerator);
+        if (opponentScript && typeof opponentScript.resetGame === 'function') {
+            opponentScript.resetGame();
+        }
+        
         this.showScreen('intro');
         this.updateResult("");
         print("GameManager: Game reset");

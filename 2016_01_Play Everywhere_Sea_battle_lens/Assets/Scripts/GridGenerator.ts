@@ -11,6 +11,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
     @input ship3Prefab: ObjectPrefab;
     @input ship4Prefab: ObjectPrefab;
     
+    // Marker prefabs for hit/miss visualization
+    @input hitMarkerPrefab: ObjectPrefab;   // Spawned when hitting an object
+    @input missMarkerPrefab: ObjectPrefab;  // Spawned when hitting empty cell
+    
     // Grid size (default 10x10)
     @input gridSize: number = 10;
     
@@ -35,12 +39,18 @@ export class SeaBattleGrid extends BaseScriptComponent {
     // Reference to GameManager (optional, for cell tap callbacks)
     @input gameManager: SceneObject = null;
     
+    // Auto-generate grid on start (set false if GameManager controls generation)
+    @input autoGenerate: boolean = false;
+    
     // Grid cells [x][y] -> SceneObject
     private gridCells: SceneObject[] = [];
     private gridCells2D: SceneObject[][] = [];
     
     // Placed ships
     private placedShips: SceneObject[] = [];
+    
+    // Placed markers (hit/miss indicators)
+    private placedMarkers: SceneObject[] = [];
     
     // Ship grid (tracks occupied cells)
     private shipGrid: boolean[][] = [];
@@ -57,6 +67,20 @@ export class SeaBattleGrid extends BaseScriptComponent {
         // Initialize ship grid
         this.initShipGrid();
         
+        // Only auto-generate if enabled (for testing)
+        // In game, GameManager calls generate() method
+        if (this.autoGenerate) {
+            this.generate();
+        }
+        
+        print(`SeaBattleGrid: Initialized (name: ${this.getSceneObject().name}, autoGenerate: ${this.autoGenerate})`);
+    }
+    
+    /**
+     * Public method to generate grid and place ships
+     * Called by GameManager when needed
+     */
+    generate() {
         // Generate visual grid
         this.generateGrid();
         
@@ -70,6 +94,66 @@ export class SeaBattleGrid extends BaseScriptComponent {
         } else {
             this.placeTestShips();
         }
+        
+        print("SeaBattleGrid: Generation complete");
+    }
+    
+    // Track if grid is visible
+    private isVisible: boolean = false;
+    
+    /**
+     * Show the grid (enable all cells, ships, and markers)
+     */
+    show() {
+        this.isVisible = true;
+        
+        // Show all grid cells
+        for (const cell of this.gridCells) {
+            if (cell) cell.enabled = true;
+        }
+        
+        // Show all ships
+        for (const ship of this.placedShips) {
+            if (ship) ship.enabled = true;
+        }
+        
+        // Show all markers
+        for (const marker of this.placedMarkers) {
+            if (marker) marker.enabled = true;
+        }
+        
+        print(`SeaBattleGrid: ${this.getSceneObject().name} shown`);
+    }
+    
+    /**
+     * Hide the grid (disable all cells, ships, and markers)
+     */
+    hide() {
+        this.isVisible = false;
+        
+        // Hide all grid cells
+        for (const cell of this.gridCells) {
+            if (cell) cell.enabled = false;
+        }
+        
+        // Hide all ships
+        for (const ship of this.placedShips) {
+            if (ship) ship.enabled = false;
+        }
+        
+        // Hide all markers
+        for (const marker of this.placedMarkers) {
+            if (marker) marker.enabled = false;
+        }
+        
+        print(`SeaBattleGrid: ${this.getSceneObject().name} hidden`);
+    }
+    
+    /**
+     * Check if grid is visible
+     */
+    getIsVisible(): boolean {
+        return this.isVisible;
     }
     
     /**
@@ -145,9 +229,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
      */
     setupCellInteraction(cell: SceneObject, gridX: number, gridY: number) {
         // Try to get existing interaction component or create new one
-        let interaction = cell.getComponent("Component.InteractionComponent") as InteractionComponent;
+        // Use "Component.Touch" which maps to InteractionComponent
+        let interaction = cell.getComponent("Component.Touch") as InteractionComponent;
         if (!interaction) {
-            interaction = cell.createComponent("Component.InteractionComponent") as InteractionComponent;
+            interaction = cell.createComponent("Component.Touch") as InteractionComponent;
         }
         
         if (interaction) {
@@ -158,6 +243,8 @@ export class SeaBattleGrid extends BaseScriptComponent {
             interaction.onTap.add(() => {
                 this.handleCellTap(x, y);
             });
+            
+            print(`SeaBattleGrid: Cell (${x}, ${y}) interaction setup`);
         }
     }
     
@@ -448,6 +535,7 @@ export class SeaBattleGrid extends BaseScriptComponent {
      */
     resetGame() {
         this.clearShips();
+        this.clearMarkers();
         this.initShipGrid();
         this.generateGrid();
     }
@@ -463,18 +551,65 @@ export class SeaBattleGrid extends BaseScriptComponent {
     }
     
     /**
-     * Update cell visual state (change material or add marker)
-     * For prototype: just log state change
+     * Update cell visual state - spawn hit/miss marker
      */
     setCellState(x: number, y: number, state: 'hit' | 'miss' | 'unknown') {
         const cell = this.getCellAt(x, y);
         if (!cell) return;
         
-        // For prototype, just rename cell to indicate state
+        // Rename cell to indicate state
         cell.name = `Cell_${x}_${y}_${state}`;
-        print(`SeaBattleGrid: Cell (${x}, ${y}) state changed to ${state}`);
         
-        // TODO: In polish phase, change material/color based on state
+        // Spawn marker prefab based on state
+        if (state === 'hit' && this.hitMarkerPrefab) {
+            this.spawnMarker(x, y, this.hitMarkerPrefab, 'hit');
+        } else if (state === 'miss' && this.missMarkerPrefab) {
+            this.spawnMarker(x, y, this.missMarkerPrefab, 'miss');
+        }
+        
+        print(`SeaBattleGrid: Cell (${x}, ${y}) state changed to ${state}`);
+    }
+    
+    /**
+     * Spawn a marker at grid position (at ship level height)
+     * Marker uses its own prefab size (same as ships)
+     */
+    private spawnMarker(gridX: number, gridY: number, prefab: ObjectPrefab, type: string) {
+        // Get cell position and spawn marker above it
+        const cellPos = this.gridToWorldPosition(gridX, gridY, 0);
+        
+        // Marker height - same as ships (cellSize + shipHeightOffset)
+        const markerHeight = this.cellSize + this.shipHeightOffset;
+        
+        // Get parent
+        let parent: SceneObject;
+        if (this.gridParent) {
+            parent = this.gridParent;
+        } else {
+            parent = this.getSceneObject();
+        }
+        
+        // Spawn marker - uses prefab's original scale (like ships)
+        const marker = prefab.instantiate(parent);
+        marker.name = `Marker_${type}_${gridX}_${gridY}`;
+        
+        const transform = marker.getTransform();
+        transform.setLocalPosition(new vec3(cellPos.x, markerHeight, cellPos.z));
+        // No setLocalScale - marker keeps its prefab size
+        
+        this.placedMarkers.push(marker);
+        
+        print(`SeaBattleGrid: Spawned ${type} marker at (${gridX}, ${gridY}) height=${markerHeight}`);
+    }
+    
+    /**
+     * Clear all markers
+     */
+    clearMarkers() {
+        for (const marker of this.placedMarkers) {
+            if (marker) marker.destroy();
+        }
+        this.placedMarkers = [];
     }
     
     /**

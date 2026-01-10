@@ -26,6 +26,7 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
+    autoGenerate: false
     cellPrefab: false
     cellSize: false
     cellSpacing: false
@@ -33,6 +34,8 @@
     gameManager: false
     gridParent: false
     gridSize: false
+    hitMarkerPrefab: false
+    missMarkerPrefab: false
     ship1Prefab: false
     ship2Prefab: false
     ship3Prefab: false
@@ -53,6 +56,8 @@
       ship2Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       ship3Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       ship4Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      hitMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      missMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridSize: !<float> 10.000000
       cellSize: !<float> 1.000000
       cellSpacing: 0.100000
@@ -61,6 +66,7 @@
       useRandomPlacement: true
       enableCellTapping: false
       gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      autoGenerate: false
   ScriptTypes:
     -
       {}
@@ -70,6 +76,8 @@
     - // @input Asset.ObjectPrefab ship2Prefab
     - // @input Asset.ObjectPrefab ship3Prefab
     - // @input Asset.ObjectPrefab ship4Prefab
+    - // @input Asset.ObjectPrefab hitMarkerPrefab
+    - // @input Asset.ObjectPrefab missMarkerPrefab
     - // @input float gridSize = 10
     - // @input float cellSize = 1
     - // @input float cellSpacing = 0.1
@@ -78,3 +86,4 @@
     - // @input bool useRandomPlacement = true
     - // @input bool enableCellTapping
     - // @input SceneObject gameManager
+    - // @input bool autoGenerate
