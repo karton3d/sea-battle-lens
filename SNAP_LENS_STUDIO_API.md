@@ -326,14 +326,24 @@ Component for implementing turn-based multiplayer games in Snap Lens Studio. All
 - Can be retrieved from turn history
 
 ### Documentation Needed:
-- Official Turn-Based component API reference
-- Turn data storage format
-- Callback implementation
-- Player flow management
+- ✅ Official Turn-Based component API reference - **FOUND**
+- ✅ Turn data storage format - **RESEARCHED**
+- ✅ Callback implementation (Response System) - **RESEARCHED**
+- ✅ Player flow management - **RESEARCHED**
+
+### Official Documentation:
+- **Turn-Based Component**: https://developers.snap.com/lens-studio/features/games/turn-based
+- **Turn-Based Player Info**: https://developers.snap.com/lens-studio/features/games/turn-based-player-info
+- **Turn-Based Game Example**: https://developers.snap.com/lens-studio/examples/lens-examples/turn-based-game
+- **Games Overview**: https://developers.snap.com/lens-studio/features/games/games-overview
+
+### Detailed Research:
+See `TURN_BASED_RESEARCH.md` for comprehensive research findings, integration guide, and implementation strategy.
 
 ### References:
 - Component exists in `Scene.scene` as "Turn Based"
 - Script Asset ID: `2485c892-b1f1-4924-9453-ce440bd2cdfb`
+- SceneObject ID: `9129c439-40f1-4777-884d-a1e0f69039ca`
 
 ---
 

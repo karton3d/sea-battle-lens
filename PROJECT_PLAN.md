@@ -157,10 +157,12 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 
 ### 4. Turn-Based Integration
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** IN PROGRESS
 
 **Tasks:**
-- [ ] Research Turn-Based component API
+- [x] Research Turn-Based component API ✅ (See TURN_BASED_RESEARCH.md)
+- [ ] Download official "Turn Based Game" example
+- [ ] Study example implementation
 - [ ] Create `TurnBasedManager.ts` script
 - [ ] Integrate with Turn-Based component
 - [ ] Set up turn variables
@@ -798,10 +800,11 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 
 ## Next Steps (Immediate)
 
-1. **Research Turn-Based Component**
-   - Find official documentation
-   - Understand API structure
-   - Test basic integration
+1. **Research Turn-Based Component** ✅ COMPLETED
+   - ✅ Found official documentation
+   - ✅ Understood API structure (Response System)
+   - ⏳ Test basic integration (Next step)
+   - See `TURN_BASED_RESEARCH.md` for detailed findings
 
 2. **Implement Random Placement**
    - Create algorithm
