@@ -10,6 +10,9 @@
     - !<own> 89bef635-2d16-4001-9db1-ec6298e90505
     - !<own> 0d1dd6db-8861-47a3-a7d9-4598c1b839b6
     - !<own> 2a3a2204-9a16-445b-8632-689f863f4524
+    - !<own> 9129c439-40f1-4777-884d-a1e0f69039ca
+    - !<own> cb6a6285-7f8f-4d35-9c4f-528b4308b527
+    - !<own> ed18c24c-c1be-454e-bc3d-86f8dccd425e
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       []
@@ -177,6 +180,22 @@
   DecayType: None
   DecayLimit: false
   DecayRange: 40.000000
+- !<SceneObject/02df8d94-c900-4fe9-97b3-d484564b6192>
+  PrefabRemaps:
+    []
+  Name: player
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 10c9f3b1-1a09-4796-b81d-383b467e894c
+    - !<own> 73b9e5e9-be1a-46b3-ba07-8101b63f4857
 - !<RenderMeshVisual/0b8211b0-480e-4579-b461-be82a608a0f7>
   PrefabRemaps:
     []
@@ -213,6 +232,39 @@
     []
   Components:
     - !<own> 0b8211b0-480e-4579-b461-be82a608a0f7
+- !<ScreenTransform/10c9f3b1-1a09-4796-b81d-383b467e894c>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: 0.212862
+    bottom: 0.484858
+    right: 0.704882
+    top: 0.884877
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
 - !<RenderMeshVisual/1a47dddf-ed68-4267-b13b-33874781d19e>
   PrefabRemaps:
     []
@@ -305,6 +357,22 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<SceneObject/48fae487-09d9-4aeb-9148-198f3b15e0cb>
+  PrefabRemaps:
+    []
+  Name: Full Frame Region
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 02df8d94-c900-4fe9-97b3-d484564b6192
+  Components:
+    - !<own> d8a54b78-ef67-4018-81f4-0ed53686ff67
+    - !<own> 58aef579-6080-4a71-bcad-7e71f45441a7
 - !<RenderMeshVisual/4912f38e-078a-4519-8dbf-d4b64c52b94b>
   PrefabRemaps:
     []
@@ -325,6 +393,110 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/4bb104a3-70a0-4e0e-8e90-ea46214e05cb>
+  PrefabRemaps:
+    []
+  Name: Turn Based
+  Enabled: true
+  ScriptAsset: !<reference> 2485c892-b1f1-4924-9453-ce440bd2cdfb
+  ScriptInputsDefault:
+    requireTurnSubmission: true
+    allowChangingTurnVariablesAfterTurnSubmission: true
+    useTurnLimit: true
+    turnLimitInput: true
+    useTurnHistory: true
+    turnsSavedLimitInput: true
+    tappableAreasInput: true
+    user1FlowObjectsInputSO: true
+    user2FlowObjectsInputSO: true
+    gameOverObjectsInputSO: true
+    debugMode: true
+    swapPlayersAfterSimulatedTurn: true
+    debugTappedKeySimulateTurn: true
+    debugTurnCount: true
+    debugTappedKeySingleTurn: true
+    testDataType: true
+    debugIsTurnComplete: true
+    debugIsTurnRestoredFromCache: true
+    debugAssociatedDataStudioInputs: true
+    debugTurnHistoryStudioInputs: true
+    debugAssociatedDataString: true
+    debugTurnHistoryStrings: true
+    _onTurnStartResponses: true
+    _onTurnEndResponses: true
+    _onGameOverResponses: true
+    printLogsInput: true
+    loggerConfig: true
+    showDebugView: true
+    _advancedOptions: true
+    defaultTurnVariables: true
+    remoteServiceModule: true
+    autoCaptureHelper: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      requireTurnSubmission: true
+      allowChangingTurnVariablesAfterTurnSubmission: false
+      useTurnLimit: false
+      turnLimitInput: 2
+      useTurnHistory: false
+      turnsSavedLimitInput: 0
+      autoRestoreTurn: true
+      tappableAreasInput:
+        []
+      user1FlowObjectsInputSO: !<reference.SceneObject[]>
+        []
+      user2FlowObjectsInputSO: !<reference.SceneObject[]>
+        []
+      gameOverObjectsInputSO: !<reference.SceneObject[]>
+        []
+      debugMode: Simulate Turns
+      swapPlayersAfterSimulatedTurn: true
+      debugTappedKeySimulateTurn: ""
+      debugTurnCount: 0
+      debugTappedKeySingleTurn: ""
+      testDataType: Studio Inputs
+      debugIsTurnComplete: false
+      debugIsTurnRestoredFromCache: false
+      debugAssociatedDataStudioInputs:
+        []
+      debugTurnHistoryStudioInputs:
+        - variables:
+            []
+          isTurnComplete: false
+      debugAssociatedDataString: '{"key1": "value1", "key2":0}'
+      debugTurnHistoryStrings:
+        []
+      _onTurnStartResponses:
+        []
+      _onTurnEndResponses:
+        []
+      _onGameOverResponses:
+        []
+      printLogsInput: false
+      loggerConfig:
+        printOnScreen: false
+        fontSize: !<float> 12.000000
+        printErrors: true
+        printWarnings: true
+        printInfoLogs: false
+      showDebugView: false
+      _advancedOptions: false
+      defaultTurnVariables:
+        []
+      remoteServiceModule: !<reference.RemoteServiceModule> 53134e89-9460-4d35-b990-7708cd763b62
+      autoCaptureHelper: !<reference.ScriptAsset> f6c679e6-a4e6-4760-86bb-4836099db786
+  ScriptTypes:
+    "":
+      {}
+- !<ScreenRegionComponent/58aef579-6080-4a71-bcad-7e71f45441a7>
+  PrefabRemaps:
+    []
+  Name: Screen Region
+  Enabled: true
+  ScreenRegionType: SafeRender
+  ResizeWithKeyboard: false
 - !<SceneObject/5d63d4e1-b986-4678-b86c-41a837e8c4d3>
   PrefabRemaps:
     []
@@ -355,6 +527,25 @@
     []
   Components:
     - !<own> 8d6c6b8c-7d3e-487d-b2ee-aff4aaf727c3
+- !<Image/73b9e5e9-be1a-46b3-ba07-8101b63f4857>
+  PrefabRemaps:
+    []
+  Name: Image
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Fit
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 1b8dc378-d091-4861-a0e3-6da515339b59
+  FlipX: false
+  FlipY: false
+  RotationAngle: 0
+  Pivot: {x: 0.000000, y: 0.000000}
+  ExtentsTarget: !<reference> 00000000-0000-0000-0000-000000000000
 - !<DeviceTracking/7478f7b6-d8e4-4f7e-9e44-166fddbb8d16>
   PrefabRemaps:
     []
@@ -407,6 +598,163 @@
   ScriptTypes:
     "":
       {}
+- !<SceneObject/9129c439-40f1-4777-884d-a1e0f69039ca>
+  PrefabRemaps:
+    []
+  Name: Turn Based
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
+- !<Canvas/a22362b3-ae68-4c5e-b9c0-3ac11bdffdea>
+  PrefabRemaps:
+    []
+  Name: Canvas
+  Enabled: true
+  UnitType: Points
+  SortingType: Hierarchy
+  WorldSpaceRect:
+    left: -15.000000
+    bottom: -20.000000
+    right: 15.000000
+    top: 20.000000
+- !<ScriptComponent/a5c99718-2ac7-49be-9e40-9b891d47eb26>
+  PrefabRemaps:
+    []
+  Name: Turn Based Player Info
+  Enabled: true
+  ScriptAsset: !<reference> 8a7bdc69-76bf-461f-853b-ff2dce8f38b3
+  ScriptInputsDefault:
+    targetUser: true
+    bitmoji3DConfigInputs: true
+    useTextDisplay: true
+    textDisplayConfigInputs: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      turnBased: !<reference.ScriptComponent> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
+      targetUser:
+        type: Current
+      useBitmoji3D: false
+      bitmoji3DConfigInputs:
+        bitmojiComponent: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+        autoLoadBitmoji3D: true
+        hideBitmoji3DIfNotFound: false
+      useBitmojiSticker: true
+      bitmojiStickerConfigInputs:
+        stickerType: Selfie
+        stickerId: ""
+        autoLoad: true
+        applyActionInputs:
+          outputType: Image
+          meshVisual: !<reference.MaterialMeshVisual> 00000000-0000-0000-0000-000000000000
+          image: !<reference.Image> 73b9e5e9-be1a-46b3-ba07-8101b63f4857
+          material: !<reference.Material> 00000000-0000-0000-0000-000000000000
+          showAdvancedOptions: false
+          meshVisualCloneType: CloneOnce
+          materialPropertyName: baseTex
+          meshVisualMaterialIndex: 0
+        fallbackSettings:
+          placeholderTexture: !<reference.Texture> 4bb337af-cf9a-4ab7-b7ad-7796e3e97a14
+          loadingTexture: !<reference.Texture> 4bb337af-cf9a-4ab7-b7ad-7796e3e97a14
+          missingUserTexture: !<reference.Texture> 4bb337af-cf9a-4ab7-b7ad-7796e3e97a14
+      useTextDisplay: false
+      textDisplayConfigInputs:
+        fallbackText: ""
+        configurableSetTextInputs:
+          targetType: Text
+          text: !<reference.Text> 00000000-0000-0000-0000-000000000000
+          text3D: !<reference.Text3D> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    "":
+      {}
+- !<Camera/c3fc4023-1404-4e58-a683-bfda7a123a66>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 1048576
+  MipmapLevel: 0
+  RenderOrder: 1
+  Size: 20.000000
+  Near: -1.000000
+  Far: 200.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Orthographic
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/cb6a6285-7f8f-4d35-9c4f-528b4308b527>
+  PrefabRemaps:
+    []
+  Name: Turn Based Player Info
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> a5c99718-2ac7-49be-9e40-9b891d47eb26
+- !<ScreenTransform/d8a54b78-ef67-4018-81f4-0ed53686ff67>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
 - !<SceneObject/dcede660-de62-4244-9306-28fea4829179>
   PrefabRemaps:
     - 34f88419-79d9-4400-94e9-a9871cd1ba2e: 44af2ffa-ca78-48a4-603f-5ea57a52ce13
@@ -423,3 +771,19 @@
     []
   Components:
     - !<own> 34f88419-79d9-4400-94e9-a9871cd1ba2e
+- !<SceneObject/ed18c24c-c1be-454e-bc3d-86f8dccd425e>
+  PrefabRemaps:
+    []
+  Name: Orthographic Camera
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: -120.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 48fae487-09d9-4aeb-9148-198f3b15e0cb
+  Components:
+    - !<own> c3fc4023-1404-4e58-a683-bfda7a123a66
+    - !<own> a22362b3-ae68-4c5e-b9c0-3ac11bdffdea

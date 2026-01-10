@@ -1,151 +1,172 @@
-# Морской бой - Прототип игры для Snap Lens Studio
+# Meme Fleet Battle 🚀
 
-Прототип игры "Морской бой" для Snap Lens Studio с визуализацией игрового поля в виде грида.
+A viral, meme-filled AR Battleship game for Snap Lens Studio. Instead of traditional ships, players hunt for wacky 3D objects (cows, toilets, sneakers, flying eyes, etc.) using X-ray scanning mechanics.
 
-## Структура проекта
+## 🎮 Game Concept
+
+**Meme Fleet Battle** is a turn-based strategy game that puts a fun, shareable twist on the classic Battleship formula:
+- Hide and hunt for meme-worthy 3D objects on a grid
+- Use UFO saucer X-ray scanning to reveal hidden objects
+- Play solo or with a friend via Snap's Turn-Based system
+- Viral, meme-focused aesthetic for maximum shareability
+
+## 📋 Project Status
+
+### ✅ Completed
+- Grid generation system (10x10 configurable)
+- Object placement system with collision detection
+- Visual grid with proper spacing
+- Objects positioned above grid
+
+### 🚧 In Progress
+- Random object placement algorithm
+- Turn-Based multiplayer integration
+
+### 📝 Planned
+- Intro screen with game preview
+- Single Player / Multiplayer menu
+- Turn-based gameplay flow
+- UFO scanning animations
+- X-ray reveal effects
+- Victory system
+
+See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for detailed development plan and asset list.
+
+## 🏗️ Project Structure
 
 ```
 2016_01_Play Everywhere_Sea_battle_lens/
 ├── Assets/
-│   ├── GridGenerator.ts          # Скрипт для генерации грида
-│   ├── ShipPlacer.ts             # Скрипт для размещения кораблей
-│   └── ...
-└── Support/
-    └── StudioLib.d.ts            # TypeScript определения API Snap Lens Studio
+│   ├── GridGenerator.ts          # Grid generation & object placement
+│   ├── [Future scripts...]       # Game logic, UI, animations
+│   └── [Prefabs...]              # 3D objects, UI elements
+├── Support/
+│   └── StudioLib.d.ts            # TypeScript definitions for Snap Lens Studio API
+├── PROJECT_PLAN.md               # Detailed development plan & asset list
+├── SNAP_LENS_STUDIO_API.md       # API documentation
+└── README.md                      # This file
 ```
 
-## Установка и использование
+## 🚀 Quick Start
 
-### 1. Создание префаба ячейки
+### 1. Setup Grid
 
-1. Откройте проект в Snap Lens Studio
-2. Создайте новый 3D объект (например, Box):
-   - В меню: `Objects > 3D Object > Box`
-   - Или используйте существующий объект
-3. Настройте размеры и материалы ячейки по вашему усмотрению
-4. Сохраните объект как префаб:
-   - Перетащите объект из Scene Hierarchy в папку Assets
-   - Или используйте меню: `Assets > Create > Prefab`
+1. Open project in Snap Lens Studio
+2. Create a cell prefab (e.g., Box object)
+3. Add `GridGenerator.ts` script to a SceneObject
+4. Configure in Inspector:
+   - **Cell Prefab**: Your cell prefab
+   - **Grid Size**: 10 (default)
+   - **Cell Size**: 10.0 (default)
+   - **Cell Spacing**: 1.0 (default)
+   - **Ship Prefabs**: Assign 1x1, 2x1, 3x1, 4x1 object prefabs
 
-### 2. Настройка скрипта GridGenerator
+### 2. Create Object Prefabs
 
-1. Добавьте скрипт `GridGenerator.ts` к объекту в сцене:
-   - Создайте новый SceneObject (или используйте существующий)
-   - В Inspector панели нажмите `Add Component > Script`
-   - Выберите `GridGenerator.ts`
+Create prefabs for meme objects:
+- **1x1 objects**: Cow, Toilet, Sneaker, Flying Eye (4 types)
+- **2x1 objects**: Extended versions (3 types)
+- **3x1 objects**: Extended versions (2 types)
+- **4x1 objects**: Longest version (1 type)
 
-2. Настройте параметры в Inspector:
-   - **Cell Prefab**: Перетащите созданный префаб ячейки
-   - **Grid Size**: Размер грида (по умолчанию 10x10)
-   - **Cell Size**: Размер одной ячейки (по умолчанию 1.0)
-   - **Grid Parent**: (Опционально) Родительский объект для ячеек
+**Important:** Ensure visibility is **enabled** in all prefabs!
 
-### 3. Запуск
+### 3. Run
 
-При запуске линзы грид будет автоматически сгенерирован в методе `onAwake()`.
+The grid and test objects will be generated automatically on lens start.
 
-## API скрипта GridGenerator
+## 📚 API Documentation
 
-### Параметры (@input)
+### GridGenerator Component
 
-- `cellPrefab: ObjectPrefab` - Префаб ячейки грида
-- `gridSize: number` - Размер грида (по умолчанию 10)
-- `cellSize: number` - Размер одной ячейки (по умолчанию 1.0)
-- `gridParent: SceneObject` - Родительский объект (опционально, если не задан, создается автоматически)
+#### Inputs
+- `cellPrefab: ObjectPrefab` - Prefab for grid cells
+- `gridSize: number` - Grid size (default: 10)
+- `cellSize: number` - Cell size (default: 1.0)
+- `cellSpacing: number` - Spacing between cells (default: 0.1)
+- `ship1Prefab: ObjectPrefab` - 1-cell object prefab
+- `ship2Prefab: ObjectPrefab` - 2-cell object prefab
+- `ship3Prefab: ObjectPrefab` - 3-cell object prefab
+- `ship4Prefab: ObjectPrefab` - 4-cell object prefab
+- `gridParent: SceneObject` - Parent for grid (optional)
+- `shipHeightOffset: number` - Height offset for objects (default: 0.5)
 
-### Методы
+#### Methods
+- `generateGrid()` - Generates the grid
+- `placeShip(gridX, gridY, length, horizontal)` - Places an object
+- `clearGrid()` - Clears the grid
+- `clearShips()` - Clears all objects
 
-- `generateGrid()` - Генерирует грид заданного размера
-- `clearGrid()` - Очищает текущий грид
-- `regenerateGrid(newSize?: number)` - Пересоздает грид с новым размером
-
-### Пример использования в коде
-
+#### Example
 ```typescript
-// Получить компонент GridGenerator
-const gridGenerator = sceneObject.getComponent("Component.Script") as GridGenerator;
-
-// Изменить размер грида и пересоздать
-gridGenerator.regenerateGrid(15); // Создаст грид 15x15
+// Place a 4-cell horizontal object at position (0, 0)
+gridGenerator.placeShip(0, 0, 4, true);
 ```
 
-## Особенности реализации
+## 🎯 Development Roadmap
 
-- Грид центрируется относительно начала координат
-- Ячейки позиционируются с учетом размера ячейки (`cellSize`)
-- Каждая ячейка получает уникальное имя: `Cell_X_Y`
-- Родительский объект создается автоматически с именем "Grid", если не указан `gridParent`
+### Phase 1: Core Systems ✅
+- [x] Grid generation
+- [x] Object placement
+- [ ] Random placement algorithm
 
-## Документация
+### Phase 2: UI & Screens
+- [ ] Intro screen
+- [ ] Menu system
+- [ ] Game setup screen
 
-Подробная документация по API Snap Lens Studio находится в файле:
-- `SNAP_LENS_STUDIO_API.md` - Релевантные части API для проекта
+### Phase 3: Gameplay
+- [ ] Turn-Based integration
+- [ ] Cell interaction
+- [ ] UFO scanning
+- [ ] X-ray effects
 
-### 3. Настройка скрипта ShipPlacer
+### Phase 4: Polish
+- [ ] Animations
+- [ ] Sound effects
+- [ ] Victory system
+- [ ] Final testing
 
-1. Добавьте скрипт `ShipPlacer.ts` к объекту в сцене:
-   - Создайте новый SceneObject (или используйте существующий)
-   - В Inspector панели нажмите `Add Component > Script`
-   - Выберите `ShipPlacer.ts`
+See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for complete task breakdown.
 
-2. Создайте префабы кораблей:
-   - Создайте 4 разных префаба для кораблей (1, 2, 3, 4 палубы)
-   - Например, используйте Box объекты разной длины
-   - Сохраните их как префабы в папке Assets
+## 📖 Documentation
 
-3. Настройте параметры в Inspector:
-   - **Ship 1 Prefab**: Префаб однопалубного корабля
-   - **Ship 2 Prefab**: Префаб двухпалубного корабля
-   - **Ship 3 Prefab**: Префаб трехпалубного корабля
-   - **Ship 4 Prefab**: Префаб четырехпалубного корабля
-   - **Cell Size**: Должен совпадать с GridGenerator.cellSize
-   - **Cell Spacing**: Должен совпадать с GridGenerator.cellSpacing
-   - **Grid Size**: Должен совпадать с GridGenerator.gridSize
+- **[PROJECT_PLAN.md](./PROJECT_PLAN.md)** - Complete development plan, task list, and asset requirements
+- **[SNAP_LENS_STUDIO_API.md](./SNAP_LENS_STUDIO_API.md)** - Relevant Snap Lens Studio API documentation
 
-## API скриптов
+## 🛠️ Technical Details
 
-### GridGenerator
+### Requirements
+- Snap Lens Studio (latest version)
+- Turn-Based component (already in scene)
+- TypeScript support enabled
 
-#### Параметры (@input)
-- `cellPrefab: ObjectPrefab` - Префаб ячейки грида
-- `gridSize: number` - Размер грида (по умолчанию 10)
-- `cellSize: number` - Размер одной ячейки (по умолчанию 1.0)
-- `cellSpacing: number` - Расстояние между ячейками (по умолчанию 0.1)
-- `gridParent: SceneObject` - Родительский объект (опционально)
+### Known Issues
+- ✅ **Fixed:** Object visibility must be enabled in prefabs
+- Object placement currently uses fixed positions (randomization in progress)
 
-#### Методы
-- `generateGrid()` - Генерирует грид заданного размера
-- `clearGrid()` - Очищает текущий грид
-- `regenerateGrid(newSize?: number)` - Пересоздает грид с новым размером
+### Performance Notes
+- Optimize 3D models for mobile AR
+- Use efficient particle effects
+- Minimize texture sizes
 
-### ShipPlacer
+## 🤝 Contributing
 
-#### Параметры (@input)
-- `ship1Prefab: ObjectPrefab` - Префаб однопалубного корабля
-- `ship2Prefab: ObjectPrefab` - Префаб двухпалубного корабля
-- `ship3Prefab: ObjectPrefab` - Префаб трехпалубного корабля
-- `ship4Prefab: ObjectPrefab` - Префаб четырехпалубного корабля
-- `cellSize: number` - Размер ячейки (должен совпадать с GridGenerator)
-- `cellSpacing: number` - Расстояние между ячейками (должен совпадать с GridGenerator)
-- `gridSize: number` - Размер грида (должен совпадать с GridGenerator)
-- `shipsParent: SceneObject` - Родительский объект для кораблей (опционально)
+This is a prototype project. Development plan and asset requirements are documented in `PROJECT_PLAN.md`.
 
-#### Методы
-- `placeTestShips()` - Размещает тестовые корабли на гриде
-- `placeShip(shipPrefab, gridX, gridY, horizontal, parent, cellDistance)` - Размещает корабль
-- `placeShipAtGrid(shipPrefab, gridX, gridY, horizontal)` - Размещает корабль по координатам грида
-- `clearShips()` - Очищает все размещенные корабли
+## 📄 License
 
-## Следующие шаги
+[Add license information]
 
-1. Добавить интерактивность (обработка кликов по ячейкам)
-2. Реализовать логику валидации размещения кораблей
-3. Добавить визуальную обратную связь (подсветка ячеек)
-4. Реализовать игровую логику (выстрелы, проверка попаданий)
-5. Добавить UI элементы (счет, статус игры)
-
-## Полезные ссылки
+## 🔗 Links
 
 - [Snap Lens Studio Documentation](https://developers.snap.com/lens-studio/)
 - [Scripting Overview](https://developers.snap.com/lens-studio/guides/scripting/scripting-overview)
 - [Prefabs Guide](https://developers.snap.com/lens-studio/lens-studio-workflow/prefabs)
+- [Turn-Based Games](https://developers.snap.com/lens-studio/) - *Documentation needed*
+
+---
+
+**Game Title:** Meme Fleet Battle  
+**Genre:** Turn-based Strategy / AR Battleship  
+**Platform:** Snap Lens Studio (AR Lens)

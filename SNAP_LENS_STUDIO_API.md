@@ -7,6 +7,8 @@
 4. [Transform](#transform)
 5. [ScriptScene (global.scene)](#scriptscene-globalscene)
 6. [Component](#component)
+7. [Turn-Based Component](#turn-based-component)
+8. [InteractionComponent](#interactioncomponent)
 
 ---
 
@@ -286,12 +288,90 @@ const rotation = new quat(x, y, z, w);
 
 ---
 
+---
+
+## Turn-Based Component
+
+Component for implementing turn-based multiplayer games in Snap Lens Studio. Allows players to take turns and share game state.
+
+### Key Features:
+- Turn management between two players
+- Turn data storage and retrieval
+- Turn history tracking
+- Player flow objects (different UI for each player)
+- Game over detection
+- Turn submission and validation
+
+### Component Inputs (from Scene.scene):
+- `requireTurnSubmission: boolean` - Require explicit turn submission
+- `allowChangingTurnVariablesAfterTurnSubmission: boolean` - Allow data changes after submission
+- `useTurnLimit: boolean` - Enable turn limit
+- `turnLimitInput: number` - Maximum number of turns
+- `useTurnHistory: boolean` - Track turn history
+- `turnsSavedLimitInput: number` - How many turns to save
+- `tappableAreasInput: SceneObject[]` - Areas that can be tapped
+- `user1FlowObjectsInputSO: SceneObject[]` - Objects shown to player 1
+- `user2FlowObjectsInputSO: SceneObject[]` - Objects shown to player 2
+- `gameOverObjectsInputSO: SceneObject[]` - Objects shown on game over
+- `defaultTurnVariables: object` - Default variables stored with each turn
+
+### Callbacks:
+- `_onTurnStartResponses` - Called when a turn starts
+- `_onTurnEndResponses` - Called when a turn ends
+- `_onGameOverResponses` - Called when game ends
+
+### Turn Data:
+- Each turn can store associated data (game state, moves, etc.)
+- Data persists between turns
+- Can be retrieved from turn history
+
+### Documentation Needed:
+- Official Turn-Based component API reference
+- Turn data storage format
+- Callback implementation
+- Player flow management
+
+### References:
+- Component exists in `Scene.scene` as "Turn Based"
+- Script Asset ID: `2485c892-b1f1-4924-9453-ce440bd2cdfb`
+
+---
+
+## InteractionComponent
+
+Component for handling user interactions (taps, touches) on objects.
+
+### Usage:
+Add to SceneObject to make it tappable/interactable.
+
+### Methods:
+```typescript
+// Get interaction component
+const interaction = sceneObject.getComponent("Component.Interaction") as InteractionComponent;
+
+// Check if tapped
+// (Typically handled through events/callbacks)
+```
+
+### Setup:
+1. Add InteractionComponent to SceneObject
+2. Configure tap area/bounds
+3. Handle tap events in script
+
+### Documentation Needed:
+- Official InteractionComponent API
+- Event handling system
+- Tap detection methods
+
+---
+
 ## Полезные ссылки
 
 - [Snap Lens Studio Documentation](https://developers.snap.com/lens-studio/)
 - [Scripting Overview](https://developers.snap.com/lens-studio/guides/scripting/scripting-overview)
 - [Prefabs Guide](https://developers.snap.com/lens-studio/lens-studio-workflow/prefabs)
 - [Scene Setup](https://developers.snap.com/lens-studio/lens-studio-workflow/scene-set-up)
+- [Turn-Based Games](https://developers.snap.com/lens-studio/) - *Need to find specific documentation*
 
 ---
 
@@ -309,3 +389,9 @@ const rotation = new quat(x, y, z, w);
    - Назначьте префаб в параметр `cellPrefab` в Inspector
    - Настройте `gridSize` (по умолчанию 10x10)
    - Настройте `cellSize` для расстояния между ячейками
+
+3. **Turn-Based Integration (Future):**
+   - Turn-Based component exists in scene
+   - Need to research API for integration
+   - Will handle multiplayer turn flow
+   - Store game state in turn data
