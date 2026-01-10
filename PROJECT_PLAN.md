@@ -114,17 +114,17 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
 
 ### 2. Intro Screen (Welcome Screen)
 **Priority:** HIGH  
-**Status:** TODO
+**Status:** IN PROGRESS
 
 **Tasks:**
-- [ ] Create `IntroScreen.ts` script
-- [ ] Design welcome background
-- [ ] Add game title text/logo
+- [x] Create `IntroScreen.ts` script ✅
+- [ ] Design welcome background (UI setup needed)
+- [ ] Add game title text/logo (UI setup needed)
 - [ ] Create game preview (animated grid with objects)
-- [ ] Add "Single Player" button
-- [ ] Add "Play with Friend" button
-- [ ] Implement button tap handlers
-- [ ] Add screen transition animations
+- [ ] Add "Single Player" button (UI setup needed)
+- [ ] Add "Play with Friend" button (UI setup needed)
+- [x] Implement button tap handlers ✅ (basic structure)
+- [x] Add screen transition animations ✅ (basic fade in/out)
 - [ ] Add background music/sound effects
 
 **UI Elements:**
@@ -817,10 +817,11 @@ A viral, meme-filled twist on the classic Battleship game. Instead of ships, pla
    - Test with all object sizes
    - Validate rules
 
-3. **Design Intro Screen**
-   - Create UI layout
-   - Design buttons
-   - Add game title
+3. **Design Intro Screen** ✅ IN PROGRESS
+   - ✅ Created `IntroScreen.ts` script with basic structure
+   - ⏳ UI layout setup (needs scene objects)
+   - ⏳ Button design and setup
+   - ⏳ Game title display
 
 4. **Create First Meme Object**
    - Choose one object (e.g., cow)
