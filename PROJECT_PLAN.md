@@ -319,11 +319,14 @@ interface TurnData {
 ### Phase 9: Visual Polish - UI ⬜
 | Task | Status |
 |------|--------|
+| Welcome screen background (AI generated) | ⬜ |
 | Styled UI buttons | ⬜ |
 | Background images | ⬜ |
 | Styled title | ⬜ |
 | UI panels/frames | ⬜ |
 | Icons for objects | ⬜ |
+
+**AI Prompts:** See [AI_PROMPTS_GUIDE.md](AI_PROMPTS_GUIDE.md) for image generation prompts
 
 ### Phase 10: Visual Polish - Grid ⬜
 | Task | Status |
