@@ -27,7 +27,7 @@ metaInfo:
   videoPreviewHash: ""
   fromTemplateName: Default
   fromTemplateUrl: Lens Studio 5.17.1.25121920
-  activationCamera: Front
+  activationCamera: Rear
   sourceMapEnabled: false
   usingMinClientVersions: false
   androidMinClientVersion:

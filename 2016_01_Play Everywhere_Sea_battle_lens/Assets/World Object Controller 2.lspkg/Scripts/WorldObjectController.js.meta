@@ -1,0 +1,46 @@
+- !<AssetImportMetadata/190c022c-6d42-a451-245d-bb6e3e5e8694>
+  ImportedAssetIds:
+    JavaScriptAsset: !<reference> c669f49e-82f4-42a4-811b-40fa218fb131
+  ImporterName: JavaScriptAssetImporter
+  PrimaryAsset: !<reference> c669f49e-82f4-42a4-811b-40fa218fb131
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    AssetLibraryId: 4lPcF6v4TSOEsfTFywcD5R
+  AssetDataMap:
+    JavaScriptAsset: !<own> 6ba3e68f-2c6d-447f-bdc6-2f4d5642d5b4
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<ScriptAssetData/6ba3e68f-2c6d-447f-bdc6-2f4d5642d5b4>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: "Controls the touch, hiding, and showing functionality of the movable object"
+  VersionMajor: 1
+  VersionMinor: 2
+  VersionPatch: 0
+  ComponentUid: 2db057eb-d17e-42a2-be48-a314e6adf0e2
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    groundGrid: false
+    touchCollisionMaterial: false
+    worldTrackingComponent: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - touchCollisionMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      groundGrid: !<reference.RenderMeshVisual> 00000000-0000-0000-0000-000000000000
+      worldTrackingComponent: !<reference.DeviceTracking> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
