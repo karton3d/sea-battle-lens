@@ -15,7 +15,8 @@
       "Bash(git commit:*)",
       "Bash(git worktree:*)",
       "Bash(grep:*)",
-      "mcp__lens-studio__GetLensStudioLogsTool"
+      "mcp__lens-studio__GetLensStudioLogsTool",
+      "mcp__lens-studio__*"
     ]
   },
   "enableAllProjectMcpServers": true,
