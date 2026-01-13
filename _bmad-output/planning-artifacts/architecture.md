@@ -1,9 +1,23 @@
 # Architecture Document: Meme Fleet Battle
 
 **Generated:** 2026-01-13
-**Version:** v0.3 (Single Player Complete)
+**Version:** v0.4 (Multiplayer Update)
 **Platform:** Snap Lens Studio
 **Language:** TypeScript
+
+---
+
+## Decision Summary
+
+| Category | Decision | Version | Affects Epics | Rationale |
+|----------|----------|---------|---------------|-----------|
+| **Platform** | Snap Lens Studio | 5.x | All | AR lens distribution, Turn-Based component |
+| **Language** | TypeScript | ES2020 | All | Type safety, Lens Studio native |
+| **Multiplayer** | Turn-Based Component | Built-in | 1,2,3,4 | Async multiplayer via Snaps, no custom networking |
+| **State Sync** | JSON Serialization | Native | 2,3 | Turn data must be serializable for Turn-Based |
+| **AI System** | Hunt/Target Algorithm | Custom | N/A (SP only) | Existing single-player opponent |
+| **Grid System** | 10x10 Square Grid | Fixed | All | Classic Battleship, proven in v0.3 |
+| **Ship Placement** | Random, No-Touch Rule | Custom | 2 | Fair starts, no manual placement |
 
 ---
 
@@ -642,11 +656,199 @@ Scene
 
 ---
 
-## 12. Document History
+## 12. Epic to Architecture Mapping
+
+| Epic | Components Affected | Key Patterns | Notes |
+|------|---------------------|--------------|-------|
+| **Epic 1: Turn-Based Integration** | TurnBasedManager (new), GameManager | ITurnHandler interface | Core multiplayer foundation |
+| **Epic 2: Multiplayer Game Flow** | GameManager, IntroScreen, GameOverScreen | State machine extension | Mode selection, turn indicators |
+| **Epic 3: State Synchronization** | TurnBasedManager, TurnData schema | JSON serialization | Ship positions, shot results |
+| **Epic 4: UI/UX for Multiplayer** | All screen components | Screen state pattern | Waiting states, opponent feedback |
+| **Epic 5: Testing & Polish** | All components | Debug logging pattern | Two-device validation |
+
+---
+
+## 13. Implementation Patterns
+
+These patterns ensure consistent implementation across all AI agents:
+
+### 13.1 Component Communication Pattern
+
+```typescript
+// PATTERN: Use interface-based communication between components
+// GameManager gets grid reference, calls interface methods
+
+// ✅ CORRECT: Query grid via interface
+const hasShip = this.opponentGrid.hasShipAt(x, y);
+
+// ❌ WRONG: Direct state access
+const hasShip = this.opponentGrid.shipGrid[y][x];
+```
+
+### 13.2 Turn Handler Pattern
+
+```typescript
+// PATTERN: ITurnHandler for abstracting turn sources (AI vs Multiplayer)
+
+interface ITurnHandler {
+    isMyTurn(): boolean;
+    getNextShot(): Promise<{x: number, y: number}> | {x: number, y: number};
+    onShotResult(x: number, y: number, result: 'hit' | 'miss'): void;
+    onTurnEnd(): void;
+}
+
+// GameManager uses handler, doesn't care if AI or multiplayer
+private turnHandler: ITurnHandler;
+
+// Single player: turnHandler = new AITurnHandler();
+// Multiplayer:   turnHandler = new TurnBasedManager();
+```
+
+### 13.3 State Serialization Pattern
+
+```typescript
+// PATTERN: All multiplayer state must be JSON-serializable
+
+// ✅ CORRECT: Plain objects and primitives
+interface TurnData {
+    shotX: number;
+    shotY: number;
+    result: 'hit' | 'miss';
+    isGameOver: boolean;
+}
+
+// ❌ WRONG: SceneObjects, functions, circular refs
+interface BadTurnData {
+    grid: SceneObject;  // NOT SERIALIZABLE
+    callback: () => void;  // NOT SERIALIZABLE
+}
+```
+
+### 13.4 Screen State Pattern
+
+```typescript
+// PATTERN: Centralized screen management via showScreen()
+
+// ✅ CORRECT: Use GameManager.showScreen()
+this.showScreen('game');
+
+// ❌ WRONG: Direct SceneObject manipulation
+this.gameScreen.enabled = true;
+this.introScreen.enabled = false;
+```
+
+### 13.5 Delayed Action Pattern
+
+```typescript
+// PATTERN: Use DelayedCallbackEvent for timed actions (no async/await)
+
+// ✅ CORRECT: Lens Studio delayed callback
+const delayedEvent = this.createEvent('DelayedCallbackEvent');
+delayedEvent.bind(() => {
+    this.executeAITurn();
+});
+delayedEvent.reset(1.0); // 1 second delay
+
+// ❌ WRONG: setTimeout (not available in Lens Studio)
+setTimeout(() => this.executeAITurn(), 1000);
+```
+
+---
+
+## 14. Consistency Rules
+
+### 14.1 Naming Conventions
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| **Files** | PascalCase.ts | `GameManager.ts`, `TurnBasedManager.ts` |
+| **Classes** | PascalCase | `SeaBattleGrid`, `TurnBasedManager` |
+| **Interfaces** | IPascalCase | `ITurnHandler`, `IGridController` |
+| **Methods** | camelCase | `playerShoot()`, `onCellTapped()` |
+| **Private fields** | camelCase (no prefix) | `gridCells`, `turnHandler` |
+| **Constants** | SCREAMING_SNAKE | `TOTAL_OBJECT_CELLS`, `GRID_SIZE` |
+| **@input props** | camelCase | `@input playerGrid: SceneObject` |
+| **Events** | onEventName | `onCellTapped`, `onTurnReceived` |
+
+### 14.2 Code Organization
+
+```
+Assets/Scripts/
+├── GameManager.ts          # Central game controller
+├── GridGenerator.ts        # SeaBattleGrid component
+├── TurnBasedManager.ts     # NEW: Multiplayer turn handling
+├── IntroScreen.ts          # Welcome screen logic
+└── types/
+    └── GameTypes.ts        # Shared type definitions
+```
+
+**File Structure Within Components:**
+```typescript
+@component
+export class ComponentName extends BaseScriptComponent {
+    // 1. @input declarations (scene references)
+    @input playerGrid: SceneObject;
+
+    // 2. Private state
+    private state: GameState;
+
+    // 3. Lifecycle methods
+    onAwake() { }
+
+    // 4. Public API methods
+    public startGame(): void { }
+
+    // 5. Private implementation
+    private processShot(): void { }
+}
+```
+
+### 14.3 Error Handling
+
+```typescript
+// PATTERN: Defensive checks with print logging (no throw in Lens Studio)
+
+// ✅ CORRECT: Guard clause with log
+public onCellTapped(x: number, y: number): void {
+    if (this.state.turn !== 'player') {
+        print('[GameManager] onCellTapped: Not player turn, ignoring');
+        return;
+    }
+    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+        print(`[GameManager] onCellTapped: Invalid coords (${x}, ${y})`);
+        return;
+    }
+    // Process tap...
+}
+
+// ❌ WRONG: Throwing exceptions
+if (!valid) throw new Error('Invalid state');
+```
+
+### 14.4 Logging Strategy
+
+```typescript
+// PATTERN: Prefixed logging for component tracing
+
+// Format: [ComponentName] methodName: message
+print('[GameManager] playerShoot: Hit at (5, 3)');
+print('[TurnBasedManager] onTurnReceived: Processing opponent shot');
+print('[SeaBattleGrid] setCellState: Marking (2, 7) as miss');
+
+// Debug levels (manual filtering in log viewer)
+print('[DEBUG] AI state: ' + JSON.stringify(this.aiState));
+print('[ERROR] Failed to deserialize turn data');
+print('[TURN] Submitting turn: ' + JSON.stringify(turnData));
+```
+
+---
+
+## 15. Document History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0 | 2026-01-13 | Initial architecture document |
+| 1.0 | 2026-01-13 | Initial architecture document (v0.3 single player) |
+| 1.1 | 2026-01-13 | Added Decision Summary, Epic Mapping, Implementation Patterns, Consistency Rules for v0.4 multiplayer |
 
 ---
 
