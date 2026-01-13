@@ -2,14 +2,7 @@
 
 AR Battleship with meme objects for Snap Lens Studio.
 
-## What is it?
-
-Hunt hidden meme objects on a 10×10 grid. UFO scans cells. First to find all objects wins.
-
-## Status
-
-✅ Single Player (vs AI) — working  
-⬜ Multiplayer (Turn-Based) — in progress
+**Status:** Single Player ✅ | Multiplayer ⬜
 
 ## Quick Start
 
@@ -19,16 +12,4 @@ Hunt hidden meme objects on a 10×10 grid. UFO scans cells. First to find all ob
 
 ## Docs
 
-| File | Content |
-|------|---------|
-| [PROJECT_PLAN.md](PROJECT_PLAN.md) | Overview |
-| [USER_FLOW.md](USER_FLOW.md) | User journey |
-| [ASSETS.md](ASSETS.md) | All assets |
-| [TASKS.md](TASKS.md) | Progress |
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| GameManager.ts | Game logic |
-| GridGenerator.ts | Grid + ships |
+Start with **[0_PROJECT.md](0_PROJECT.md)** for full context.

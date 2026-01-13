@@ -1,0 +1,58 @@
+# Tasks
+
+## 🔴 TODO — Multiplayer
+
+- [ ] Turn-Based integration
+- [ ] State serialization
+- [ ] Turn submission
+- [ ] Opponent turn handling
+
+## 🔴 TODO — UI Polish
+
+- [ ] Reshuffle button
+- [ ] Turn banner animation
+- [ ] Grid transitions (slide)
+- [ ] Grid border colors (red/blue)
+
+## 🔴 TODO — Visual Polish
+
+- [ ] Welcome background
+- [ ] Styled buttons
+- [ ] Meme 3D objects
+- [ ] X-ray reveal effect
+- [ ] Destroy animation
+- [ ] UFO scan effect
+
+## 🔴 TODO — Environment
+
+- [ ] Alpha mask boundary
+- [ ] Clouds, birds (decorative)
+- [ ] Particles
+- [ ] Zoom gestures
+
+## 🔴 TODO — Audio
+
+- [ ] UI sounds
+- [ ] Hit/miss sounds
+- [ ] Victory sounds
+
+---
+
+## ✅ DONE — Core
+
+- [x] Grid generation (10×10)
+- [x] Random object placement
+- [x] Collision detection
+- [x] Cell tap interaction
+- [x] Hit/miss markers
+- [x] Game state management
+- [x] AI opponent (smart hunt)
+- [x] Win condition
+- [x] Game restart
+
+## ✅ DONE — UI (Prototype)
+
+- [x] Intro screen buttons
+- [x] Setup screen
+- [x] Game screen text
+- [x] Game over screen
