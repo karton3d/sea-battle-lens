@@ -12,12 +12,12 @@ workflow_path: "gamedev-brownfield-validated"
 notes:
   existing_docs_policy: "READ-ONLY - Use as context, do not modify"
   existing_docs:
-    - "README.md"
-    - "PROJECT_PLAN.md"
-    - "TURN_BASED_RESEARCH.md"
-    - "INTRO_SCREEN_SETUP.md"
-    - "SNAP_LENS_STUDIO_API.md"
-    - "AI_PROMPTS_GUIDE.md"
+    - "0_PROJECT.md"
+    - "1_USER_FLOW.md"
+    - "2_ASSETS.md"
+    - "3_TASKS.md"
+    - "docs/TECH_REFERENCE.md"
+  marketing_name: "Fleet Yeet!"
   output_folder: "_bmad-output/planning-artifacts"
   implementation_folder: "_bmad-output/implementation-artifacts"
   current_version: "v0.3 - Single Player Complete"
@@ -106,8 +106,8 @@ workflow_status:
         output_file: "_bmad-output/planning-artifacts/gdd.md"
         note: "Focus on multiplayer additions to existing game"
         context_files:
-          - "PROJECT_PLAN.md (existing design)"
-          - "TURN_BASED_RESEARCH.md (multiplayer research)"
+          - "0_PROJECT.md (existing design)"
+          - "docs/TECH_REFERENCE.md (multiplayer API research)"
 
   # ============================================
   # PHASE 2: TECHNICAL

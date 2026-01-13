@@ -1,7 +1,7 @@
-# Resume Workflow: Meme Fleet Battle
+# Resume Workflow: Fleet Yeet! (Meme Fleet Battle)
 
 **Last Updated:** 2026-01-13
-**Project:** Meme Fleet Battle (Snap Lens Studio AR Game)
+**Project:** Fleet Yeet! / Meme Fleet Battle (Snap Lens Studio AR Game)
 **Track:** BMGD Full Game Dev (Brownfield)
 
 ---
@@ -21,19 +21,21 @@ This reads `bmgd-workflow-status.yaml` and tells you where you are.
 ### Option 2: Copy-Paste Prompt
 
 ```
-I'm continuing development on Meme Fleet Battle (Snap Lens Studio game).
+I'm continuing development on Fleet Yeet! / Meme Fleet Battle (Snap Lens Studio game).
 
 Context files (READ-ONLY, don't modify):
-- PROJECT_PLAN.md - existing game documentation
-- TURN_BASED_RESEARCH.md - multiplayer research
+- 0_PROJECT.md - project overview
+- docs/TECH_REFERENCE.md - Lens Studio & Turn-Based API reference
 
 BMAD artifacts created:
 - _bmad-output/planning-artifacts/codebase-analysis.md
 - _bmad-output/planning-artifacts/architecture.md
-- _bmad-output/planning-artifacts/test-strategy.md (DRAFT)
+- _bmad-output/planning-artifacts/gdd.md
+- _bmad-output/epics.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
-Current status: Phase 0 (Foundation Validation) COMPLETE
-Next step: Phase 1 - Create GDD for multiplayer feature
+Current status: Phase 3 (Production) - Ready to create stories
+Next step: Create first story file for Epic 1
 
 Please read the workflow status file and continue:
 _bmad-output/bmgd-workflow-status.yaml
@@ -44,52 +46,38 @@ _bmad-output/bmgd-workflow-status.yaml
 ## Current Progress
 
 ```
-✅ PHASE 0: FOUNDATION VALIDATION - COMPLETE
-   ├── ✅ codebase-analysis.md   - Code review, risks, technical debt
-   ├── ✅ architecture.md        - System design, interfaces, data flow
-   └── 📝 test-strategy.md       - DRAFT (needs validation session)
+PHASE 0: FOUNDATION VALIDATION - COMPLETE
+   ├── codebase-analysis.md   - Code review, risks, technical debt
+   ├── architecture.md        - System design, interfaces, data flow
+   └── test-strategy.md       - DRAFT (needs validation session)
 
-→  PHASE 1: DESIGN - NEXT
-   └── ○ GDD                     - Document multiplayer feature design
+PHASE 1: DESIGN - COMPLETE
+   └── gdd.md                 - Game Design Document for multiplayer
 
-○  PHASE 2: TECHNICAL
-   ├── ○ architecture-update     - Multiplayer integration plan
-   └── ○ test-framework          - Testing setup
+PHASE 2: TECHNICAL - COMPLETE
+   ├── architecture.md        - Updated with Decision Summary, Epic Mapping
+   └── test-framework         - Recommended (not required)
 
-○  PHASE 3: PRODUCTION
-   └── ○ sprint-planning         - Stories & execution
+PHASE 3: PRODUCTION - IN PROGRESS
+   ├── sprint-status.yaml     - 21 stories across 5 epics
+   ├── epics.md               - Epic and story definitions
+   └── → create-story         - NEXT: Create Story 1.1
 ```
 
 ---
 
-## Separate Sessions
+## Next Action
 
-### Test Strategy Validation
-
-The MCP server testing approach needs hands-on validation:
+Start implementing Epic 1 (Turn-Based Integration) with Story 1.1:
 
 ```
-I want to validate the Lens Studio MCP server testing approach.
-
-Read: _bmad-output/planning-artifacts/test-strategy.md
-
-Focus on Section 4 (MCP Server Automation) and Section 10 (Validation Checklist).
-Help me test the MCP connection and verify if automated testing is feasible.
+/bmad:bmgd:workflows:create-story
 ```
 
-### Continue to GDD (Multiplayer Design)
+Or to see sprint status:
 
 ```
-Continue Meme Fleet Battle development.
-
-Read these files first:
-- _bmad-output/bmgd-workflow-status.yaml
-- _bmad-output/planning-artifacts/architecture.md
-- PROJECT_PLAN.md (context only, don't modify)
-- TURN_BASED_RESEARCH.md (context only, don't modify)
-
-Start the GDD workflow for multiplayer feature design.
-Command: /bmad:bmgd:workflows:create-gdd
+/bmad:bmgd:workflows:sprint-status
 ```
 
 ---
@@ -101,31 +89,47 @@ Command: /bmad:bmgd:workflows:create-gdd
 | `bmgd-workflow-status.yaml` | Workflow tracking | Active |
 | `planning-artifacts/codebase-analysis.md` | Code review | Complete |
 | `planning-artifacts/architecture.md` | System design | Complete |
+| `planning-artifacts/gdd.md` | Game design | Complete |
 | `planning-artifacts/test-strategy.md` | Testing approach | DRAFT |
+| `epics.md` | Epic/story definitions | Complete |
+| `implementation-artifacts/sprint-status.yaml` | Sprint tracking | Active |
 
 ### Context Files (READ-ONLY)
 
 These exist in project root - use for context but don't modify:
 
-- `README.md` - Project overview
-- `PROJECT_PLAN.md` - Development roadmap (v0.3 complete)
-- `TURN_BASED_RESEARCH.md` - Multiplayer API research
-- `SNAP_LENS_STUDIO_API.md` - API reference
-- `AI_PROMPTS_GUIDE.md` - Image generation prompts
+- `0_PROJECT.md` - Project overview (marketing name: Fleet Yeet!)
+- `1_USER_FLOW.md` - User journey and intro screen flow
+- `2_ASSETS.md` - Asset requirements
+- `3_TASKS.md` - Task tracking
+- `docs/TECH_REFERENCE.md` - Lens Studio API & Turn-Based reference
 
 ---
 
 ## Project Summary
 
-**Meme Fleet Battle** is an AR Battleship game for Snapchat where players hunt meme objects (cows, toilets, etc.) instead of ships.
+**Fleet Yeet!** (internal: Meme Fleet Battle) is an AR Battleship game for Snapchat where players hunt meme objects (cows, toilets, etc.) instead of ships.
 
 | Aspect | Status |
 |--------|--------|
-| Single Player | ✅ Complete (v0.3) |
-| Multiplayer | ⬜ Not started |
-| Visual Polish | ⬜ Not started |
+| Single Player | Complete (v0.3) |
+| Multiplayer | Ready for dev (v0.4) |
+| Visual Polish | Not started |
 
 **Next Milestone:** v0.4 - Multiplayer with Turn-Based
+
+---
+
+## Epic Overview
+
+| Epic | Stories | Focus | Status |
+|------|---------|-------|--------|
+| Epic 1: Turn-Based Integration | 4 | Core multiplayer foundation | Backlog |
+| Epic 2: Multiplayer Game Flow | 4 | Game modes and flow | Backlog |
+| Epic 3: State Synchronization | 4 | Data handling | Backlog |
+| Epic 4: UI/UX for Multiplayer | 4 | User interface | Backlog |
+| Epic 5: Testing & Polish | 5 | Quality assurance | Backlog |
+| **Total** | **21 stories** | | |
 
 ---
 
@@ -146,10 +150,11 @@ See `architecture.md` for recommended interfaces.
 | Command | Purpose |
 |---------|---------|
 | `/bmad:bmgd:workflows:workflow-status` | Check current progress |
-| `/bmad:bmgd:workflows:create-gdd` | Create Game Design Document |
-| `/bmad:bmgd:workflows:game-architecture` | Architecture workflow |
-| `/bmad:bmgd:workflows:sprint-planning` | Create sprint plan |
+| `/bmad:bmgd:workflows:sprint-status` | View sprint status |
+| `/bmad:bmgd:workflows:create-story` | Create next story file |
+| `/bmad:bmgd:workflows:dev-story` | Implement a story |
+| `/bmad:bmgd:workflows:code-review` | Code review |
 
 ---
 
-*Generated by BMGD Workflow Init*
+*Generated by BMGD Workflow*

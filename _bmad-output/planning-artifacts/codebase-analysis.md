@@ -246,7 +246,7 @@ receiveTurn(x: number, y: number) {
 5. **Turn History** - Access previous turns for replay
 
 ### Existing Research
-`TURN_BASED_RESEARCH.md` contains detailed API documentation and integration strategy.
+`docs/TECH_REFERENCE.md` contains detailed API documentation and integration strategy.
 
 ---
 
@@ -438,10 +438,11 @@ class MultiplayerTurnHandler implements ITurnHandler { ... }
 | `GridGenerator.ts` | 628 | Visual grid (class: SeaBattleGrid) |
 
 **Context files (read-only):**
-- `PROJECT_PLAN.md` - Development roadmap
-- `TURN_BASED_RESEARCH.md` - Multiplayer API research
-- `README.md` - Project overview
-- `SNAP_LENS_STUDIO_API.md` - API reference
+- `0_PROJECT.md` - Project overview
+- `1_USER_FLOW.md` - User journey and flow
+- `2_ASSETS.md` - Asset requirements
+- `3_TASKS.md` - Task tracking
+- `docs/TECH_REFERENCE.md` - Lens Studio & Turn-Based API reference
 
 ---
 

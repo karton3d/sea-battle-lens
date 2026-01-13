@@ -4,9 +4,9 @@ inputDocuments:
   - "_bmad-output/planning-artifacts/architecture.md"
   - "_bmad-output/planning-artifacts/codebase-analysis.md"
   - "_bmad-output/planning-artifacts/test-strategy.md"
-  - "PROJECT_PLAN.md"
-  - "TURN_BASED_RESEARCH.md"
-  - "INTRO_SCREEN_SETUP.md"
+  - "0_PROJECT.md"
+  - "docs/TECH_REFERENCE.md"
+  - "1_USER_FLOW.md"
 documentCounts:
   briefs: 0
   research: 0

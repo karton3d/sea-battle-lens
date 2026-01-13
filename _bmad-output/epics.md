@@ -27,7 +27,7 @@
 - [ ] Includes debug logging with [TurnBasedManager] prefix
 
 **Technical Notes:**
-- Reference TURN_BASED_RESEARCH.md for API details
+- Reference docs/TECH_REFERENCE.md for API details
 - Use DelayedCallbackEvent for any async operations
 
 ### Story 1.2: Implement Turn Submission
@@ -105,7 +105,7 @@
 
 **Technical Notes:**
 - IntroScreen.ts may need updates
-- Reference INTRO_SCREEN_SETUP.md
+- Reference 1_USER_FLOW.md
 
 ### Story 2.2: Initial Ship Position Exchange
 
@@ -335,7 +335,7 @@
 - [ ] Debug mode clearly documented
 
 **Technical Notes:**
-- TURN_BASED_RESEARCH.md has debug settings
+- docs/TECH_REFERENCE.md has debug settings
 - Use debugMode, swapPlayersAfterSimulatedTurn
 
 ### Story 5.2: Two-Device Testing
