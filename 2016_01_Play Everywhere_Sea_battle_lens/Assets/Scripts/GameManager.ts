@@ -1,4 +1,4 @@
-// Game Manager - Central controller for Meme Fleet Battle
+// Game Manager - Central controller for Fleet Yeet!
 
 // Game phases
 type GamePhase = 'intro' | 'setup' | 'playing' | 'gameover';

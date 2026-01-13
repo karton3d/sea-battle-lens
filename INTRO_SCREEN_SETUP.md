@@ -38,7 +38,7 @@ The `IntroScreen.ts` script has been created with the basic structure for the we
 - Assign to `backgroundObject` input (optional)
 
 #### Game Title
-- Create Text or Text3D object with "Meme Fleet Battle"
+- Create Text or Text3D object with "Fleet Yeet!"
 - Style it with meme/viral aesthetic
 - Add as child of screen container
 - Assign to `titleObject` input

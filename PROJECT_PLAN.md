@@ -1,8 +1,8 @@
-# Meme Fleet Battle - Development Plan
+# Fleet Yeet! - Development Plan
 
 ## Game Overview
 
-**Game Title:** Meme Fleet Battle  
+**Game Title:** Fleet Yeet!  
 **Genre:** Turn-based Strategy / Battleship with Meme Twist  
 **Platform:** Snap Lens Studio (AR Lens)  
 **Target Audience:** Gen Z, meme lovers, casual gamers (13+)

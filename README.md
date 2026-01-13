@@ -1,10 +1,10 @@
-# Meme Fleet Battle 🚀
+# Fleet Yeet! 🚀
 
 A viral, meme-filled AR Battleship game for Snap Lens Studio. Instead of traditional ships, players hunt for wacky 3D objects (cows, toilets, sneakers, flying eyes, etc.) using X-ray scanning mechanics.
 
 ## 🎮 Game Concept
 
-**Meme Fleet Battle** is a turn-based strategy game that puts a fun, shareable twist on the classic Battleship formula:
+**Fleet Yeet!** is a turn-based strategy game that puts a fun, shareable twist on the classic Battleship formula:
 - Hide and hunt for meme-worthy 3D objects on a grid
 - Use UFO saucer X-ray scanning to reveal hidden objects
 - Play solo or with a friend via Snap's Turn-Based system
@@ -167,6 +167,6 @@ This is a prototype project. Development plan and asset requirements are documen
 
 ---
 
-**Game Title:** Meme Fleet Battle  
+**Game Title:** Fleet Yeet!  
 **Genre:** Turn-based Strategy / AR Battleship  
 **Platform:** Snap Lens Studio (AR Lens)

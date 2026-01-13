@@ -265,7 +265,7 @@ onGameOver() {
 1. **Download Example Project**
    - Get "Turn Based Game" example from Lens Studio
    - Study implementation
-   - Adapt for Meme Fleet Battle
+   - Adapt for Fleet Yeet!
 
 2. **Create Basic Integration**
    - Create `TurnBasedManager.ts`

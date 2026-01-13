@@ -63,11 +63,11 @@ Negative: blurry, low quality, distorted, watermark, text, ugly, deformed
 
 ---
 
-## Meme Fleet Battle — Welcome Screen Prompts
+## Fleet Yeet! — Welcome Screen Prompts
 
 ### Prompt 1: Meme Style (Recommended)
 ```
-Game title screen for "Meme Fleet Battle", 
+Game title screen for "Fleet Yeet!", 
 cartoon style with bold outlines, 
 centered composition with game logo at top, 
 vibrant neon colors on dark blue ocean background,
@@ -81,7 +81,7 @@ clean vector graphics,
 
 ### Prompt 2: Retro Arcade
 ```
-Retro arcade game welcome screen "Meme Fleet Battle",
+Retro arcade game welcome screen "Fleet Yeet!",
 80s synthwave aesthetic,
 pixel art battleship silhouettes on gradient purple-pink sunset,
 scanline effect overlay,
@@ -98,7 +98,7 @@ Minimalist mobile game splash screen,
 flat design illustration,
 top-down view of stylized ocean grid 10x10,
 geometric battleship shapes in teal and coral colors,
-clean sans-serif title "MEME FLEET" centered,
+clean sans-serif title "FLEET YEET!" centered,
 soft gradient background light blue to white,
 subtle drop shadows,
 modern app store style,
@@ -176,4 +176,4 @@ transparent background
 
 | Version | Date | Changes |
 |---------|------|---------|
-| v1.0 | 2026-01-11 | Initial guide with Meme Fleet Battle prompts |
+| v1.0 | 2026-01-11 | Initial guide with Fleet Yeet! prompts |
