@@ -4,37 +4,37 @@
 
 - **Single Player** — start single player mode
 - **Play with Friend** — start multiplayer mode
+- **Reshuffle** — re-randomize object placement
 - **Start** — begin game after setup
 - **Play Again** — restart after game over
 
+## Turn Banner (transition overlay)
+
+- Arrow + info box
+- Color: **red** = your turn, **blue** = opponent's turn
+- Text: "Turn #N — [hint]"
+
 ## Messages & Hints
 
-### Intro Screen
-- **Title**: "Fleet Yeet!"
-
 ### Setup Screen
-- **Status**: "Your objects are placed randomly"
-- **Explanation**: "This is your grid. Your objects are hidden here. Tap Start when ready."
+- "Your objects are placed randomly"
+- "This is your grid. Your objects are hidden here."
 
 ### Player Turn
-- **Status**: "Your Turn #1" / "Your Turn #2" / etc.
-- **Hint**: "Tap opponent's grid to scan a cell and find hidden objects"
+- "Turn #N — Scan a cell to find hidden objects"
 
 ### Shot Results
-- **Hit**: "Hit!"
-- **Miss**: "Miss!"
-- **Destroyed**: "Object destroyed!"
-- **Already Shot**: "Already scanned this cell"
+- "Hit!" / "Miss!" / "Object destroyed!"
+- "Already scanned this cell"
 
 ### Opponent Turn
-- **Status**: "Opponent's turn..."
-- **Result**: "Opponent hit (X,Y)!" / "Opponent missed (X,Y)!"
+- "Opponent's turn..."
+- "Opponent hit (X,Y)!" / "Opponent missed (X,Y)!"
 
 ### Game Over
-- **Win**: "You Win! All objects destroyed!"
-- **Lose**: "You Lost! Opponent found all your objects"
+- "You Win!" / "You Lost!"
 
-## Grid Labels
+## Grid Colors
 
-- **Your Grid** — player's grid label
-- **Opponent Grid** — opponent's grid label
+- **Red border** — your grid
+- **Blue border** — opponent's grid
