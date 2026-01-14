@@ -49,32 +49,32 @@ TurnBasedManager.ts — multiplayer integration (TODO)
 
 ## Objects (Ships)
 
-| Size | Count | Total Cells |
-|------|-------|-------------|
-| 1×4 | 1 | 4 |
-| 1×3 | 2 | 6 |
-| 1×2 | 3 | 6 |
-| 1×1 | 4 | 4 |
-| **Total** | **10** | **20** |
+| Size      | Count  | Total Cells |
+|-----------|--------|-------------|
+| 1×4       | 1      | 4           |
+| 1×3       | 2      | 6           |
+| 1×2       | 3      | 6           |
+| 1×1       | 4      | 4           |
+| **Total** | **10** | **20**      |
 
 ## Status
 
-| Component | Status |
-|-----------|--------|
-| Grid + Ships | ✅ |
-| Single Player (AI) | ✅ |
-| Hit/Miss Markers | ✅ |
-| Win Condition | ✅ |
-| Multiplayer | ⬜ |
-| Visual Polish | ⬜ |
+| Component          | Status |
+|--------------------|--------|
+| Grid + Ships       | ✅      |
+| Single Player (AI) | ✅      |
+| Hit/Miss Markers   | ✅      |
+| Win Condition      | ✅      |
+| Multiplayer        | ⬜      |
+| Visual Polish      | ⬜      |
 
 **Current: v0.3** — Single Player complete
 
 ## Docs
 
-| # | File | Content |
-|---|------|---------|
-| 1 | [1_USER_FLOW.md](1_USER_FLOW.md) | Step-by-step user journey |
-| 2 | [2_ASSETS.md](2_ASSETS.md) | All required assets |
-| 3 | [3_TASKS.md](3_TASKS.md) | Progress tracking |
-| - | [docs/TECH_REFERENCE.md](docs/TECH_REFERENCE.md) | API + Turn-Based docs |
+| # | File                                             | Content                   |
+|---|--------------------------------------------------|---------------------------|
+| 1 | [1_USER_FLOW.md](1_USER_FLOW.md)                 | Step-by-step user journey |
+| 2 | [2_ASSETS.md](2_ASSETS.md)                       | All required assets       |
+| 3 | [3_TASKS.md](3_TASKS.md)                         | Progress tracking         |
+| - | [docs/TECH_REFERENCE.md](docs/TECH_REFERENCE.md) | API + Turn-Based docs     |

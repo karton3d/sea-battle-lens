@@ -10,13 +10,13 @@ Claude Code cannot connect to Snap Lens Studio's MCP server. The health check re
 
 Tested the Lens Studio MCP server directly with curl using different protocol versions:
 
-| Protocol Version | Result |
-|-----------------|--------|
-| `2024-10-07` | Error - Unsupported protocol version |
-| `2024-11-05` | Error - Unsupported protocol version |
-| `2025-03-26` | Error - Unsupported protocol version |
-| `2025-06-18` | **Success** - Server responds with capabilities and 41 tools |
-| `2025-11-25` | Error - Unsupported protocol version |
+| Protocol Version | Result                                                       |
+|------------------|--------------------------------------------------------------|
+| `2024-10-07`     | Error - Unsupported protocol version                         |
+| `2024-11-05`     | Error - Unsupported protocol version                         |
+| `2025-03-26`     | Error - Unsupported protocol version                         |
+| `2025-06-18`     | **Success** - Server responds with capabilities and 41 tools |
+| `2025-11-25`     | Error - Unsupported protocol version                         |
 
 **Test command:**
 ```bash

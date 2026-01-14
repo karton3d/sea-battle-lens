@@ -84,15 +84,15 @@ Or to see sprint status:
 
 ## Key Files
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `bmgd-workflow-status.yaml` | Workflow tracking | Active |
-| `planning-artifacts/codebase-analysis.md` | Code review | Complete |
-| `planning-artifacts/architecture.md` | System design | Complete |
-| `planning-artifacts/gdd.md` | Game design | Complete |
-| `planning-artifacts/test-strategy.md` | Testing approach | DRAFT |
-| `epics.md` | Epic/story definitions | Complete |
-| `implementation-artifacts/sprint-status.yaml` | Sprint tracking | Active |
+| File                                          | Purpose                | Status   |
+|-----------------------------------------------|------------------------|----------|
+| `bmgd-workflow-status.yaml`                   | Workflow tracking      | Active   |
+| `planning-artifacts/codebase-analysis.md`     | Code review            | Complete |
+| `planning-artifacts/architecture.md`          | System design          | Complete |
+| `planning-artifacts/gdd.md`                   | Game design            | Complete |
+| `planning-artifacts/test-strategy.md`         | Testing approach       | DRAFT    |
+| `epics.md`                                    | Epic/story definitions | Complete |
+| `implementation-artifacts/sprint-status.yaml` | Sprint tracking        | Active   |
 
 ### Context Files (READ-ONLY)
 
@@ -110,11 +110,11 @@ These exist in project root - use for context but don't modify:
 
 **Fleet Yeet!** (internal: Meme Fleet Battle) is an AR Battleship game for Snapchat where players hunt meme objects (cows, toilets, etc.) instead of ships.
 
-| Aspect | Status |
-|--------|--------|
-| Single Player | Complete (v0.3) |
-| Multiplayer | Ready for dev (v0.4) |
-| Visual Polish | Not started |
+| Aspect        | Status               |
+|---------------|----------------------|
+| Single Player | Complete (v0.3)      |
+| Multiplayer   | Ready for dev (v0.4) |
+| Visual Polish | Not started          |
 
 **Next Milestone:** v0.4 - Multiplayer with Turn-Based
 
@@ -122,14 +122,14 @@ These exist in project root - use for context but don't modify:
 
 ## Epic Overview
 
-| Epic | Stories | Focus | Status |
-|------|---------|-------|--------|
-| Epic 1: Turn-Based Integration | 4 | Core multiplayer foundation | Backlog |
-| Epic 2: Multiplayer Game Flow | 4 | Game modes and flow | Backlog |
-| Epic 3: State Synchronization | 4 | Data handling | Backlog |
-| Epic 4: UI/UX for Multiplayer | 4 | User interface | Backlog |
-| Epic 5: Testing & Polish | 5 | Quality assurance | Backlog |
-| **Total** | **21 stories** | | |
+| Epic                           | Stories        | Focus                       | Status  |
+|--------------------------------|----------------|-----------------------------|---------|
+| Epic 1: Turn-Based Integration | 4              | Core multiplayer foundation | Backlog |
+| Epic 2: Multiplayer Game Flow  | 4              | Game modes and flow         | Backlog |
+| Epic 3: State Synchronization  | 4              | Data handling               | Backlog |
+| Epic 4: UI/UX for Multiplayer  | 4              | User interface              | Backlog |
+| Epic 5: Testing & Polish       | 5              | Quality assurance           | Backlog |
+| **Total**                      | **21 stories** |                             |         |
 
 ---
 
@@ -147,13 +147,13 @@ See `architecture.md` for recommended interfaces.
 
 ## Commands Reference
 
-| Command | Purpose |
-|---------|---------|
+| Command                                | Purpose                |
+|----------------------------------------|------------------------|
 | `/bmad:bmgd:workflows:workflow-status` | Check current progress |
-| `/bmad:bmgd:workflows:sprint-status` | View sprint status |
-| `/bmad:bmgd:workflows:create-story` | Create next story file |
-| `/bmad:bmgd:workflows:dev-story` | Implement a story |
-| `/bmad:bmgd:workflows:code-review` | Code review |
+| `/bmad:bmgd:workflows:sprint-status`   | View sprint status     |
+| `/bmad:bmgd:workflows:create-story`    | Create next story file |
+| `/bmad:bmgd:workflows:dev-story`       | Implement a story      |
+| `/bmad:bmgd:workflows:code-review`     | Code review            |
 
 ---
 

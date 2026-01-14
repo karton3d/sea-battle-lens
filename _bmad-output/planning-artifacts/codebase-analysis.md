@@ -45,38 +45,39 @@ Well-defined TypeScript types:
 - `GameState`: Complete game state interface
 
 #### Input Properties (lines 58-85)
-| Input | Type | Purpose |
-|-------|------|---------|
-| `gridSize` | number | Grid dimension (default: 10) |
-| `aiDelay` | number | AI turn delay in ms |
-| `playerGridGenerator` | SceneObject | Reference to player's grid |
-| `opponentGridGenerator` | SceneObject | Reference to opponent's grid |
-| `introScreen/setupScreen/gameScreen/gameOverScreen` | SceneObject | UI screens |
-| `statusText/hintText/resultText` | Text | UI text elements |
-| `*Button` | SceneObject | Various button references |
+
+| Input                                               | Type        | Purpose                      |
+|-----------------------------------------------------|-------------|------------------------------|
+| `gridSize`                                          | number      | Grid dimension (default: 10) |
+| `aiDelay`                                           | number      | AI turn delay in ms          |
+| `playerGridGenerator`                               | SceneObject | Reference to player's grid   |
+| `opponentGridGenerator`                             | SceneObject | Reference to opponent's grid |
+| `introScreen/setupScreen/gameScreen/gameOverScreen` | SceneObject | UI screens                   |
+| `statusText/hintText/resultText`                    | Text        | UI text elements             |
+| `*Button`                                           | SceneObject | Various button references    |
 
 #### Key Methods
 
-| Method | Lines | Purpose |
-|--------|-------|---------|
-| `onAwake()` | 96-106 | Initialize state, setup buttons, show intro |
-| `getGridScript()` | 111-121 | Get grid script via component lookup |
-| `initializeState()` | 214-235 | Create fresh game state |
-| `setupButtons()` | 254-302 | Wire up button interactions |
-| `showScreen()` | 307-314 | Screen state management |
-| `startSetup()` | 386-402 | Enter setup phase |
-| `generatePlacements()` | 407-417 | Generate random ship positions |
-| `startGame()` | 552-566 | Enter playing phase |
-| `playerShoot()` | 574-611 | Handle player's shot |
-| `processShot()` | 616-643 | Core shot processing logic |
-| `scheduleAITurn()` | 676-682 | Delay before AI move |
-| `aiTurn()` | 687-723 | AI makes its move |
-| `getAIShot()` | 728-759 | AI shot selection (hunt/target) |
-| `checkWin()` | 841-850 | Win condition check |
-| `endGame()` | 855-867 | Handle game over |
-| `resetGame()` | 872-892 | Reset to initial state |
-| `submitTurn()` | 899-902 | **STUB** - Multiplayer turn submission |
-| `receiveTurn()` | 907-910 | **STUB** - Multiplayer turn receive |
+| Method                 | Lines   | Purpose                                     |
+|------------------------|---------|---------------------------------------------|
+| `onAwake()`            | 96-106  | Initialize state, setup buttons, show intro |
+| `getGridScript()`      | 111-121 | Get grid script via component lookup        |
+| `initializeState()`    | 214-235 | Create fresh game state                     |
+| `setupButtons()`       | 254-302 | Wire up button interactions                 |
+| `showScreen()`         | 307-314 | Screen state management                     |
+| `startSetup()`         | 386-402 | Enter setup phase                           |
+| `generatePlacements()` | 407-417 | Generate random ship positions              |
+| `startGame()`          | 552-566 | Enter playing phase                         |
+| `playerShoot()`        | 574-611 | Handle player's shot                        |
+| `processShot()`        | 616-643 | Core shot processing logic                  |
+| `scheduleAITurn()`     | 676-682 | Delay before AI move                        |
+| `aiTurn()`             | 687-723 | AI makes its move                           |
+| `getAIShot()`          | 728-759 | AI shot selection (hunt/target)             |
+| `checkWin()`           | 841-850 | Win condition check                         |
+| `endGame()`            | 855-867 | Handle game over                            |
+| `resetGame()`          | 872-892 | Reset to initial state                      |
+| `submitTurn()`         | 899-902 | **STUB** - Multiplayer turn submission      |
+| `receiveTurn()`        | 907-910 | **STUB** - Multiplayer turn receive         |
 
 #### Architecture Pattern
 **State Machine** with phases: `intro → setup → playing → gameover`
@@ -98,31 +99,31 @@ Well-defined TypeScript types:
 **Class:** `SeaBattleGrid extends BaseScriptComponent`
 
 #### Input Properties (lines 6-43)
-| Input | Type | Purpose |
-|-------|------|---------|
-| `cellPrefab` | ObjectPrefab | Grid cell visual |
-| `ship1-4Prefab` | ObjectPrefab | Ship visuals by length |
-| `hitMarkerPrefab` | ObjectPrefab | Hit indicator |
-| `missMarkerPrefab` | ObjectPrefab | Miss indicator |
-| `gridSize` | number | Grid dimension |
-| `cellSize/cellSpacing` | number | Visual sizing |
-| `enableCellTapping` | boolean | Enable tap detection |
-| `gameManager` | SceneObject | Reference back to GameManager |
-| `autoGenerate` | boolean | Auto-generate on start |
+| Input                  | Type         | Purpose                       |
+|------------------------|--------------|-------------------------------|
+| `cellPrefab`           | ObjectPrefab | Grid cell visual              |
+| `ship1-4Prefab`        | ObjectPrefab | Ship visuals by length        |
+| `hitMarkerPrefab`      | ObjectPrefab | Hit indicator                 |
+| `missMarkerPrefab`     | ObjectPrefab | Miss indicator                |
+| `gridSize`             | number       | Grid dimension                |
+| `cellSize/cellSpacing` | number       | Visual sizing                 |
+| `enableCellTapping`    | boolean      | Enable tap detection          |
+| `gameManager`          | SceneObject  | Reference back to GameManager |
+| `autoGenerate`         | boolean      | Auto-generate on start        |
 
 #### Key Methods
 
-| Method | Lines | Purpose |
-|--------|-------|---------|
-| `generate()` | 83-99 | Public entry point for grid generation |
-| `show()/hide()` | 107-157 | Visibility control |
-| `generateGrid()` | 185-225 | Create visual grid cells |
-| `placeShip()` | 286-346 | Place single ship at position |
-| `placeShipsRandomly()` | 395-448 | Random placement algorithm |
-| `canPlaceShip()` | 454-501 | Validate placement (bounds, no-touch rule) |
-| `hasShipAt()` | 526-531 | Check if cell has ship |
-| `setCellState()` | 556-571 | Update cell visual (spawn marker) |
-| `resetGame()` | 536-541 | Clear and regenerate |
+| Method                 | Lines   | Purpose                                    |
+|------------------------|---------|--------------------------------------------|
+| `generate()`           | 83-99   | Public entry point for grid generation     |
+| `show()/hide()`        | 107-157 | Visibility control                         |
+| `generateGrid()`       | 185-225 | Create visual grid cells                   |
+| `placeShip()`          | 286-346 | Place single ship at position              |
+| `placeShipsRandomly()` | 395-448 | Random placement algorithm                 |
+| `canPlaceShip()`       | 454-501 | Validate placement (bounds, no-touch rule) |
+| `hasShipAt()`          | 526-531 | Check if cell has ship                     |
+| `setCellState()`       | 556-571 | Update cell visual (spawn marker)          |
+| `resetGame()`          | 536-541 | Clear and regenerate                       |
 
 #### Data Structures
 - `gridCells: SceneObject[]` - All cell objects (flat)
@@ -181,11 +182,11 @@ const gm = this.gameManager.getComponent("Component.ScriptComponent");
 
 Both components track ship positions independently:
 
-| Data | GameManager | SeaBattleGrid |
-|------|-------------|---------------|
-| Ship positions | `state.playerShips[].cells` | `shipGrid[][]` |
-| Grid state | `state.playerGrid[][]` | `gridCells2D[][]` |
-| Hit tracking | `state.playerHits` | via markers |
+| Data           | GameManager                 | SeaBattleGrid     |
+|----------------|-----------------------------|-------------------|
+| Ship positions | `state.playerShips[].cells` | `shipGrid[][]`    |
+| Grid state     | `state.playerGrid[][]`      | `gridCells2D[][]` |
+| Hit tracking   | `state.playerHits`          | via markers       |
 
 **Risk:** State can diverge if not carefully synchronized.
 
@@ -352,26 +353,26 @@ class MultiplayerTurnHandler implements ITurnHandler { ... }
 
 ### High Priority
 
-| Issue | Location | Impact | Remediation |
-|-------|----------|--------|-------------|
-| Duplicate ship state | GameManager + Grid | State divergence risk | Single source of truth |
-| Fragile component lookup | `getGridScript()` | Runtime errors if structure changes | Interface-based design |
-| Type assertions | `(gm as any).onCellTapped` | No compile-time safety | Proper interfaces |
+| Issue                    | Location                   | Impact                              | Remediation            |
+|--------------------------|----------------------------|-------------------------------------|------------------------|
+| Duplicate ship state     | GameManager + Grid         | State divergence risk               | Single source of truth |
+| Fragile component lookup | `getGridScript()`          | Runtime errors if structure changes | Interface-based design |
+| Type assertions          | `(gm as any).onCellTapped` | No compile-time safety              | Proper interfaces      |
 
 ### Medium Priority
 
-| Issue | Location | Impact | Remediation |
-|-------|----------|--------|-------------|
-| Large single file | GameManager (936 lines) | Hard to maintain | Extract services |
-| Magic numbers | `TOTAL_OBJECT_CELLS = 20` | Coupling to ship config | Derive from config |
-| No error boundaries | Throughout | Silent failures | Error handling |
+| Issue               | Location                  | Impact                  | Remediation        |
+|---------------------|---------------------------|-------------------------|--------------------|
+| Large single file   | GameManager (936 lines)   | Hard to maintain        | Extract services   |
+| Magic numbers       | `TOTAL_OBJECT_CELLS = 20` | Coupling to ship config | Derive from config |
+| No error boundaries | Throughout                | Silent failures         | Error handling     |
 
 ### Low Priority
 
-| Issue | Location | Impact | Remediation |
-|-------|----------|--------|-------------|
+| Issue                        | Location   | Impact      | Remediation         |
+|------------------------------|------------|-------------|---------------------|
 | Print statements for logging | Throughout | Performance | Conditional logging |
-| Hardcoded ship configuration | Both files | Inflexible | Config-driven |
+| Hardcoded ship configuration | Both files | Inflexible  | Config-driven       |
 
 ---
 
@@ -384,13 +385,13 @@ class MultiplayerTurnHandler implements ITurnHandler { ... }
 
 ### What CAN Be Tested
 
-| Aspect | Method |
-|--------|--------|
-| Game flow | Manual play-through |
-| AI behavior | Debug mode observation |
-| Ship placement | Visual inspection |
-| State transitions | Console logging |
-| Multiplayer | Turn-Based debug mode |
+| Aspect            | Method                 |
+|-------------------|------------------------|
+| Game flow         | Manual play-through    |
+| AI behavior       | Debug mode observation |
+| Ship placement    | Visual inspection      |
+| State transitions | Console logging        |
+| Multiplayer       | Turn-Based debug mode  |
 
 ### Recommendations
 
@@ -432,10 +433,10 @@ class MultiplayerTurnHandler implements ITurnHandler { ... }
 
 ## Files Reference
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `GameManager.ts` | 936 | Central controller |
-| `GridGenerator.ts` | 628 | Visual grid (class: SeaBattleGrid) |
+| File               | Lines | Purpose                            |
+|--------------------|-------|------------------------------------|
+| `GameManager.ts`   | 936   | Central controller                 |
+| `GridGenerator.ts` | 628   | Visual grid (class: SeaBattleGrid) |
 
 **Context files (read-only):**
 - `0_PROJECT.md` - Project overview

@@ -74,13 +74,13 @@ This GDD documents the **multiplayer expansion (v0.4)**, which adds asynchronous
 
 ### Platform Considerations
 
-| Aspect | Details |
-|--------|---------|
-| **Distribution** | Snapchat Lens ecosystem, discoverable via Lens Explorer |
-| **Performance** | Mobile AR constraints, target 30fps minimum |
-| **Multiplayer** | Turn-Based component (async via Snaps) |
-| **Session Context** | Camera-first, short attention span environment |
-| **Monetization** | N/A (Lens format, no direct monetization) |
+| Aspect              | Details                                                 |
+|---------------------|---------------------------------------------------------|
+| **Distribution**    | Snapchat Lens ecosystem, discoverable via Lens Explorer |
+| **Performance**     | Mobile AR constraints, target 30fps minimum             |
+| **Multiplayer**     | Turn-Based component (async via Snaps)                  |
+| **Session Context** | Camera-first, short attention span environment          |
+| **Monetization**    | N/A (Lens format, no direct monetization)               |
 
 ### Control Scheme
 
@@ -260,11 +260,11 @@ No mechanic unlocks or upgrades - all mechanics available from start. Complexity
 
 #### Control Scheme (Snapchat Lens - Touch)
 
-| Action | Input | Notes |
-|--------|-------|-------|
-| Fire shot | Tap cell | Primary interaction |
-| Navigate menu | Tap button | Standard UI |
-| View grids | Automatic | Both grids visible during play |
+| Action        | Input      | Notes                          |
+|---------------|------------|--------------------------------|
+| Fire shot     | Tap cell   | Primary interaction            |
+| Navigate menu | Tap button | Standard UI                    |
+| View grids    | Automatic  | Both grids visible during play |
 
 #### Input Feel
 
@@ -300,13 +300,13 @@ No mechanic unlocks or upgrades - all mechanics available from start. Complexity
 
 ### Object Types (Ships)
 
-| Object | Size | Count | Total Cells |
-|--------|------|-------|-------------|
-| Battleship | 4 cells | 1 | 4 |
-| Cruiser | 3 cells | 2 | 6 |
-| Destroyer | 2 cells | 3 | 6 |
-| Submarine | 1 cell | 4 | 4 |
-| **Total** | | **10 objects** | **20 cells** |
+| Object     | Size    | Count          | Total Cells  |
+|------------|---------|----------------|--------------|
+| Battleship | 4 cells | 1              | 4            |
+| Cruiser    | 3 cells | 2              | 6            |
+| Destroyer  | 2 cells | 3              | 6            |
+| Submarine  | 1 cell  | 4              | 4            |
+| **Total**  |         | **10 objects** | **20 cells** |
 
 **Object Placement:**
 - Horizontal or vertical orientation (no diagonal)
@@ -457,13 +457,13 @@ Receive Snap → See Opponent's Move → Take Turn → Send Snap → Wait → Re
 
 **Visual Elements:**
 
-| Element | Style | Notes |
-|---------|-------|-------|
-| Grid cells | Simple cubes | Clear, tappable targets |
-| Meme objects | Stylized 3D | Recognizable meme references |
-| Hit marker | Red/orange explosion | Celebratory, satisfying |
-| Miss marker | Blue splash/X | Clear but not punishing |
-| UI | Clean, minimal | Text + simple buttons |
+| Element      | Style                | Notes                        |
+|--------------|----------------------|------------------------------|
+| Grid cells   | Simple cubes         | Clear, tappable targets      |
+| Meme objects | Stylized 3D          | Recognizable meme references |
+| Hit marker   | Red/orange explosion | Celebratory, satisfying      |
+| Miss marker  | Blue splash/X        | Clear but not punishing      |
+| UI           | Clean, minimal       | Text + simple buttons        |
 
 **AR Integration:**
 - Grid floats in camera space
@@ -482,14 +482,14 @@ Receive Snap → See Opponent's Move → Take Turn → Send Snap → Wait → Re
 
 **Sound Effects (Future Polish Phase):**
 
-| Event | Sound | Feel |
-|-------|-------|------|
-| Tap cell | Click/tap | Responsive |
-| Hit | Explosion/impact | Satisfying, celebratory |
-| Miss | Splash/whoosh | Clear but soft |
-| Object destroyed | Victory fanfare | Big moment |
-| Win game | Celebration | Shareable moment |
-| Lose game | Sad trombone (gentle) | Humorous, not punishing |
+| Event            | Sound                 | Feel                    |
+|------------------|-----------------------|-------------------------|
+| Tap cell         | Click/tap             | Responsive              |
+| Hit              | Explosion/impact      | Satisfying, celebratory |
+| Miss             | Splash/whoosh         | Clear but soft          |
+| Object destroyed | Victory fanfare       | Big moment              |
+| Win game         | Celebration           | Shareable moment        |
+| Lose game        | Sad trombone (gentle) | Humorous, not punishing |
 
 *Note: Audio is Phase 13 (Polish) - not required for v0.4 multiplayer*
 
@@ -499,12 +499,12 @@ Receive Snap → See Opponent's Move → Take Turn → Send Snap → Wait → Re
 
 ### Performance Requirements
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Frame rate | 30fps minimum | AR performance floor |
-| Load time | <3 seconds | Lens attention span |
-| Memory | Within Lens limits | ~50MB budget |
-| Battery | Minimal drain | Short sessions help |
+| Metric     | Target             | Notes                |
+|------------|--------------------|----------------------|
+| Frame rate | 30fps minimum      | AR performance floor |
+| Load time  | <3 seconds         | Lens attention span  |
+| Memory     | Within Lens limits | ~50MB budget         |
+| Battery    | Minimal drain      | Short sessions help  |
 
 ### Platform-Specific Details
 
@@ -529,12 +529,12 @@ Receive Snap → See Opponent's Move → Take Turn → Send Snap → Wait → Re
 
 **3D Assets:**
 
-| Asset | Count | Complexity |
-|-------|-------|------------|
-| Grid cell prefab | 1 | Low poly cube |
-| Ship prefabs | 4 | 1x1, 2x1, 3x1, 4x1 |
-| Hit marker | 1 | Simple effect |
-| Miss marker | 1 | Simple effect |
+| Asset            | Count | Complexity         |
+|------------------|-------|--------------------|
+| Grid cell prefab | 1     | Low poly cube      |
+| Ship prefabs     | 4     | 1x1, 2x1, 3x1, 4x1 |
+| Hit marker       | 1     | Simple effect      |
+| Miss marker      | 1     | Simple effect      |
 
 **UI Assets:**
 - Button sprites (4-6)
@@ -603,21 +603,21 @@ Epic 5 (Testing)
 
 ### Technical Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Crash rate | <1% | Lens analytics |
-| Turn sync success | >99% | No lost turns |
-| Load time | <3s | Manual testing |
-| Frame rate | 30fps+ | Performance profiler |
+| Metric            | Target | Measurement          |
+|-------------------|--------|----------------------|
+| Crash rate        | <1%    | Lens analytics       |
+| Turn sync success | >99%   | No lost turns        |
+| Load time         | <3s    | Manual testing       |
+| Frame rate        | 30fps+ | Performance profiler |
 
 ### Gameplay Metrics
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Game completion rate | >80% | Players finish started games |
-| Multiplayer adoption | >30% | Of total plays choose MP |
-| Rematch rate | >20% | Players play again with same friend |
-| Share rate | Track | Screenshot/video shares |
+| Metric               | Target | Notes                               |
+|----------------------|--------|-------------------------------------|
+| Game completion rate | >80%   | Players finish started games        |
+| Multiplayer adoption | >30%   | Of total plays choose MP            |
+| Rematch rate         | >20%   | Players play again with same friend |
+| Share rate           | Track  | Screenshot/video shares             |
 
 ### Qualitative Success
 
@@ -632,18 +632,18 @@ Epic 5 (Testing)
 
 **Not included in v0.4:**
 
-| Feature | Reason |
-|---------|--------|
-| Real-time multiplayer | Platform doesn't support well |
-| Ranked matchmaking | Friends-only focus |
-| Leaderboards | No persistent backend |
-| Custom ship placement | Complexity vs accessibility |
-| Different grid sizes | Scope control |
-| Power-ups/special abilities | Keep it pure Battleship |
-| Chat/messaging | Snap itself is the message |
-| Spectator mode | Not supported by Turn-Based |
-| Tournament mode | Out of scope |
-| Monetization | Lens format limitation |
+| Feature                     | Reason                        |
+|-----------------------------|-------------------------------|
+| Real-time multiplayer       | Platform doesn't support well |
+| Ranked matchmaking          | Friends-only focus            |
+| Leaderboards                | No persistent backend         |
+| Custom ship placement       | Complexity vs accessibility   |
+| Different grid sizes        | Scope control                 |
+| Power-ups/special abilities | Keep it pure Battleship       |
+| Chat/messaging              | Snap itself is the message    |
+| Spectator mode              | Not supported by Turn-Based   |
+| Tournament mode             | Out of scope                  |
+| Monetization                | Lens format limitation        |
 
 **Deferred to future versions:**
 - Visual polish (Phase 9-12)
@@ -665,29 +665,29 @@ Epic 5 (Testing)
 
 ### Dependencies
 
-| Dependency | Type | Risk |
-|------------|------|------|
-| Lens Studio 5.x | Platform | Low - stable |
-| Turn-Based component | Platform | Medium - limited docs |
-| Snapchat app | Distribution | Low - required anyway |
-| TypeScript support | Technical | Low - well supported |
+| Dependency           | Type         | Risk                  |
+|----------------------|--------------|-----------------------|
+| Lens Studio 5.x      | Platform     | Low - stable          |
+| Turn-Based component | Platform     | Medium - limited docs |
+| Snapchat app         | Distribution | Low - required anyway |
+| TypeScript support   | Technical    | Low - well supported  |
 
 ### Risks and Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| Turn-Based API issues | High | Early spike testing, debug mode |
-| State sync bugs | High | Thorough serialization testing |
-| Async UX confusion | Medium | Clear turn indicators, messaging |
-| Performance on low-end | Medium | Optimize assets, test widely |
+| Risk                   | Impact | Mitigation                       |
+|------------------------|--------|----------------------------------|
+| Turn-Based API issues  | High   | Early spike testing, debug mode  |
+| State sync bugs        | High   | Thorough serialization testing   |
+| Async UX confusion     | Medium | Clear turn indicators, messaging |
+| Performance on low-end | Medium | Optimize assets, test widely     |
 
 ---
 
 ## Document History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | 2026-01-13 | Boss | Initial GDD for v0.4 Multiplayer |
+| Version | Date       | Author | Changes                          |
+|---------|------------|--------|----------------------------------|
+| 1.0     | 2026-01-13 | Boss   | Initial GDD for v0.4 Multiplayer |
 
 ---
 

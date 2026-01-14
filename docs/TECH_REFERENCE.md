@@ -62,16 +62,16 @@ Async two-player games via Snaps. Component handles:
 
 ### Inputs
 
-| Input | Type | Purpose |
-|-------|------|---------|
-| requireTurnSubmission | bool | Explicit turn submit |
-| useTurnLimit | bool | Enable turn limit |
-| turnLimitInput | number | Max turns |
-| useTurnHistory | bool | Track history |
-| tappableAreasInput | SceneObject[] | Tappable cells |
-| user1FlowObjectsInputSO | SceneObject[] | Player 1 UI |
-| user2FlowObjectsInputSO | SceneObject[] | Player 2 UI |
-| gameOverObjectsInputSO | SceneObject[] | Game over UI |
+| Input                   | Type          | Purpose              |
+|-------------------------|---------------|----------------------|
+| requireTurnSubmission   | bool          | Explicit turn submit |
+| useTurnLimit            | bool          | Enable turn limit    |
+| turnLimitInput          | number        | Max turns            |
+| useTurnHistory          | bool          | Track history        |
+| tappableAreasInput      | SceneObject[] | Tappable cells       |
+| user1FlowObjectsInputSO | SceneObject[] | Player 1 UI          |
+| user2FlowObjectsInputSO | SceneObject[] | Player 2 UI          |
+| gameOverObjectsInputSO  | SceneObject[] | Game over UI         |
 
 ### Callbacks
 
@@ -116,7 +116,7 @@ interface TurnData {
 
 ## Component Names
 
-| Use | Name |
-|-----|------|
-| Touch/Tap | `"Component.Touch"` |
-| Script | `"Component.ScriptComponent"` |
+| Use       | Name                          |
+|-----------|-------------------------------|
+| Touch/Tap | `"Component.Touch"`           |
+| Script    | `"Component.ScriptComponent"` |

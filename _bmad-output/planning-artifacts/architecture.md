@@ -9,15 +9,15 @@
 
 ## Decision Summary
 
-| Category | Decision | Version | Affects Epics | Rationale |
-|----------|----------|---------|---------------|-----------|
-| **Platform** | Snap Lens Studio | 5.x | All | AR lens distribution, Turn-Based component |
-| **Language** | TypeScript | ES2020 | All | Type safety, Lens Studio native |
-| **Multiplayer** | Turn-Based Component | Built-in | 1,2,3,4 | Async multiplayer via Snaps, no custom networking |
-| **State Sync** | JSON Serialization | Native | 2,3 | Turn data must be serializable for Turn-Based |
-| **AI System** | Hunt/Target Algorithm | Custom | N/A (SP only) | Existing single-player opponent |
-| **Grid System** | 10x10 Square Grid | Fixed | All | Classic Battleship, proven in v0.3 |
-| **Ship Placement** | Random, No-Touch Rule | Custom | 2 | Fair starts, no manual placement |
+| Category           | Decision              | Version  | Affects Epics | Rationale                                         |
+|--------------------|-----------------------|----------|---------------|---------------------------------------------------|
+| **Platform**       | Snap Lens Studio      | 5.x      | All           | AR lens distribution, Turn-Based component        |
+| **Language**       | TypeScript            | ES2020   | All           | Type safety, Lens Studio native                   |
+| **Multiplayer**    | Turn-Based Component  | Built-in | 1,2,3,4       | Async multiplayer via Snaps, no custom networking |
+| **State Sync**     | JSON Serialization    | Native   | 2,3           | Turn data must be serializable for Turn-Based     |
+| **AI System**      | Hunt/Target Algorithm | Custom   | N/A (SP only) | Existing single-player opponent                   |
+| **Grid System**    | 10x10 Square Grid     | Fixed    | All           | Classic Battleship, proven in v0.3                |
+| **Ship Placement** | Random, No-Touch Rule | Custom   | 2             | Fair starts, no manual placement                  |
 
 ---
 
@@ -178,11 +178,11 @@ interface GameState {
 
 #### Public API
 
-| Method | Purpose | Called By |
-|--------|---------|-----------|
+| Method               | Purpose                            | Called By     |
+|----------------------|------------------------------------|---------------|
 | `onCellTapped(x, y)` | Handle cell tap from opponent grid | SeaBattleGrid |
-| `getState()` | Get current game state (debug) | External |
-| `canTapCell(x, y)` | Check if cell can be tapped | External |
+| `getState()`         | Get current game state (debug)     | External      |
+| `canTapCell(x, y)`   | Check if cell can be tapped        | External      |
 
 ---
 
@@ -222,16 +222,16 @@ private isVisible: boolean = false;              // Visibility state
 
 #### Public API
 
-| Method | Purpose | Called By |
-|--------|---------|-----------|
-| `generate()` | Generate grid and place ships | GameManager |
-| `show()` | Show all grid elements | GameManager |
-| `hide()` | Hide all grid elements | GameManager |
-| `hasShipAt(x, y)` | Check ship occupancy | GameManager |
-| `setCellState(x, y, state)` | Update cell visual | GameManager |
-| `resetGame()` | Clear and regenerate | GameManager |
-| `getCellAt(x, y)` | Get cell SceneObject | Internal |
-| `getGridSize()` | Get grid dimension | External |
+| Method                      | Purpose                       | Called By   |
+|-----------------------------|-------------------------------|-------------|
+| `generate()`                | Generate grid and place ships | GameManager |
+| `show()`                    | Show all grid elements        | GameManager |
+| `hide()`                    | Hide all grid elements        | GameManager |
+| `hasShipAt(x, y)`           | Check ship occupancy          | GameManager |
+| `setCellState(x, y, state)` | Update cell visual            | GameManager |
+| `resetGame()`               | Clear and regenerate          | GameManager |
+| `getCellAt(x, y)`           | Get cell SceneObject          | Internal    |
+| `getGridSize()`             | Get grid dimension            | External    |
 
 ---
 
@@ -576,24 +576,24 @@ Scene
 
 ### 8.1 Game Rules
 
-| Parameter | Value | Location |
-|-----------|-------|----------|
-| Grid size | 10x10 | `GameManager.gridSize`, `SeaBattleGrid.gridSize` |
-| Ships | 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 | `placeShipsRandomly()` |
-| Total cells | 20 | `TOTAL_OBJECT_CELLS` |
-| AI delay | 1000ms | `GameManager.aiDelay` |
-| No-touch rule | Enabled | `canPlaceShip()` |
+| Parameter     | Value                        | Location                                         |
+|---------------|------------------------------|--------------------------------------------------|
+| Grid size     | 10x10                        | `GameManager.gridSize`, `SeaBattleGrid.gridSize` |
+| Ships         | 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 | `placeShipsRandomly()`                           |
+| Total cells   | 20                           | `TOTAL_OBJECT_CELLS`                             |
+| AI delay      | 1000ms                       | `GameManager.aiDelay`                            |
+| No-touch rule | Enabled                      | `canPlaceShip()`                                 |
 
 ### 8.2 Grid Settings
 
-| Parameter | Default | Purpose |
-|-----------|---------|---------|
-| `cellSize` | 1.0 | Visual cell dimension |
-| `cellSpacing` | 0.1 | Gap between cells |
-| `shipHeightOffset` | 0.5 | Ship elevation above grid |
-| `useRandomPlacement` | true | Random vs fixed ships |
-| `enableCellTapping` | false/true | Enable tap interaction |
-| `autoGenerate` | false | Auto-generate on start |
+| Parameter            | Default    | Purpose                   |
+|----------------------|------------|---------------------------|
+| `cellSize`           | 1.0        | Visual cell dimension     |
+| `cellSpacing`        | 0.1        | Gap between cells         |
+| `shipHeightOffset`   | 0.5        | Ship elevation above grid |
+| `useRandomPlacement` | true       | Random vs fixed ships     |
+| `enableCellTapping`  | false/true | Enable tap interaction    |
+| `autoGenerate`       | false      | Auto-generate on start    |
 
 ---
 
@@ -601,16 +601,16 @@ Scene
 
 ### 9.1 Manual Test Cases
 
-| Test Case | Steps | Expected |
-|-----------|-------|----------|
-| TC-001: New Game | Open lens → Tap Single Player | Shows setup screen |
-| TC-002: Ship Placement | Start game | 10 ships visible, no overlaps |
-| TC-003: Hit Detection | Tap cell with ship | "HIT!" displayed, marker shown |
-| TC-004: Miss Detection | Tap empty cell | "Miss" displayed, marker shown |
-| TC-005: AI Turn | After player turn | AI shoots within 1 second |
-| TC-006: Win Condition | Hit all 20 cells | "YOU WON!" displayed |
-| TC-007: Lose Condition | AI hits all 20 | "YOU LOST!" displayed |
-| TC-008: Play Again | Tap Play Again | Returns to intro |
+| Test Case              | Steps                         | Expected                       |
+|------------------------|-------------------------------|--------------------------------|
+| TC-001: New Game       | Open lens → Tap Single Player | Shows setup screen             |
+| TC-002: Ship Placement | Start game                    | 10 ships visible, no overlaps  |
+| TC-003: Hit Detection  | Tap cell with ship            | "HIT!" displayed, marker shown |
+| TC-004: Miss Detection | Tap empty cell                | "Miss" displayed, marker shown |
+| TC-005: AI Turn        | After player turn             | AI shoots within 1 second      |
+| TC-006: Win Condition  | Hit all 20 cells              | "YOU WON!" displayed           |
+| TC-007: Lose Condition | AI hits all 20                | "YOU LOST!" displayed          |
+| TC-008: Play Again     | Tap Play Again                | Returns to intro               |
 
 ### 9.2 Debug Tools
 
@@ -624,47 +624,47 @@ Scene
 
 ### 10.1 Lens Studio Limitations
 
-| Constraint | Impact | Mitigation |
-|------------|--------|------------|
-| No unit testing | Can't automate tests | Manual testing, defensive coding |
-| Limited debugging | No breakpoints | Extensive print statements |
-| No async/await (native) | Complex callbacks | DelayedCallbackEvent |
-| Component lookup | No DI framework | Interface-based design |
+| Constraint              | Impact               | Mitigation                       |
+|-------------------------|----------------------|----------------------------------|
+| No unit testing         | Can't automate tests | Manual testing, defensive coding |
+| Limited debugging       | No breakpoints       | Extensive print statements       |
+| No async/await (native) | Complex callbacks    | DelayedCallbackEvent             |
+| Component lookup        | No DI framework      | Interface-based design           |
 
 ### 10.2 Turn-Based Constraints
 
-| Constraint | Impact | Mitigation |
-|------------|--------|------------|
-| Async only | No real-time play | Design for turn-based |
-| JSON serialization | State must be serializable | Keep state simple |
-| No direct networking | Can't bypass Snap | Use Turn-Based as designed |
+| Constraint           | Impact                     | Mitigation                 |
+|----------------------|----------------------------|----------------------------|
+| Async only           | No real-time play          | Design for turn-based      |
+| JSON serialization   | State must be serializable | Keep state simple          |
+| No direct networking | Can't bypass Snap          | Use Turn-Based as designed |
 
 ---
 
 ## 11. Glossary
 
-| Term | Definition |
-|------|------------|
-| **Cell** | One square on the 10x10 grid |
-| **Ship/Object** | A meme object occupying 1-4 cells |
-| **Hit** | Shot lands on cell with ship |
-| **Miss** | Shot lands on empty cell |
-| **Hunt mode** | AI shoots randomly to find ships |
-| **Target mode** | AI shoots adjacent cells after a hit |
-| **Turn-Based** | Lens Studio component for async multiplayer |
-| **SceneObject** | Lens Studio's game object equivalent |
+| Term            | Definition                                  |
+|-----------------|---------------------------------------------|
+| **Cell**        | One square on the 10x10 grid                |
+| **Ship/Object** | A meme object occupying 1-4 cells           |
+| **Hit**         | Shot lands on cell with ship                |
+| **Miss**        | Shot lands on empty cell                    |
+| **Hunt mode**   | AI shoots randomly to find ships            |
+| **Target mode** | AI shoots adjacent cells after a hit        |
+| **Turn-Based**  | Lens Studio component for async multiplayer |
+| **SceneObject** | Lens Studio's game object equivalent        |
 
 ---
 
 ## 12. Epic to Architecture Mapping
 
-| Epic | Components Affected | Key Patterns | Notes |
-|------|---------------------|--------------|-------|
-| **Epic 1: Turn-Based Integration** | TurnBasedManager (new), GameManager | ITurnHandler interface | Core multiplayer foundation |
-| **Epic 2: Multiplayer Game Flow** | GameManager, IntroScreen, GameOverScreen | State machine extension | Mode selection, turn indicators |
-| **Epic 3: State Synchronization** | TurnBasedManager, TurnData schema | JSON serialization | Ship positions, shot results |
-| **Epic 4: UI/UX for Multiplayer** | All screen components | Screen state pattern | Waiting states, opponent feedback |
-| **Epic 5: Testing & Polish** | All components | Debug logging pattern | Two-device validation |
+| Epic                               | Components Affected                      | Key Patterns            | Notes                             |
+|------------------------------------|------------------------------------------|-------------------------|-----------------------------------|
+| **Epic 1: Turn-Based Integration** | TurnBasedManager (new), GameManager      | ITurnHandler interface  | Core multiplayer foundation       |
+| **Epic 2: Multiplayer Game Flow**  | GameManager, IntroScreen, GameOverScreen | State machine extension | Mode selection, turn indicators   |
+| **Epic 3: State Synchronization**  | TurnBasedManager, TurnData schema        | JSON serialization      | Ship positions, shot results      |
+| **Epic 4: UI/UX for Multiplayer**  | All screen components                    | Screen state pattern    | Waiting states, opponent feedback |
+| **Epic 5: Testing & Polish**       | All components                           | Debug logging pattern   | Two-device validation             |
 
 ---
 
@@ -759,16 +759,16 @@ setTimeout(() => this.executeAITurn(), 1000);
 
 ### 14.1 Naming Conventions
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| **Files** | PascalCase.ts | `GameManager.ts`, `TurnBasedManager.ts` |
-| **Classes** | PascalCase | `SeaBattleGrid`, `TurnBasedManager` |
-| **Interfaces** | IPascalCase | `ITurnHandler`, `IGridController` |
-| **Methods** | camelCase | `playerShoot()`, `onCellTapped()` |
-| **Private fields** | camelCase (no prefix) | `gridCells`, `turnHandler` |
-| **Constants** | SCREAMING_SNAKE | `TOTAL_OBJECT_CELLS`, `GRID_SIZE` |
-| **@input props** | camelCase | `@input playerGrid: SceneObject` |
-| **Events** | onEventName | `onCellTapped`, `onTurnReceived` |
+| Element            | Convention            | Example                                 |
+|--------------------|-----------------------|-----------------------------------------|
+| **Files**          | PascalCase.ts         | `GameManager.ts`, `TurnBasedManager.ts` |
+| **Classes**        | PascalCase            | `SeaBattleGrid`, `TurnBasedManager`     |
+| **Interfaces**     | IPascalCase           | `ITurnHandler`, `IGridController`       |
+| **Methods**        | camelCase             | `playerShoot()`, `onCellTapped()`       |
+| **Private fields** | camelCase (no prefix) | `gridCells`, `turnHandler`              |
+| **Constants**      | SCREAMING_SNAKE       | `TOTAL_OBJECT_CELLS`, `GRID_SIZE`       |
+| **@input props**   | camelCase             | `@input playerGrid: SceneObject`        |
+| **Events**         | onEventName           | `onCellTapped`, `onTurnReceived`        |
 
 ### 14.2 Code Organization
 
@@ -845,10 +845,10 @@ print('[TURN] Submitting turn: ' + JSON.stringify(turnData));
 
 ## 15. Document History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-01-13 | Initial architecture document (v0.3 single player) |
-| 1.1 | 2026-01-13 | Added Decision Summary, Epic Mapping, Implementation Patterns, Consistency Rules for v0.4 multiplayer |
+| Version | Date       | Changes                                                                                               |
+|---------|------------|-------------------------------------------------------------------------------------------------------|
+| 1.0     | 2026-01-13 | Initial architecture document (v0.3 single player)                                                    |
+| 1.1     | 2026-01-13 | Added Decision Summary, Epic Mapping, Implementation Patterns, Consistency Rules for v0.4 multiplayer |
 
 ---
 

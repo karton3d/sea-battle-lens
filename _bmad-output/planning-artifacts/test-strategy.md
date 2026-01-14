@@ -17,13 +17,13 @@
 
 ### 1.1 Lens Studio Limitations
 
-| Constraint | Impact | Source |
-|------------|--------|--------|
-| No unit test framework | Cannot write automated unit tests | Platform limitation |
-| No mocking support | Cannot isolate components | Platform limitation |
-| Limited debugging | No breakpoints, print-based only | [Debugging Guide](https://developers.snap.com/lens-studio/4.55.1/references/guides/lens-features/adding-interactivity/debugging) |
-| On-device testing required | Some bugs only appear on device | [QA Troubleshooting](https://developers.snap.com/lens-studio/publishing/optimization/lens-qa-troubleshooting) |
-| Snap's automated tests | Run on submission, not during dev | Platform limitation |
+| Constraint                 | Impact                            | Source                                                                                                                           |
+|----------------------------|-----------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| No unit test framework     | Cannot write automated unit tests | Platform limitation                                                                                                              |
+| No mocking support         | Cannot isolate components         | Platform limitation                                                                                                              |
+| Limited debugging          | No breakpoints, print-based only  | [Debugging Guide](https://developers.snap.com/lens-studio/4.55.1/references/guides/lens-features/adding-interactivity/debugging) |
+| On-device testing required | Some bugs only appear on device   | [QA Troubleshooting](https://developers.snap.com/lens-studio/publishing/optimization/lens-qa-troubleshooting)                    |
+| Snap's automated tests     | Run on submission, not during dev | Platform limitation                                                                                                              |
 
 ### 1.2 What Snap Tests Automatically
 
@@ -104,13 +104,13 @@ Reference: [Debugging Guide](https://developers.snap.com/lens-studio/features/sc
 
 Built into Turn-Based component for multiplayer testing:
 
-| Setting | Purpose |
-|---------|---------|
-| `debugMode` | Enable debug features |
-| `swapPlayersAfterSimulatedTurn` | Single-device MP testing |
-| `debugTappedKeySimulateTurn` | Keyboard trigger for turns |
-| `printLogsInput` | Verbose logging |
-| `showDebugView` | Visual debug overlay |
+| Setting                         | Purpose                    |
+|---------------------------------|----------------------------|
+| `debugMode`                     | Enable debug features      |
+| `swapPlayersAfterSimulatedTurn` | Single-device MP testing   |
+| `debugTappedKeySimulateTurn`    | Keyboard trigger for turns |
+| `printLogsInput`                | Verbose logging            |
+| `showDebugView`                 | Visual debug overlay       |
 
 ---
 
@@ -118,43 +118,43 @@ Built into Turn-Based component for multiplayer testing:
 
 ### 3.1 Test Case Matrix
 
-| ID | Category | Test Case | Steps | Expected Result | Priority |
-|----|----------|-----------|-------|-----------------|----------|
-| **INIT** |
-| TC-001 | Init | Fresh start | Open lens | Intro screen displayed | P0 |
-| TC-002 | Init | Single Player select | Tap "Single Player" | Setup screen, player grid visible | P0 |
-| TC-003 | Init | Multiplayer select | Tap "Multiplayer" | Setup screen (MP flow) | P1 |
-| **SETUP** |
-| TC-010 | Setup | Ship placement | Start game | 10 ships placed, no overlaps | P0 |
-| TC-011 | Setup | No-touch rule | Inspect ships | Ships don't touch (even diagonal) | P0 |
-| TC-012 | Setup | Grid visibility | Setup phase | Only player grid visible | P1 |
-| **GAMEPLAY** |
-| TC-020 | Shoot | Hit detection | Tap cell with ship | "HIT!" message, hit marker | P0 |
-| TC-021 | Shoot | Miss detection | Tap empty cell | "Miss" message, miss marker | P0 |
-| TC-022 | Shoot | Double-tap prevention | Tap same cell twice | "Already shot here!" message | P0 |
-| TC-023 | Shoot | Turn switch | After shot | Switches to AI turn | P0 |
-| **AI** |
-| TC-030 | AI | AI shoots | After player turn | AI shoots within delay time | P0 |
-| TC-031 | AI | AI valid shot | AI turn | AI only shoots unknown cells | P0 |
-| TC-032 | AI | Hunt mode | AI playing | Random shots until hit | P1 |
-| TC-033 | AI | Target mode | After AI hit | AI shoots adjacent cells | P1 |
-| **WIN/LOSE** |
-| TC-040 | End | Player wins | Hit all 20 cells | "YOU WON!" screen | P0 |
-| TC-041 | End | Player loses | AI hits all 20 | "YOU LOST!" screen | P0 |
-| TC-042 | End | Play again | Tap "Play Again" | Returns to intro | P0 |
+| ID              | Category | Test Case             | Steps               | Expected Result                   | Priority |
+|-----------------|----------|-----------------------|---------------------|-----------------------------------|----------|
+| **INIT**        |
+| TC-001          | Init     | Fresh start           | Open lens           | Intro screen displayed            | P0       |
+| TC-002          | Init     | Single Player select  | Tap "Single Player" | Setup screen, player grid visible | P0       |
+| TC-003          | Init     | Multiplayer select    | Tap "Multiplayer"   | Setup screen (MP flow)            | P1       |
+| **SETUP**       |
+| TC-010          | Setup    | Ship placement        | Start game          | 10 ships placed, no overlaps      | P0       |
+| TC-011          | Setup    | No-touch rule         | Inspect ships       | Ships don't touch (even diagonal) | P0       |
+| TC-012          | Setup    | Grid visibility       | Setup phase         | Only player grid visible          | P1       |
+| **GAMEPLAY**    |
+| TC-020          | Shoot    | Hit detection         | Tap cell with ship  | "HIT!" message, hit marker        | P0       |
+| TC-021          | Shoot    | Miss detection        | Tap empty cell      | "Miss" message, miss marker       | P0       |
+| TC-022          | Shoot    | Double-tap prevention | Tap same cell twice | "Already shot here!" message      | P0       |
+| TC-023          | Shoot    | Turn switch           | After shot          | Switches to AI turn               | P0       |
+| **AI**          |
+| TC-030          | AI       | AI shoots             | After player turn   | AI shoots within delay time       | P0       |
+| TC-031          | AI       | AI valid shot         | AI turn             | AI only shoots unknown cells      | P0       |
+| TC-032          | AI       | Hunt mode             | AI playing          | Random shots until hit            | P1       |
+| TC-033          | AI       | Target mode           | After AI hit        | AI shoots adjacent cells          | P1       |
+| **WIN/LOSE**    |
+| TC-040          | End      | Player wins           | Hit all 20 cells    | "YOU WON!" screen                 | P0       |
+| TC-041          | End      | Player loses          | AI hits all 20      | "YOU LOST!" screen                | P0       |
+| TC-042          | End      | Play again            | Tap "Play Again"    | Returns to intro                  | P0       |
 | **MULTIPLAYER** |
-| TC-050 | MP | Turn submission | Complete turn | Turn data sent via Snap | P0 |
-| TC-051 | MP | Turn receive | Opponent's turn | Opponent's shot processed | P0 |
-| TC-052 | MP | State sync | Multiple turns | Game state consistent | P0 |
+| TC-050          | MP       | Turn submission       | Complete turn       | Turn data sent via Snap           | P0       |
+| TC-051          | MP       | Turn receive          | Opponent's turn     | Opponent's shot processed         | P0       |
+| TC-052          | MP       | State sync            | Multiple turns      | Game state consistent             | P0       |
 
 ### 3.2 Device Testing Matrix
 
-| Device Type | Test Focus | Notes |
-|-------------|------------|-------|
-| Lens Studio Preview | Quick iteration | Cannot test Turn-Based connection |
-| iOS Device | Full testing | Primary target |
-| Android Device | Compatibility | Secondary target |
-| Spectacles (if applicable) | AR experience | Limited debugging |
+| Device Type                | Test Focus      | Notes                             |
+|----------------------------|-----------------|-----------------------------------|
+| Lens Studio Preview        | Quick iteration | Cannot test Turn-Based connection |
+| iOS Device                 | Full testing    | Primary target                    |
+| Android Device             | Compatibility   | Secondary target                  |
+| Spectacles (if applicable) | AR experience   | Limited debugging                 |
 
 ---
 
@@ -194,12 +194,12 @@ Lens Studio 5.16+ includes a built-in MCP server that allows external tools to i
 
 ### 4.3 Available MCP Tools
 
-| Tool | Purpose | Testing Use |
-|------|---------|-------------|
-| `GetLensStudioSceneGraph` | Get scene structure | Verify scene setup |
-| `ListSceneObjects` | List all objects | Check object creation |
-| `SetProperty` | Modify properties | Simulate inputs |
-| `SetLensStudioProperty` | Set lens properties | Configure test state |
+| Tool                      | Purpose             | Testing Use           |
+|---------------------------|---------------------|-----------------------|
+| `GetLensStudioSceneGraph` | Get scene structure | Verify scene setup    |
+| `ListSceneObjects`        | List all objects    | Check object creation |
+| `SetProperty`             | Modify properties   | Simulate inputs       |
+| `SetLensStudioProperty`   | Set lens properties | Configure test state  |
 
 ### 4.4 Proposed Testing Workflow
 
@@ -287,29 +287,29 @@ logTestEvent('GAME_STATE', { phase: 'playing', turn: 'player', hits: 5 });
 
 > **VALIDATED:** 2026-01-13 - MCP approach confirmed working via Claude Code integration.
 
-| Task | Description | Status |
-|------|-------------|--------|
-| [x] | Verify MCP server starts correctly | DONE |
-| [x] | Test MCP connection from external script | DONE |
-| [x] | List available MCP tools | DONE (41 tools) |
-| [x] | Test `GetLensStudioSceneGraph` output | DONE |
-| [x] | Test log collection via MCP | DONE |
-| [x] | Verify script `print()` captured in logs | DONE |
-| [x] | Test TypeScript compilation via MCP | DONE |
-| [-] | Create minimal test script POC | N/A (use Claude Code directly) |
+| Task | Description                              | Status                         |
+|------|------------------------------------------|--------------------------------|
+| [x]  | Verify MCP server starts correctly       | DONE                           |
+| [x]  | Test MCP connection from external script | DONE                           |
+| [x]  | List available MCP tools                 | DONE (41 tools)                |
+| [x]  | Test `GetLensStudioSceneGraph` output    | DONE                           |
+| [x]  | Test log collection via MCP              | DONE                           |
+| [x]  | Verify script `print()` captured in logs | DONE                           |
+| [x]  | Test TypeScript compilation via MCP      | DONE                           |
+| [-]  | Create minimal test script POC           | N/A (use Claude Code directly) |
 
 ### 4.8 Validated MCP Tools for Testing
 
 The following MCP tools have been validated for automated testing:
 
-| Tool | Purpose | Validated Output |
-|------|---------|------------------|
-| `GetLensStudioSceneGraph` | Query scene hierarchy | Returns full tree with UUIDs, names, enabled states |
-| `GetLensStudioLogsTool` | Read logs with filters | Captures script `print()` statements with file/line info |
-| `RunAndCollectLogsTool` | Reset preview + collect logs | Resets lens, runs, collects runtime output |
-| `CompileWithLogsTool` | TypeScript compilation | Returns status and duration |
-| `GetLensStudioSceneObjectByName` | Find objects by name | Returns object details including components |
-| `SetLensStudioProperty` | Modify properties | Can manipulate scene state for testing |
+| Tool                             | Purpose                      | Validated Output                                         |
+|----------------------------------|------------------------------|----------------------------------------------------------|
+| `GetLensStudioSceneGraph`        | Query scene hierarchy        | Returns full tree with UUIDs, names, enabled states      |
+| `GetLensStudioLogsTool`          | Read logs with filters       | Captures script `print()` statements with file/line info |
+| `RunAndCollectLogsTool`          | Reset preview + collect logs | Resets lens, runs, collects runtime output               |
+| `CompileWithLogsTool`            | TypeScript compilation       | Returns status and duration                              |
+| `GetLensStudioSceneObjectByName` | Find objects by name         | Returns object details including components              |
+| `SetLensStudioProperty`          | Modify properties            | Can manipulate scene state for testing                   |
 
 ### 4.9 Protocol Compatibility Note
 
@@ -349,35 +349,35 @@ This enables verification of game state transitions during automated tests.
 
 ### 5.1 Phase 0: Foundation Validation (Current)
 
-| Test Focus | Method | Coverage |
-|------------|--------|----------|
-| Code review | Static analysis | Architecture |
-| Manual play | Lens Studio preview | Single Player |
-| Console logging | Print statements | State transitions |
+| Test Focus      | Method              | Coverage          |
+|-----------------|---------------------|-------------------|
+| Code review     | Static analysis     | Architecture      |
+| Manual play     | Lens Studio preview | Single Player     |
+| Console logging | Print statements    | State transitions |
 
 ### 5.2 Phase 1: Pre-Multiplayer
 
-| Test Focus | Method | Coverage |
-|------------|--------|----------|
+| Test Focus          | Method           | Coverage           |
+|---------------------|------------------|--------------------|
 | State serialization | Manual + logging | JSON export/import |
-| Turn data format | Unit-style tests | Data structure |
-| Edge cases | Manual testing | Error handling |
+| Turn data format    | Unit-style tests | Data structure     |
+| Edge cases          | Manual testing   | Error handling     |
 
 ### 5.3 Phase 2: Multiplayer Development
 
-| Test Focus | Method | Coverage |
-|------------|--------|----------|
-| Turn-Based integration | Debug mode | Connection |
-| State sync | Two-device test | Data consistency |
-| Error recovery | Disconnect tests | Resilience |
+| Test Focus             | Method           | Coverage         |
+|------------------------|------------------|------------------|
+| Turn-Based integration | Debug mode       | Connection       |
+| State sync             | Two-device test  | Data consistency |
+| Error recovery         | Disconnect tests | Resilience       |
 
 ### 5.4 Phase 3: Pre-Release
 
-| Test Focus | Method | Coverage |
-|------------|--------|----------|
-| Full game flow | Manual playthrough | End-to-end |
-| Device matrix | Multi-device | Compatibility |
-| Performance | Profiling | Optimization |
+| Test Focus     | Method             | Coverage      |
+|----------------|--------------------|---------------|
+| Full game flow | Manual playthrough | End-to-end    |
+| Device matrix  | Multi-device       | Compatibility |
+| Performance    | Profiling          | Optimization  |
 
 ---
 
@@ -492,10 +492,10 @@ function emitTestEvent(event: string, data: any) {
 
 ## 9. Document History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 0.1 DRAFT | 2026-01-13 | Initial draft - MCP approach needs validation |
-| 1.0 | 2026-01-13 | MCP approach validated - proxy solution works, tools verified |
+| Version   | Date       | Changes                                                       |
+|-----------|------------|---------------------------------------------------------------|
+| 0.1 DRAFT | 2026-01-13 | Initial draft - MCP approach needs validation                 |
+| 1.0       | 2026-01-13 | MCP approach validated - proxy solution works, tools verified |
 
 ---
 

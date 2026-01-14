@@ -410,14 +410,14 @@
 
 ## Summary
 
-| Epic | Stories | Focus |
-|------|---------|-------|
-| Epic 1: Turn-Based Integration | 4 | Core multiplayer foundation |
-| Epic 2: Multiplayer Game Flow | 4 | Game modes and flow |
-| Epic 3: State Synchronization | 4 | Data handling |
-| Epic 4: UI/UX for Multiplayer | 4 | User interface |
-| Epic 5: Testing & Polish | 5 | Quality assurance |
-| **Total** | **21 stories** | |
+| Epic                           | Stories        | Focus                       |
+|--------------------------------|----------------|-----------------------------|
+| Epic 1: Turn-Based Integration | 4              | Core multiplayer foundation |
+| Epic 2: Multiplayer Game Flow  | 4              | Game modes and flow         |
+| Epic 3: State Synchronization  | 4              | Data handling               |
+| Epic 4: UI/UX for Multiplayer  | 4              | User interface              |
+| Epic 5: Testing & Polish       | 5              | Quality assurance           |
+| **Total**                      | **21 stories** |                             |
 
 ---
 
