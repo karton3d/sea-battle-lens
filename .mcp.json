@@ -5,7 +5,7 @@
         "Authorization": "Bearer YsMbQhHSMcAYmXmFQLdWRIoeQ3iVrmwyNXaXfBiZhSEFWTfCGJxwt2OtdqwRHwZ3"
       },
       "type": "http",
-      "url": "http://localhost:50050/mcp"
+      "url": "http://localhost:50049/mcp"
     }
   }
 }
