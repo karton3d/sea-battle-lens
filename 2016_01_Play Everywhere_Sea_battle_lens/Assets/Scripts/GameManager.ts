@@ -88,7 +88,13 @@ export class GameManager extends BaseScriptComponent {
 
     // ==================== GAMEOVER BUTTONS ====================
     @input playAgainButton: SceneObject = null;
-    
+
+    // ==================== SCENE HANDLE ANIMATION ====================
+    /** Scene handle that moves view between player/opponent grids */
+    @input sceneHandle: SceneObject = null;
+    /** Animation duration in seconds */
+    @input handleAnimDuration: number = 0.5;
+
     // Game state
     private state: GameState;
     
@@ -668,6 +674,7 @@ export class GameManager extends BaseScriptComponent {
         this.updateStatus("Your turn");
         this.updateHint("Tap opponent's cell to shoot");
         this.updateResult("");
+        this.animateSceneHandle(true); // Move to show opponent grid
         
         print("GameManager: Game started!");
     }
@@ -707,6 +714,7 @@ export class GameManager extends BaseScriptComponent {
         this.state.turn = 'opponent';
         this.updateStatus("Opponent's turn");
         this.updateHint("Waiting...");
+        this.animateSceneHandle(false); // Move to show player grid
         
         // AI opponent
         if (this.state.mode === 'single') {
@@ -774,7 +782,36 @@ export class GameManager extends BaseScriptComponent {
         }
         return null;
     }
-    
+
+    // ==================== SCENE HANDLE ANIMATION ====================
+
+    /**
+     * Animate scene handle to shift view between grids
+     * @param toPlayerTurn true = player's turn (show opponent grid), false = opponent's turn (show player grid)
+     */
+    private animateSceneHandle(toPlayerTurn: boolean): void {
+        if (!this.sceneHandle) return;
+
+        const transform = this.sceneHandle.getTransform();
+        const currentPos = transform.getLocalPosition();
+        const targetX = toPlayerTurn ? -300 : 0;
+
+        const start = { x: currentPos.x };
+        const end = { x: targetX };
+
+        const TWEEN = (global as any).TWEEN;
+        new TWEEN.Tween(start)
+            .to(end, this.handleAnimDuration * 1000)
+            .easing(TWEEN.Easing.Sinusoidal.InOut)
+            .onUpdate(() => {
+                transform.setLocalPosition(new vec3(start.x, currentPos.y, currentPos.z));
+            })
+            .onComplete(() => {
+                print(`[GameManager] Scene handle animation complete: x=${targetX}`);
+            })
+            .start();
+    }
+
     // ==================== AI OPPONENT ====================
     
     /**
@@ -827,8 +864,9 @@ export class GameManager extends BaseScriptComponent {
         this.state.turn = 'player';
         this.updateStatus("Your turn");
         this.updateHint("Tap opponent's cell to shoot");
+        this.animateSceneHandle(true); // Move to show opponent grid
     }
-    
+
     /**
      * Get AI's shot (smart hunt/target mode)
      */

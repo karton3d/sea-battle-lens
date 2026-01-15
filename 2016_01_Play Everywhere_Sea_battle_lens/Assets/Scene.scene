@@ -1,6 +1,7 @@
 - !<Scene/0a1ccb1a-fe88-4fbb-9883-e3af3c75fd99>
   PackagePath: ""
   objects:
+    - !<own> 28990d4e-1b19-464c-9134-d3a2106e0ef5
     - !<own> 00000000-0000-0065-0000-000000000064
     - !<own> bfbf0c9c-5b78-4ef0-ac38-9617c633f5e6
     - !<own> 57c2db50-a721-4ed9-8098-02ffa9db0ae3
@@ -192,6 +193,22 @@
   DecayType: None
   DecayLimit: false
   DecayRange: 40.000000
+- !<ScriptComponent/023d4307-f0d2-4fc7-9a3f-a4f00c7390f4>
+  PrefabRemaps:
+    []
+  Name: TweenManager
+  Enabled: true
+  ScriptAsset: !<reference> cfcc380a-8b01-448d-bdba-2e56f3970662
+  ScriptInputsDefault:
+    printDebugLog: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      printDebugLog: false
+  ScriptTypes:
+    "":
+      {}
 - !<ScreenTransform/02572ca2-8e53-42a5-b82b-e090722c4237>
   PrefabRemaps:
     []
@@ -694,6 +711,55 @@
   Components:
     - !<own> 812c1751-f808-4349-88c2-aa8aa01ccc41
     - !<own> 993e9dc3-1447-4530-8812-c936e230d0de
+- !<SceneObject/28990d4e-1b19-464c-9134-d3a2106e0ef5>
+  PrefabRemaps:
+    - 023d4307-f0d2-4fc7-9a3f-a4f00c7390f4: 6dac3a40-d844-4423-59b9-6dd249a37cf6
+    - 091aa38f-a9fa-41ee-b128-1c12fc868bc7: f68d849b-9701-482d-57dc-0a30683c06f2
+    - 0d9e391b-f550-48ac-b005-2188d04affb2: 8529b7b4-4cbc-4d15-4229-c5125c99af79
+    - 109c5c04-0ca0-4601-a2fd-9a55914cc940: 6dd964a2-61cb-4464-40ae-784e05f5fc7e
+    - 214f2ee8-d031-44d4-99c1-a178932a1d21: ca251a33-b7bc-44c1-4b65-b5e5a856ba57
+    - 2486b3cc-5dc3-46a2-805f-b9665f703a0e: ccdeb713-07cb-4987-602f-597c7bdff167
+    - 28990d4e-1b19-464c-9134-d3a2106e0ef5: d2d72dee-6f58-45f4-591f-e359b369d6aa
+    - 38f18209-42ec-4b44-a8f8-e9e53bab98e2: 00324912-21bd-4265-4204-e079908151d6
+    - 3e6725dd-a38b-4cec-921f-358a5977af14: 39dbde2a-891c-44a2-70f0-3b83e2c4b58b
+    - 4c56d144-353d-4b61-8db1-50db1ca0bac9: 6701b74a-4fe1-40e5-68f6-376eba819ce8
+    - 5df6e521-e8d6-4503-a705-863e8319886d: ca0a5d46-52e4-4813-687f-06eb20cf4f92
+    - 66268f47-2df4-4c07-b0b1-5dfb0d307c0d: 3283b9ec-bbb2-4911-70a7-bcf90f00fb91
+    - 690ab29e-96a7-43a6-ab8c-e0645e32c032: aedae563-2021-4246-6272-aa1378cac6f5
+    - 6ab6fff9-d9a6-4edb-8cfa-ccdecd559907: cdd09162-8aba-4905-7ea4-5c87f3c658a0
+    - 6bfa7abb-1ea1-4079-abd1-9e5362a84453: e762c154-2cd8-449c-7e3b-6285908fca90
+    - 6da85d1b-7fd4-4c40-bd73-177e34a49f85: 0898e00c-d49d-414c-7c19-ddc7d4e37fb1
+    - 7c1ef519-755b-485e-99fc-ef9542b9be84: b3630543-8127-4dc5-7921-e9e594437551
+    - 7c4ca0a8-c279-48d3-abfb-2462051cd52e: 521900d6-87b0-474d-5159-ea4364886db1
+    - 86eb7991-10e8-4c49-99ac-3ee38898c5c0: 39fbadd9-9acb-4c5c-749a-c1ee8dc725df
+    - 8a24a4fd-c880-4851-a730-62ac875ef87e: 548d04c1-23bb-4769-40eb-a69a1aa298c8
+    - 92b2b78e-f03b-41b4-93c1-276b396e6252: d65a0a7c-c7c3-4cc8-6ae9-2b21907adb38
+    - 9dd28b6b-3d73-4a6b-b1d6-f4d84f6e58ee: 267c8f62-893f-46b7-4d1f-3e3ac48d6736
+    - ab62994c-211b-4803-9353-fb721622d39f: b0802990-d992-4374-5898-976a42c77241
+    - b16ee205-21f8-4d17-9766-91e834371560: e1d457ba-9bd7-44da-5d28-1dc831b52f4d
+    - b3273a37-a302-4ac1-b58c-17be841fbb31: a41fd042-f517-444f-6f06-b6bf894f01ca
+    - b71a32be-a1d0-4547-bb29-795a8e16a2ea: 08e91271-15a0-45a5-5518-cb63162ca844
+    - d1edc4a3-c7fb-435d-9af5-e0b9ae7fad13: 12bf7edf-5d38-4a9c-6102-9d57b6a36f3a
+    - d57d6a54-3f2c-4b36-bb3c-827b989c81cf: 0c449851-8998-4872-59da-a79047d904f5
+    - d5f5d0c9-5a45-46fe-91e9-b331fb0ad2ca: d21dee6e-f68d-43ac-6a33-c4103223c0ed
+    - e0d67316-5891-4f22-9319-259efdf22414: be0441db-ffe1-4af3-4a2c-b63a1783bf4c
+    - e2d66f77-1bd6-44b6-a3bb-8a1572e0b753: 260c52f5-4208-4079-687e-68f8980432cf
+    - f188fa9a-bfad-46b8-aaa7-429d53beddeb: e050c1b3-3367-4cce-4206-457bf977981b
+    - f565e2d6-3694-4412-95ba-b1508507f2f8: 6cf437d1-49af-4817-7aee-00d66cba5f5d
+    - fa54018b-2d08-4596-b88c-b9b822a5039e: 0754e985-7146-4e5d-5021-580a4ada8f8d
+  Name: TweenManager
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> b71a32be-a1d0-4547-bb29-795a8e16a2ea
+    - !<own> 023d4307-f0d2-4fc7-9a3f-a4f00c7390f4
 - !<SceneObject/2a3a2204-9a16-445b-8632-689f863f4524>
   PrefabRemaps:
     - 2a3a2204-9a16-445b-8632-689f863f4524: cbf087e9-91ad-481f-6690-f28264bcfb9c
@@ -2058,6 +2124,7 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
+    handleAnimDuration: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -2082,6 +2149,8 @@
       startButton: !<reference.SceneObject> ae3a7a66-ad78-45f7-b2cc-2bb7827d4e58
       reshuffleButton: !<reference.SceneObject> a5d92e2e-014f-4188-a260-20ab056c8884
       playAgainButton: !<reference.SceneObject> 0608ea05-e637-444e-b01e-82251b902bd8
+      sceneHandle: !<reference.SceneObject> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
+      handleAnimDuration: 0.500000
   ScriptTypes:
     "":
       {}
@@ -2909,6 +2978,22 @@
   Components:
     - !<own> a90be38a-4713-4733-8c7c-8f4d34bfa6e1
     - !<own> d0e63be3-5188-46f8-bbc1-8e35a9e7cd58
+- !<ScriptComponent/b71a32be-a1d0-4547-bb29-795a8e16a2ea>
+  PrefabRemaps:
+    []
+  Name: Tween
+  Enabled: true
+  ScriptAsset: !<reference> 17a55beb-aea7-4cf1-87a9-2a865ef62d00
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      {}
+  ScriptTypes:
+    "":
+      {}
 - !<ScriptComponent/bb3877f3-94c1-4ba5-a5c1-b96b37c8fd63>
   PrefabRemaps:
     []
@@ -3035,7 +3120,6 @@
   ScriptAsset: !<reference> dd9d3f5c-35e8-4a30-8fea-b64c8ab17f36
   ScriptInputsDefault:
     revealPosition: true
-    updateEveryFrame: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -3050,7 +3134,7 @@
       revealPosition: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
       minRadius: !<float> 140.000000
       maxRadius: !<float> 180.000000
-      updateEveryFrame: true
+      updateEveryFrame: false
   ScriptTypes:
     "":
       {}

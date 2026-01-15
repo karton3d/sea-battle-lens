@@ -30,6 +30,7 @@
     gameOverScreen: false
     gameScreen: false
     gridSize: false
+    handleAnimDuration: false
     hintText: false
     introAssets: false
     introScreen: false
@@ -40,6 +41,7 @@
     reshuffleButton: false
     resultText: false
     screenTransitionDelay: false
+    sceneHandle: false
     setupScreen: false
     singlePlayerButton: false
     startButton: false
@@ -72,6 +74,8 @@
       startButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       reshuffleButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      sceneHandle: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      handleAnimDuration: 0.500000
   ScriptTypes:
     -
       {}
@@ -94,3 +98,5 @@
     - // @input SceneObject startButton
     - // @input SceneObject reshuffleButton
     - // @input SceneObject playAgainButton
+    - // @input SceneObject sceneHandle
+    - // @input float handleAnimDuration = 0.5
