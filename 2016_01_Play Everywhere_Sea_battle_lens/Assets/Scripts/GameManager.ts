@@ -84,7 +84,8 @@ export class GameManager extends BaseScriptComponent {
     
     // ==================== SETUP BUTTONS ====================
     @input startButton: SceneObject = null;
-    
+    @input reshuffleButton: SceneObject = null;
+
     // ==================== GAMEOVER BUTTONS ====================
     @input playAgainButton: SceneObject = null;
     
@@ -290,7 +291,19 @@ export class GameManager extends BaseScriptComponent {
                 this.setupTouchButton(this.startButton, () => this.onStartTap());
             }
         }
-        
+
+        // Reshuffle button
+        if (this.reshuffleButton) {
+            let interaction = this.reshuffleButton.getComponent("Component.Touch") as InteractionComponent;
+            if (!interaction) {
+                interaction = this.reshuffleButton.createComponent("Component.Touch") as InteractionComponent;
+            }
+            if (interaction) {
+                interaction.onTap.add(() => this.onReshuffleTap());
+                print("GameManager: Reshuffle button setup");
+            }
+        }
+
         // Play Again button
         if (this.playAgainButton) {
             const buttonScript = this.getUIButtonScript(this.playAgainButton);
@@ -415,7 +428,42 @@ export class GameManager extends BaseScriptComponent {
         print("GameManager: Start button tapped");
         this.delayedCall(() => this.startGame(), this.screenTransitionDelay);
     }
-    
+
+    /**
+     * Reshuffle button tapped - regenerate ship placements
+     */
+    onReshuffleTap() {
+        // Only allow during setup phase
+        if (this.state.phase !== 'setup') {
+            print("[GameManager] onReshuffleTap: Ignored - not in setup phase");
+            return;
+        }
+
+        print("[GameManager] onReshuffleTap: Reshuffling ship placements");
+
+        // Reshuffle player grid ships
+        const playerScript = this.getGridScript(this.playerGridGenerator);
+        if (playerScript && typeof playerScript.reshuffleShips === 'function') {
+            playerScript.reshuffleShips();
+        }
+
+        // Reshuffle opponent grid ships (hidden from player)
+        const opponentScript = this.getGridScript(this.opponentGridGenerator);
+        if (opponentScript && typeof opponentScript.reshuffleShips === 'function') {
+            opponentScript.reshuffleShips();
+        }
+
+        // Regenerate GameManager's placement data
+        this.state.playerShips = this.generateShipPlacements();
+        this.markShipsOnGrid(this.state.playerGrid, this.state.playerShips, true);
+        this.state.opponentShips = this.generateShipPlacements();
+
+        this.updateStatus("New positions!");
+        this.updateHint("Tap Reshuffle again or Start");
+
+        print("[GameManager] onReshuffleTap: Reshuffle complete");
+    }
+
     /**
      * Play Again button tapped
      */

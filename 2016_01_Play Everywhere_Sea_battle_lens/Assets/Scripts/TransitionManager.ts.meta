@@ -1,0 +1,62 @@
+- !<AssetImportMetadata/3f8d98c8-0d2b-4324-b193-cc087bf6b848>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 23ab810e-2ad4-4e79-99bb-bb59ea88a9df
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 23ab810e-2ad4-4e79-99bb-bb59ea88a9df
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> d7efc018-07e5-4ae0-b30d-ead4b2afc6e7
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/d7efc018-07e5-4ae0-b30d-ead4b2afc6e7>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 5f0bedf2-bdfb-4fe8-abd3-e95b984b86da
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    bannerDisplayTime: false
+    gameManager: false
+    opponentGrid: false
+    playerGrid: false
+    transitionDuration: false
+    turnBanner: false
+    turnBannerText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - playerGrid: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      opponentGrid: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      turnBanner: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      turnBannerText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      transitionDuration: 0.300000
+      bannerDisplayTime: 1.200000
+      gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input SceneObject playerGrid
+    - // @input SceneObject opponentGrid
+    - // @input SceneObject turnBanner
+    - // @input Component.Text turnBannerText
+    - // @input float transitionDuration = 0.3
+    - // @input float bannerDisplayTime = 1.2
+    - // @input SceneObject gameManager

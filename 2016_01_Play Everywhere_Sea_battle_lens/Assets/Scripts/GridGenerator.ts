@@ -539,7 +539,34 @@ export class SeaBattleGrid extends BaseScriptComponent {
         this.initShipGrid();
         this.generateGrid();
     }
-    
+
+    /**
+     * Reshuffle ships without regenerating grid cells
+     * More efficient than full resetGame() - keeps grid intact
+     */
+    reshuffleShips(): void {
+        print(`[SeaBattleGrid] ${this.getSceneObject().name} reshuffling ships`);
+
+        // Clear only ships (keep grid cells and markers)
+        this.clearShips();
+
+        // Reset ship occupancy grid
+        this.initShipGrid();
+
+        // Place ships randomly again
+        if (this.useRandomPlacement) {
+            const success = this.placeShipsRandomly();
+            if (!success) {
+                print("[SeaBattleGrid] Random placement failed, using test placement");
+                this.placeTestShips();
+            }
+        } else {
+            this.placeTestShips();
+        }
+
+        print(`[SeaBattleGrid] Reshuffle complete, ${this.placedShips.length} ships placed`);
+    }
+
     /**
      * Get cell SceneObject at grid position
      */

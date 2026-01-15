@@ -1,0 +1,50 @@
+- !<AssetImportMetadata/d6b19eb2-1b35-4207-a922-6a55258e8023>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 6baf1a0f-e936-4751-a6a3-78a9cf4beacb
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 6baf1a0f-e936-4751-a6a3-78a9cf4beacb
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 02a82e67-9efb-42c8-8275-e417f01b3c80
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/02a82e67-9efb-42c8-8275-e417f01b3c80>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: a076cc7a-ca37-4d47-94af-5742d923a880
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    aiDelay: false
+    gameManager: false
+    gridSize: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      aiDelay: !<float> 1000.000000
+      gridSize: !<float> 10.000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input SceneObject gameManager
+    - // @input float aiDelay = 1000
+    - // @input float gridSize = 10
