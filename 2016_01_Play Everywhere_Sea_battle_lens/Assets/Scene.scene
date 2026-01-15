@@ -1277,16 +1277,16 @@
   Pivot: {x: 0.000000, y: 0.000000}
   Transform:
     position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    rotation: {x: 0.000000, y: -0.000000, z: 91.000008}
+    rotation: {x: 0.000000, y: -0.000000, z: 0.000000}
     scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     hasSegmentScaleCompensation: false
   RawMode: true
   ForceBasic: true
   Anchor:
-    left: -1.179571
-    bottom: -0.175624
-    right: -0.363424
-    top: -0.014323
+    left: -0.499991
+    bottom: -0.563085
+    right: 0.491525
+    top: -0.382369
   Offset:
     left: 0.000000
     bottom: 0.000000
@@ -2046,7 +2046,7 @@
     "":
       interactable: true
       renderOrderOverride: 0
-      text: Reshuffle
+      text: Shuffle
       useColors: true
       normalColor: !<Vec4> {x: 0.999207, y: 0.988861, z: 0.016327, w: 1.000000}
       pressedColor: !<Vec4> {x: 0.664225, y: 0.664240, z: 0.664225, w: 1.000000}
@@ -2618,7 +2618,7 @@
   Layers: 1048576
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: -0.000000, z: 91.000008}
+    Rotation: {x: 0.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:

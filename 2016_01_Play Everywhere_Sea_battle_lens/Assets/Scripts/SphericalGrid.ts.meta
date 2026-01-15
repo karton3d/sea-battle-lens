@@ -1,0 +1,92 @@
+- !<AssetImportMetadata/8146112c-b9da-4ea9-86a6-99ff5acacc64>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 356f3ed5-6539-474e-a269-b150add745c8
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/356f3ed5-6539-474e-a269-b150add745c8>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 7f9aa1d6-6bc3-4491-a623-72a5d96d55ee
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    autoGenerate: false
+    cellPrefab: false
+    enableCellTapping: false
+    gameManager: false
+    gridCols: false
+    gridParent: false
+    gridRows: false
+    hitMarkerPrefab: false
+    latitudeRange: false
+    missMarkerPrefab: false
+    objectHeightOffset: false
+    ship1Prefab: false
+    ship2Prefab: false
+    ship3Prefab: false
+    ship4Prefab: false
+    sphereRadius: false
+    useRandomPlacement: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - cellPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship1Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship2Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship3Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      ship4Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      hitMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      missMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      sphereRadius: !<float> 10.000000
+      gridRows: !<float> 10.000000
+      gridCols: !<float> 10.000000
+      latitudeRange: !<float> 70.000000
+      objectHeightOffset: 0.500000
+      gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      useRandomPlacement: true
+      enableCellTapping: false
+      gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      autoGenerate: false
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Asset.ObjectPrefab cellPrefab
+    - // @input Asset.ObjectPrefab ship1Prefab
+    - // @input Asset.ObjectPrefab ship2Prefab
+    - // @input Asset.ObjectPrefab ship3Prefab
+    - // @input Asset.ObjectPrefab ship4Prefab
+    - // @input Asset.ObjectPrefab hitMarkerPrefab
+    - // @input Asset.ObjectPrefab missMarkerPrefab
+    - // @input float sphereRadius = 10
+    - // @input float gridRows = 10
+    - // @input float gridCols = 10
+    - // @input float latitudeRange = 70
+    - // @input float objectHeightOffset = 0.5
+    - // @input SceneObject gridParent
+    - // @input bool useRandomPlacement = true
+    - // @input bool enableCellTapping
+    - // @input SceneObject gameManager
+    - // @input bool autoGenerate
