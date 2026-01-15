@@ -1354,6 +1354,7 @@
       cellSpacing: !<float> 14.000000
       curvature: -0.040000
       objectHeightOffset: !<float> 11.000000
+      missMarkerHeightOffset: !<float> 6.000000
       gridParent: !<reference.SceneObject> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
       useRandomPlacement: true
       enableCellTapping: true
@@ -2009,6 +2010,7 @@
       cellSpacing: !<float> 14.000000
       curvature: -0.040000
       objectHeightOffset: !<float> 11.000000
+      missMarkerHeightOffset: !<float> 6.000000
       gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
       useRandomPlacement: true
       enableCellTapping: true
@@ -2125,6 +2127,9 @@
     gridSize: true
     aiDelay: true
     handleAnimDuration: true
+    delayBeforeAI: true
+    delayAfterAnimation: true
+    delayAfterShot: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -2151,6 +2156,9 @@
       playAgainButton: !<reference.SceneObject> 0608ea05-e637-444e-b01e-82251b902bd8
       sceneHandle: !<reference.SceneObject> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
       handleAnimDuration: 0.500000
+      delayBeforeAI: !<float> 1.000000
+      delayAfterAnimation: 0.300000
+      delayAfterShot: !<float> 1.000000
   ScriptTypes:
     "":
       {}

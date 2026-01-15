@@ -94,6 +94,12 @@ export class GameManager extends BaseScriptComponent {
     @input sceneHandle: SceneObject = null;
     /** Animation duration in seconds */
     @input handleAnimDuration: number = 0.5;
+    /** Delay before AI takes turn (seconds) */
+    @input delayBeforeAI: number = 1.0;
+    /** Delay after animation completes (seconds) */
+    @input delayAfterAnimation: number = 0.3;
+    /** Delay after shot to let user see the marker (seconds) */
+    @input delayAfterShot: number = 1.0;
 
     // Game state
     private state: GameState;
@@ -691,38 +697,47 @@ export class GameManager extends BaseScriptComponent {
             print("GameManager: Not player's turn");
             return;
         }
-        
+
         // Check if cell already shot
         if (this.state.opponentGrid[x][y] !== 'unknown') {
             this.updateResult("Already shot here!");
             return;
         }
-        
-        // Process shot
+
+        // Block further taps
+        this.state.turn = 'waiting';
+
+        // Process shot immediately
         const result = this.processShot(x, y, this.state.opponentGrid, this.state.opponentShips, true);
-        
-        // Update visual marker on opponent's grid
+
+        // Show marker immediately
         this.updateCellVisual(this.opponentGridGenerator, x, y, result === 'miss' ? 'miss' : 'hit');
-        
+
         // Check win
         if (this.checkWin('player')) {
             this.endGame('player');
             return;
         }
-        
-        // Switch to opponent's turn
-        this.state.turn = 'opponent';
-        this.updateStatus("Opponent's turn");
-        this.updateHint("Waiting...");
-        this.animateSceneHandle(false); // Move to show player grid
-        
-        // AI opponent
-        if (this.state.mode === 'single') {
-            this.scheduleAITurn();
-        } else {
-            // Multiplayer: submit turn
-            this.submitTurn(x, y, result);
-        }
+
+        // Delay to let user see the marker, then transition
+        this.delayedCall(this.delayAfterShot, () => {
+            // Switch to opponent's turn
+            this.state.turn = 'opponent';
+            this.updateStatus("Opponent's turn");
+            this.updateHint("Waiting...");
+
+            // Animate to player grid, then trigger AI after delays
+            this.animateSceneHandle(false, () => {
+                if (this.state.mode === 'single') {
+                    this.delayedCall(this.delayBeforeAI, () => {
+                        this.aiTurn();
+                    });
+                } else {
+                    // Multiplayer: submit turn
+                    this.submitTurn(x, y, result);
+                }
+            });
+        });
     }
     
     /**
@@ -788,9 +803,14 @@ export class GameManager extends BaseScriptComponent {
     /**
      * Animate scene handle to shift view between grids
      * @param toPlayerTurn true = player's turn (show opponent grid), false = opponent's turn (show player grid)
+     * @param onComplete optional callback after animation + delay completes
      */
-    private animateSceneHandle(toPlayerTurn: boolean): void {
-        if (!this.sceneHandle) return;
+    private animateSceneHandle(toPlayerTurn: boolean, onComplete?: () => void): void {
+        if (!this.sceneHandle) {
+            // No scene handle, just call callback immediately
+            if (onComplete) onComplete();
+            return;
+        }
 
         const transform = this.sceneHandle.getTransform();
         const currentPos = transform.getLocalPosition();
@@ -808,8 +828,25 @@ export class GameManager extends BaseScriptComponent {
             })
             .onComplete(() => {
                 print(`[GameManager] Scene handle animation complete: x=${targetX}`);
+                // Add delay after animation before callback
+                if (onComplete) {
+                    const delayEvent = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent;
+                    delayEvent.bind(() => {
+                        onComplete();
+                    });
+                    delayEvent.reset(this.delayAfterAnimation);
+                }
             })
             .start();
+    }
+
+    /**
+     * Helper to create a delayed callback
+     */
+    private delayedCall(delay: number, callback: () => void): void {
+        const delayEvent = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent;
+        delayEvent.bind(callback);
+        delayEvent.reset(delay);
     }
 
     // ==================== AI OPPONENT ====================
@@ -832,39 +869,42 @@ export class GameManager extends BaseScriptComponent {
         if (this.state.turn !== 'opponent' || this.state.phase !== 'playing') {
             return;
         }
-        
+
         // Get AI's shot
         const shot = this.getAIShot();
         if (!shot) {
             print("GameManager: AI couldn't find a cell to shoot");
             return;
         }
-        
+
         print(`GameManager: AI shoots at (${shot.x}, ${shot.y})`);
-        
+
         // Process shot on player's grid
         const result = this.processShot(shot.x, shot.y, this.state.playerGrid, this.state.playerShips, false);
-        
-        // Update visual marker on player's grid
+
+        // Update visual marker on player's grid immediately
         this.updateCellVisual(this.playerGridGenerator, shot.x, shot.y, result === 'miss' ? 'miss' : 'hit');
-        
+
         // Update AI state based on result
         this.updateAIState(shot.x, shot.y, result);
-        
+
         // Update UI
         this.updateResult(`AI shot (${shot.x}, ${shot.y}) - ${result === 'miss' ? 'Miss' : 'HIT!'}`);
-        
+
         // Check win
         if (this.checkWin('opponent')) {
             this.endGame('opponent');
             return;
         }
-        
-        // Switch to player's turn
-        this.state.turn = 'player';
-        this.updateStatus("Your turn");
-        this.updateHint("Tap opponent's cell to shoot");
-        this.animateSceneHandle(true); // Move to show opponent grid
+
+        // Delay to let user see the marker, then transition
+        this.delayedCall(this.delayAfterShot, () => {
+            // Switch to player's turn
+            this.state.turn = 'player';
+            this.updateStatus("Your turn");
+            this.updateHint("Tap opponent's cell to shoot");
+            this.animateSceneHandle(true); // Move to show opponent grid
+        });
     }
 
     /**

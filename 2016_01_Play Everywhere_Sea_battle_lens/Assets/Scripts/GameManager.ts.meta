@@ -27,6 +27,9 @@
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
     aiDelay: false
+    delayAfterAnimation: false
+    delayAfterShot: false
+    delayBeforeAI: false
     gameOverScreen: false
     gameScreen: false
     gridSize: false
@@ -76,6 +79,9 @@
       playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       sceneHandle: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       handleAnimDuration: 0.500000
+      delayBeforeAI: !<float> 1.000000
+      delayAfterAnimation: 0.300000
+      delayAfterShot: !<float> 1.000000
   ScriptTypes:
     -
       {}
@@ -100,3 +106,6 @@
     - // @input SceneObject playAgainButton
     - // @input SceneObject sceneHandle
     - // @input float handleAnimDuration = 0.5
+    - // @input float delayBeforeAI = 1
+    - // @input float delayAfterAnimation = 0.3
+    - // @input float delayAfterShot = 1

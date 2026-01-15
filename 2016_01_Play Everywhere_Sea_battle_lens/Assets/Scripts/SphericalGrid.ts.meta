@@ -36,6 +36,7 @@
     gridParent: false
     gridRows: false
     hitMarkerPrefab: false
+    missMarkerHeightOffset: false
     missMarkerPrefab: false
     objectHeightOffset: false
     ship1Prefab: false
@@ -64,6 +65,7 @@
       cellSpacing: !<float> 1.000000
       curvature: !<float> 0.000000
       objectHeightOffset: 0.500000
+      missMarkerHeightOffset: 0.020000
       gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       useRandomPlacement: true
       enableCellTapping: false
@@ -85,6 +87,7 @@
     - // @input float cellSpacing = 1
     - // @input float curvature
     - // @input float objectHeightOffset = 0.1
+    - // @input float missMarkerHeightOffset = 0.02
     - // @input SceneObject gridParent
     - // @input bool useRandomPlacement = true
     - // @input bool enableCellTapping

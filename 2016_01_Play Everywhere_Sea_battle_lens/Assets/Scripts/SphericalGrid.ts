@@ -33,8 +33,11 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Curvature amount (0 = flat, higher = more curved like a sphere) */
     @input curvature: number = 0.0;
 
-    /** Height offset for ships/markers above grid surface */
+    /** Height offset for ships above grid surface */
     @input objectHeightOffset: number = 0.1;
+
+    /** Height offset for miss markers above grid surface */
+    @input missMarkerHeightOffset: number = 0.02;
 
     // ==================== OPTIONS ====================
 
@@ -558,7 +561,9 @@ export class SphericalGrid extends BaseScriptComponent {
      * Spawn marker at grid position
      */
     private spawnMarker(row: number, col: number, prefab: ObjectPrefab, type: string): void {
-        const position = this.getCellWorldPosition(row, col, this.objectHeightOffset);
+        // Miss markers use missMarkerHeightOffset, hit markers use objectHeightOffset
+        const heightOffset = type === 'miss' ? this.missMarkerHeightOffset : this.objectHeightOffset;
+        const position = this.getCellWorldPosition(row, col, heightOffset);
 
         let parent: SceneObject;
         if (this.gridParent) {
@@ -570,12 +575,18 @@ export class SphericalGrid extends BaseScriptComponent {
         const marker = prefab.instantiate(parent);
         marker.name = `Marker_${type}_${row}_${col}`;
 
+        // Enable the marker (prefab might be disabled by default)
+        marker.enabled = true;
+
         const transform = marker.getTransform();
         transform.setLocalPosition(position);
 
-        // Rotate to face outward
-        const rotation = this.getCellRotation(row, col);
-        transform.setLocalRotation(rotation);
+        // Rotate marker to lay flat on the surface:
+        // 1. Rotate 90 degrees around X-axis to lay flat (from vertical to horizontal)
+        // 2. Then apply cell rotation to match the curved surface
+        const layFlat = quat.fromEulerAngles(-Math.PI / 2, 0, 0);
+        const cellRot = this.getCellRotation(row, col);
+        transform.setLocalRotation(cellRot.multiply(layFlat));
 
         this.placedMarkers.push(marker);
 

@@ -604,10 +604,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
     private spawnMarker(gridX: number, gridY: number, prefab: ObjectPrefab, type: string) {
         // Get cell position and spawn marker above it
         const cellPos = this.gridToWorldPosition(gridX, gridY, 0);
-        
+
         // Marker height - same as ships (cellSize + shipHeightOffset)
         const markerHeight = this.cellSize + this.shipHeightOffset;
-        
+
         // Get parent
         let parent: SceneObject;
         if (this.gridParent) {
@@ -615,17 +615,22 @@ export class SeaBattleGrid extends BaseScriptComponent {
         } else {
             parent = this.getSceneObject();
         }
-        
+
         // Spawn marker - uses prefab's original scale (like ships)
         const marker = prefab.instantiate(parent);
         marker.name = `Marker_${type}_${gridX}_${gridY}`;
-        
+
+        // Enable the marker (prefab might be disabled by default)
+        marker.enabled = true;
+
         const transform = marker.getTransform();
         transform.setLocalPosition(new vec3(cellPos.x, markerHeight, cellPos.z));
-        // No setLocalScale - marker keeps its prefab size
-        
+
+        // Reset rotation to identity (flat on grid)
+        transform.setLocalRotation(quat.quatIdentity());
+
         this.placedMarkers.push(marker);
-        
+
         print(`SeaBattleGrid: Spawned ${type} marker at (${gridX}, ${gridY}) height=${markerHeight}`);
     }
     
