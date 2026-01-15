@@ -19,22 +19,22 @@ export class SphericalGrid extends BaseScriptComponent {
     @input hitMarkerPrefab: ObjectPrefab;
     @input missMarkerPrefab: ObjectPrefab;
 
-    // ==================== SPHERE PARAMETERS ====================
+    // ==================== GRID PARAMETERS ====================
 
-    /** Radius of the sphere */
-    @input sphereRadius: number = 10.0;
-
-    /** Number of rows (latitude divisions) */
+    /** Number of rows */
     @input gridRows: number = 10;
 
-    /** Number of columns (longitude divisions) */
+    /** Number of columns */
     @input gridCols: number = 10;
 
-    /** Latitude range in degrees (avoid poles) - from -latRange to +latRange */
-    @input latitudeRange: number = 70.0;
+    /** Spacing between cells */
+    @input cellSpacing: number = 1.0;
 
-    /** Height offset for ships/markers above sphere surface */
-    @input objectHeightOffset: number = 0.5;
+    /** Curvature amount (0 = flat, higher = more curved like a sphere) */
+    @input curvature: number = 0.0;
+
+    /** Height offset for ships/markers above grid surface */
+    @input objectHeightOffset: number = 0.1;
 
     // ==================== OPTIONS ====================
 
@@ -85,7 +85,7 @@ export class SphericalGrid extends BaseScriptComponent {
             this.generate();
         }
 
-        print(`[SphericalGrid] Initialized - radius: ${this.sphereRadius}, grid: ${this.gridRows}x${this.gridCols}`);
+        print(`[SphericalGrid] Initialized - grid: ${this.gridRows}x${this.gridCols}, spacing: ${this.cellSpacing}, curvature: ${this.curvature}`);
     }
 
     // ==================== PUBLIC API ====================
@@ -205,76 +205,73 @@ export class SphericalGrid extends BaseScriptComponent {
     // ==================== COORDINATE CONVERSION ====================
 
     /**
-     * Convert grid position (row, col) to spherical coordinates (lat, lon in radians)
+     * Get flat grid position (centered at origin)
      */
-    private gridToSpherical(row: number, col: number): { lat: number, lon: number } {
-        // Latitude: map row to -latRange...+latRange degrees
-        const latDegrees = -this.latitudeRange + (row / (this.gridRows - 1)) * (2 * this.latitudeRange);
-        const lat = latDegrees * Math.PI / 180;
+    private getFlatGridPosition(row: number, col: number): { x: number, y: number } {
+        // Center the grid around origin
+        const centerRow = (this.gridRows - 1) / 2;
+        const centerCol = (this.gridCols - 1) / 2;
 
-        // Longitude: map col to 0...360 degrees
-        const lonDegrees = (col / this.gridCols) * 360;
-        const lon = lonDegrees * Math.PI / 180;
+        const x = (col - centerCol) * this.cellSpacing;
+        const y = (row - centerRow) * this.cellSpacing;
 
-        return { lat, lon };
+        return { x, y };
     }
 
     /**
-     * Convert spherical coordinates to cartesian (x, y, z)
-     * @param lat Latitude in radians
-     * @param lon Longitude in radians
-     * @param radius Sphere radius
+     * Get world position for a grid cell with curvature applied
      */
-    private sphericalToCartesian(lat: number, lon: number, radius: number): vec3 {
-        const x = radius * Math.cos(lat) * Math.cos(lon);
-        const y = radius * Math.sin(lat);
-        const z = radius * Math.cos(lat) * Math.sin(lon);
+    private getCellWorldPosition(row: number, col: number, heightOffset: number = 0): vec3 {
+        const flat = this.getFlatGridPosition(row, col);
+
+        if (Math.abs(this.curvature) < 0.0001) {
+            // Flat grid - no curvature
+            return new vec3(flat.x, flat.y, heightOffset);
+        }
+
+        // Curvature directly controls the bend angle per unit distance
+        // Positive = curve away (convex), Negative = curve toward (concave)
+        // Scale factor makes values like 0.01-0.1 usable
+        const scaledCurvature = this.curvature * 0.1;
+
+        // Calculate angles based on flat position
+        const angleX = flat.x * scaledCurvature;
+        const angleY = flat.y * scaledCurvature;
+
+        // For small angles, use the approximation for smooth curvature
+        // z offset = distance^2 * curvature / 2 (parabolic approximation)
+        const distSq = flat.x * flat.x + flat.y * flat.y;
+        const zOffset = distSq * scaledCurvature * 0.5;
+
+        // Slight x/y adjustment for proper spherical feel at higher curvatures
+        const x = flat.x * (1 - Math.abs(angleY) * 0.1);
+        const y = flat.y * (1 - Math.abs(angleX) * 0.1);
+        const z = zOffset + heightOffset;
 
         return new vec3(x, y, z);
     }
 
     /**
-     * Get world position for a grid cell
-     */
-    private getCellWorldPosition(row: number, col: number, heightOffset: number = 0): vec3 {
-        const spherical = this.gridToSpherical(row, col);
-        return this.sphericalToCartesian(spherical.lat, spherical.lon, this.sphereRadius + heightOffset);
-    }
-
-    /**
-     * Get rotation to face TOWARD sphere center (looking inward)
+     * Get rotation for cell to face viewer (with curvature)
      */
     private getCellRotation(row: number, col: number): quat {
-        const spherical = this.gridToSpherical(row, col);
-
-        // Get position on sphere surface
-        const position = this.sphericalToCartesian(spherical.lat, spherical.lon, this.sphereRadius);
-
-        // Normal points outward from center
-        const outward = position.normalize();
-
-        // Forward direction: TOWARD center (negative of outward)
-        const forward = new vec3(-outward.x, -outward.y, -outward.z);
-
-        // Calculate "up" vector on the sphere surface
-        // Use world up (0,1,0) projected onto the tangent plane
-        const worldUp = new vec3(0, 1, 0);
-
-        // Right vector = forward cross worldUp (tangent to sphere)
-        let right = forward.cross(worldUp);
-
-        // Handle poles where forward is parallel to worldUp
-        if (right.length < 0.001) {
-            right = new vec3(1, 0, 0);
-        } else {
-            right = right.normalize();
+        if (Math.abs(this.curvature) < 0.0001) {
+            // Flat grid - face forward
+            return quat.quatIdentity();
         }
 
-        // Recalculate up to be perpendicular to forward and right
-        const up = right.cross(forward).normalize();
+        const flat = this.getFlatGridPosition(row, col);
+        const scaledCurvature = this.curvature * 0.1;
 
-        // Build rotation using lookAt: cell faces toward center with proper up
-        return quat.lookAt(forward, up);
+        // Calculate tilt angles - cells tilt to face the virtual center
+        const angleX = flat.x * scaledCurvature;
+        const angleY = flat.y * scaledCurvature;
+
+        // Rotate around Y axis (horizontal tilt) and X axis (vertical tilt)
+        const rotY = quat.fromEulerAngles(0, -angleX, 0);
+        const rotX = quat.fromEulerAngles(angleY, 0, 0);
+
+        return rotY.multiply(rotX);
     }
 
     // ==================== GRID GENERATION ====================
@@ -613,6 +610,7 @@ export class SphericalGrid extends BaseScriptComponent {
 
     getGridRows(): number { return this.gridRows; }
     getGridCols(): number { return this.gridCols; }
-    getSphereRadius(): number { return this.sphereRadius; }
+    getCellSpacing(): number { return this.cellSpacing; }
+    getCurvature(): number { return this.curvature; }
     getIsVisible(): boolean { return this.isVisible; }
 }

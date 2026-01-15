@@ -28,20 +28,20 @@
   ScriptInputsHidden:
     autoGenerate: false
     cellPrefab: false
+    cellSpacing: false
+    curvature: false
     enableCellTapping: false
     gameManager: false
     gridCols: false
     gridParent: false
     gridRows: false
     hitMarkerPrefab: false
-    latitudeRange: false
     missMarkerPrefab: false
     objectHeightOffset: false
     ship1Prefab: false
     ship2Prefab: false
     ship3Prefab: false
     ship4Prefab: false
-    sphereRadius: false
     useRandomPlacement: false
   ScriptTypesHidden:
     {}
@@ -59,10 +59,10 @@
       ship4Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       hitMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       missMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
-      sphereRadius: !<float> 10.000000
       gridRows: !<float> 10.000000
       gridCols: !<float> 10.000000
-      latitudeRange: !<float> 70.000000
+      cellSpacing: !<float> 1.000000
+      curvature: !<float> 0.000000
       objectHeightOffset: 0.500000
       gridParent: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       useRandomPlacement: true
@@ -80,11 +80,11 @@
     - // @input Asset.ObjectPrefab ship4Prefab
     - // @input Asset.ObjectPrefab hitMarkerPrefab
     - // @input Asset.ObjectPrefab missMarkerPrefab
-    - // @input float sphereRadius = 10
     - // @input float gridRows = 10
     - // @input float gridCols = 10
-    - // @input float latitudeRange = 70
-    - // @input float objectHeightOffset = 0.5
+    - // @input float cellSpacing = 1
+    - // @input float curvature
+    - // @input float objectHeightOffset = 0.1
     - // @input SceneObject gridParent
     - // @input bool useRandomPlacement = true
     - // @input bool enableCellTapping

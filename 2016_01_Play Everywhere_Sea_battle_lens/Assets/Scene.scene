@@ -22,6 +22,9 @@
     - !<own> 3a4ab60a-1de9-4fb3-8350-a5bff391e896
     - !<own> 3d55b809-bc01-4139-8c44-a4baa1f6664f
     - !<own> afd35fc7-02dc-43c1-a731-3ddbdc800f01
+    - !<own> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
+    - !<own> e0568f64-3225-4059-a8f6-20a080dcf39f
+    - !<own> 6a72ec62-bb3a-4734-939d-df5883ad09ae
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       []
@@ -1259,6 +1262,40 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/4a0d3e81-df76-4e80-86ec-f291fe4a771f>
+  PrefabRemaps:
+    []
+  Name: SphericalGrid
+  Enabled: true
+  ScriptAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
+  ScriptInputsDefault:
+    gridRows: true
+    gridCols: true
+    useRandomPlacement: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
+      ship1Prefab: !<reference.ObjectPrefab> 8434345a-8c3d-440d-9d3a-97f50b8751c1
+      ship2Prefab: !<reference.ObjectPrefab> d0b91458-d381-4616-9572-000be64ad078
+      ship3Prefab: !<reference.ObjectPrefab> 27c3ec53-6f98-4c2a-9d46-4b641fc68355
+      ship4Prefab: !<reference.ObjectPrefab> cd5891c5-49ab-490e-a7d4-a531e5df0fcb
+      hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
+      missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      gridRows: !<float> 10.000000
+      gridCols: !<float> 10.000000
+      cellSpacing: !<float> 14.000000
+      curvature: -0.040000
+      objectHeightOffset: !<float> 11.000000
+      gridParent: !<reference.SceneObject> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
+      useRandomPlacement: true
+      enableCellTapping: true
+      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
+      autoGenerate: true
+  ScriptTypes:
+    "":
+      {}
 - !<ScreenTransform/4a7d7680-57e4-4006-ad90-1cb2caff42cc>
   PrefabRemaps:
     []
@@ -1503,12 +1540,11 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: -80.000015, y: 0.000000, z: 0.000000}
     Scale: {x: 1.250000, y: 1.250000, z: 1.250000}
     HasSegmentScaleCompensation: false
   Children:
     - !<own> d62c5487-d60b-4cd4-9534-a9840e3316a6
-    - !<own> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
   Components:
     []
 - !<ScreenTransform/5d671238-3a06-4e32-ab9c-1362a5deb852>
@@ -1548,7 +1584,7 @@
   PrefabRemaps:
     []
   Name: OpponentGrid
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -1697,6 +1733,21 @@
   ScriptTypes:
     "":
       {}
+- !<SceneObject/6a72ec62-bb3a-4734-939d-df5883ad09ae>
+  PrefabRemaps:
+    []
+  Name: RevealController
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> c1025a01-420f-46cf-8b5c-0cd8af2ec231
 - !<RenderMeshVisual/6ccfc792-3812-4d18-b759-240f8992d079>
   PrefabRemaps:
     []
@@ -1724,9 +1775,9 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 120.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    Position: {x: 300.000000, y: -0.000004, z: 0.000002}
+    Rotation: {x: -80.000015, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.250000, y: 1.250000, z: 1.250000}
     HasSegmentScaleCompensation: false
   Children:
     []
@@ -1736,7 +1787,7 @@
   PrefabRemaps:
     []
   Name: PlayerGrid
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -1866,6 +1917,56 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/7996db0b-7add-41b3-99ba-c28081b33c3e>
+  PrefabRemaps:
+    []
+  Name: SphericalGrid
+  Enabled: true
+  ScriptAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
+  ScriptInputsDefault:
+    gridRows: true
+    gridCols: true
+    useRandomPlacement: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
+      ship1Prefab: !<reference.ObjectPrefab> ce41e3db-dc4d-4888-ad54-2d1f10ebaa6c
+      ship2Prefab: !<reference.ObjectPrefab> bc16e651-2e5b-4428-97ce-829eee1dd589
+      ship3Prefab: !<reference.ObjectPrefab> 4f181c7a-1b03-45cc-b0b1-3efcf25cf639
+      ship4Prefab: !<reference.ObjectPrefab> d41f1311-1520-4662-a9d0-bdbf2c7768b9
+      hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
+      missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      gridRows: !<float> 10.000000
+      gridCols: !<float> 10.000000
+      cellSpacing: !<float> 14.000000
+      curvature: -0.040000
+      objectHeightOffset: !<float> 11.000000
+      gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
+      useRandomPlacement: true
+      enableCellTapping: true
+      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
+      autoGenerate: true
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e>
+  PrefabRemaps:
+    []
+  Name: World Handle
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000002}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
+    - !<own> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
+  Components:
+    []
 - !<SceneObject/7f655732-b01c-4f73-bc4c-5f8b20ddc631>
   PrefabRemaps:
     []
@@ -1964,8 +2065,8 @@
       gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
       screenTransitionDelay: 0.200000
-      playerGridGenerator: !<reference.SceneObject> 6d34475f-5e98-4c4f-8784-cd2dc3dda9a5
-      opponentGridGenerator: !<reference.SceneObject> 5fcf10d6-beb4-45ac-89a9-aa3b90a5fa93
+      playerGridGenerator: !<reference.SceneObject> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
+      opponentGridGenerator: !<reference.SceneObject> e0568f64-3225-4059-a8f6-20a080dcf39f
       introScreen: !<reference.SceneObject> 2ad497af-e8ce-4dde-958d-857383ec56a9
       setupScreen: !<reference.SceneObject> 114f1e21-50c8-4ffb-a69e-91856070ca57
       gameScreen: !<reference.SceneObject> 9cd41bf9-d956-429c-94f3-7b1efbff3a21
@@ -2923,9 +3024,36 @@
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
-    - !<own> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
+    - !<own> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
   Components:
     []
+- !<ScriptComponent/c1025a01-420f-46cf-8b5c-0cd8af2ec231>
+  PrefabRemaps:
+    []
+  Name: RevealController
+  Enabled: true
+  ScriptAsset: !<reference> dd9d3f5c-35e8-4a30-8fea-b64c8ab17f36
+  ScriptInputsDefault:
+    revealPosition: true
+    updateEveryFrame: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      materials: !<reference.Material[]>
+        - !<reference> 5334bb50-5ba7-4c4b-b919-b353ece3a959
+        - !<reference> f4b97c61-795c-4648-893b-22f410173b9d
+        - !<reference> b8d06adc-1ff7-42fb-ba16-db41528a8385
+        - !<reference> 733c8dff-fed2-4cac-8f26-bd6b30e6ee34
+        - !<reference> 4a338c86-8604-4ad4-b688-799e7aada09e
+      revealSource: !<reference.SceneObject> bfbf0c9c-5b78-4ef0-ac38-9617c633f5e6
+      revealPosition: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+      minRadius: !<float> 140.000000
+      maxRadius: !<float> 180.000000
+      updateEveryFrame: true
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/c24827d4-31b0-4b9e-8f0f-1486849143e5>
   PrefabRemaps:
     []
@@ -3006,6 +3134,21 @@
     bottom: 0.000000
     right: 0.000000
     top: 0.000000
+- !<SceneObject/c4de2354-7ef6-4e37-9688-b9f59c9b65b8>
+  PrefabRemaps:
+    []
+  Name: "Sphere Grid: Player"
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 7996db0b-7add-41b3-99ba-c28081b33c3e
 - !<SceneObject/cb6a6285-7f8f-4d35-9c4f-528b4308b527>
   PrefabRemaps:
     []
@@ -3381,6 +3524,21 @@
   Enabled: true
   ScreenRegionType: FullFrame
   ResizeWithKeyboard: false
+- !<SceneObject/e0568f64-3225-4059-a8f6-20a080dcf39f>
+  PrefabRemaps:
+    []
+  Name: "Sphere Grid: Enemy"
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 4a0d3e81-df76-4e80-86ec-f291fe4a771f
 - !<SceneObject/ed18c24c-c1be-454e-bc3d-86f8dccd425e>
   PrefabRemaps:
     []

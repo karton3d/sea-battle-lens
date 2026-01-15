@@ -1,0 +1,60 @@
+- !<AssetImportMetadata/815556e7-9dca-46d4-a6b1-ded6370e94d6>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> dd9d3f5c-35e8-4a30-8fea-b64c8ab17f36
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> dd9d3f5c-35e8-4a30-8fea-b64c8ab17f36
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 45587b13-41b8-4d41-a8a8-ed47033a042e
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/45587b13-41b8-4d41-a8a8-ed47033a042e>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 7fe88fd6-edd1-472e-9590-9b1dc04d1096
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    materials: false
+    maxRadius: false
+    minRadius: false
+    revealPosition: false
+    revealSource: false
+    updateEveryFrame: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - materials: !<reference.Material[]>
+        []
+      revealSource: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      revealPosition: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+      minRadius: !<float> 1.000000
+      maxRadius: !<float> 5.000000
+      updateEveryFrame: true
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - "// @input Asset.Material[] materials = {}"
+    - // @input SceneObject revealSource
+    - '// @input vec3 revealPosition = {0,0,0} {"hint":"World position of the reveal center"}'
+    - '// @input float minRadius = 1 {"hint":"Objects within this radius are 100% visible"}'
+    - '// @input float maxRadius = 5 {"hint":"Objects beyond this radius are invisible"}'
+    - // @input bool updateEveryFrame = true
