@@ -58,6 +58,7 @@ export class GameManager extends BaseScriptComponent {
     // ==================== GAME SETTINGS ====================
     @input gridSize: number = 10;
     @input aiDelay: number = 1000;
+    @input screenTransitionDelay: number = 0.5; // Delay before switching screens (seconds)
     
     // ==================== GRIDS ====================
     @input playerGridGenerator: SceneObject = null;
@@ -68,6 +69,9 @@ export class GameManager extends BaseScriptComponent {
     @input setupScreen: SceneObject = null;
     @input gameScreen: SceneObject = null;
     @input gameOverScreen: SceneObject = null;
+    
+    // ==================== SCREEN ASSETS (enabled/disabled with screen) ====================
+    @input introAssets: SceneObject[] = [];
     
     // ==================== UI TEXT ====================
     @input statusText: Text = null;
@@ -250,54 +254,82 @@ export class GameManager extends BaseScriptComponent {
     
     /**
      * Setup button interactions
+     * Uses UI Button component events (onPress) to allow animations to play
      */
     setupButtons() {
         // Single Player button
         if (this.singlePlayerButton) {
-            let interaction = this.singlePlayerButton.getComponent("Component.Touch") as InteractionComponent;
-            if (!interaction) {
-                interaction = this.singlePlayerButton.createComponent("Component.Touch") as InteractionComponent;
-            }
-            if (interaction) {
-                interaction.onTap.add(() => this.onSinglePlayerTap());
-                print("GameManager: Single Player button setup");
+            const buttonScript = this.getUIButtonScript(this.singlePlayerButton);
+            if (buttonScript && buttonScript.onPress) {
+                buttonScript.onPress.add(() => this.onSinglePlayerTap());
+                print("GameManager: Single Player button setup (UI Button)");
+            } else {
+                // Fallback to Component.Touch if UI Button not found
+                this.setupTouchButton(this.singlePlayerButton, () => this.onSinglePlayerTap());
             }
         }
         
         // Multiplayer button
         if (this.multiplayerButton) {
-            let interaction = this.multiplayerButton.getComponent("Component.Touch") as InteractionComponent;
-            if (!interaction) {
-                interaction = this.multiplayerButton.createComponent("Component.Touch") as InteractionComponent;
-            }
-            if (interaction) {
-                interaction.onTap.add(() => this.onMultiplayerTap());
-                print("GameManager: Multiplayer button setup");
+            const buttonScript = this.getUIButtonScript(this.multiplayerButton);
+            if (buttonScript && buttonScript.onPress) {
+                buttonScript.onPress.add(() => this.onMultiplayerTap());
+                print("GameManager: Multiplayer button setup (UI Button)");
+            } else {
+                this.setupTouchButton(this.multiplayerButton, () => this.onMultiplayerTap());
             }
         }
         
         // Start button
         if (this.startButton) {
-            let interaction = this.startButton.getComponent("Component.Touch") as InteractionComponent;
-            if (!interaction) {
-                interaction = this.startButton.createComponent("Component.Touch") as InteractionComponent;
-            }
-            if (interaction) {
-                interaction.onTap.add(() => this.onStartTap());
-                print("GameManager: Start button setup");
+            const buttonScript = this.getUIButtonScript(this.startButton);
+            if (buttonScript && buttonScript.onPress) {
+                buttonScript.onPress.add(() => this.onStartTap());
+                print("GameManager: Start button setup (UI Button)");
+            } else {
+                this.setupTouchButton(this.startButton, () => this.onStartTap());
             }
         }
         
         // Play Again button
         if (this.playAgainButton) {
-            let interaction = this.playAgainButton.getComponent("Component.Touch") as InteractionComponent;
-            if (!interaction) {
-                interaction = this.playAgainButton.createComponent("Component.Touch") as InteractionComponent;
+            const buttonScript = this.getUIButtonScript(this.playAgainButton);
+            if (buttonScript && buttonScript.onPress) {
+                buttonScript.onPress.add(() => this.onPlayAgainTap());
+                print("GameManager: Play Again button setup (UI Button)");
+            } else {
+                this.setupTouchButton(this.playAgainButton, () => this.onPlayAgainTap());
             }
-            if (interaction) {
-                interaction.onTap.add(() => this.onPlayAgainTap());
-                print("GameManager: Play Again button setup");
+        }
+    }
+    
+    /**
+     * Get UI Button script component
+     */
+    private getUIButtonScript(buttonObject: SceneObject): any {
+        if (!buttonObject) return null;
+        const scripts = buttonObject.getComponents("Component.ScriptComponent");
+        for (let i = 0; i < scripts.length; i++) {
+            const script = scripts[i] as any;
+            // Check if it's UI Button (has onPress event)
+            if (script && script.onPress && typeof script.onPress.add === 'function') {
+                return script;
             }
+        }
+        return null;
+    }
+    
+    /**
+     * Fallback: Setup Component.Touch for buttons without UI Button component
+     */
+    private setupTouchButton(buttonObject: SceneObject, callback: () => void) {
+        let interaction = buttonObject.getComponent("Component.Touch") as InteractionComponent;
+        if (!interaction) {
+            interaction = buttonObject.createComponent("Component.Touch") as InteractionComponent;
+        }
+        if (interaction) {
+            interaction.onTap.add(callback);
+            print(`GameManager: ${buttonObject.name} setup (Component.Touch fallback)`);
         }
     }
     
@@ -310,7 +342,21 @@ export class GameManager extends BaseScriptComponent {
         if (this.gameScreen) this.gameScreen.enabled = (screen === 'game');
         if (this.gameOverScreen) this.gameOverScreen.enabled = (screen === 'gameover');
         
+        // Toggle screen assets
+        this.setAssetsEnabled(this.introAssets, screen === 'intro');
+        
         print(`GameManager: Showing screen: ${screen}`);
+    }
+    
+    /**
+     * Enable/disable array of SceneObjects
+     */
+    setAssetsEnabled(assets: SceneObject[], enabled: boolean) {
+        for (const asset of assets) {
+            if (asset) {
+                asset.enabled = enabled;
+            }
+        }
     }
     
     /**
@@ -350,7 +396,7 @@ export class GameManager extends BaseScriptComponent {
     onSinglePlayerTap() {
         print("GameManager: Single Player selected");
         this.state.mode = 'single';
-        this.startSetup();
+        this.delayedCall(() => this.startSetup(), this.screenTransitionDelay);
     }
     
     /**
@@ -359,7 +405,7 @@ export class GameManager extends BaseScriptComponent {
     onMultiplayerTap() {
         print("GameManager: Multiplayer selected");
         this.state.mode = 'multiplayer';
-        this.startSetup();
+        this.delayedCall(() => this.startSetup(), this.screenTransitionDelay);
     }
     
     /**
@@ -367,7 +413,7 @@ export class GameManager extends BaseScriptComponent {
      */
     onStartTap() {
         print("GameManager: Start button tapped");
-        this.startGame();
+        this.delayedCall(() => this.startGame(), this.screenTransitionDelay);
     }
     
     /**
@@ -375,7 +421,20 @@ export class GameManager extends BaseScriptComponent {
      */
     onPlayAgainTap() {
         print("GameManager: Play Again tapped");
-        this.resetGame();
+        this.delayedCall(() => this.resetGame(), this.screenTransitionDelay);
+    }
+    
+    /**
+     * Execute callback after delay (seconds)
+     */
+    delayedCall(callback: () => void, delay: number) {
+        if (delay <= 0) {
+            callback();
+            return;
+        }
+        const event = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent;
+        event.bind(callback);
+        event.reset(delay);
     }
     
     // ==================== GAME FLOW ====================

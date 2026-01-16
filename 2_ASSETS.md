@@ -17,6 +17,14 @@
 | Hint | Player instructions |
 | Result | Hit/Miss/Destroyed |
 
+## Welcome Screen
+| Element | Description |
+|---------|-------------|
+| Background | 3D scene with sky, hills, grid preview |
+| Title | "FLEET YEET!" 3D text (gradient) |
+| Grid Preview | Green cells with blue outlines, meme objects |
+| Buttons | Single Player, Play with Friend |
+
 ## Turn Banner
 | Element | Description |
 |---------|-------------|

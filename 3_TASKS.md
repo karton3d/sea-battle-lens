@@ -16,7 +16,7 @@
 
 ## 🔴 TODO — Visual Polish
 
-- [ ] Welcome background
+- [x] Welcome background
 - [ ] Styled buttons
 - [ ] Meme 3D objects
 - [ ] X-ray reveal effect
@@ -53,6 +53,7 @@
 ## ✅ DONE — UI (Prototype)
 
 - [x] Intro screen buttons
+- [x] Welcome screen background
 - [x] Setup screen
 - [x] Game screen text
 - [x] Game over screen

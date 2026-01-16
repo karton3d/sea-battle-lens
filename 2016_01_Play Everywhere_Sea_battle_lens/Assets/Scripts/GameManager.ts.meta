@@ -31,12 +31,14 @@
     gameScreen: false
     gridSize: false
     hintText: false
+    introAssets: false
     introScreen: false
     multiplayerButton: false
     opponentGridGenerator: false
     playAgainButton: false
     playerGridGenerator: false
     resultText: false
+    screenTransitionDelay: false
     setupScreen: false
     singlePlayerButton: false
     startButton: false
@@ -52,12 +54,15 @@
   DefaultScriptInputs:
     - gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
+      screenTransitionDelay: 0.500000
       playerGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       opponentGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       introScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       setupScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       gameScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       gameOverScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      introAssets: !<reference.SceneObject[]>
+        []
       statusText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       hintText: !<reference.Text> 00000000-0000-0000-0000-000000000000
       resultText: !<reference.Text> 00000000-0000-0000-0000-000000000000
@@ -71,12 +76,14 @@
   InputLines:
     - // @input float gridSize = 10
     - // @input float aiDelay = 1000
+    - // @input float screenTransitionDelay = 0.5
     - // @input SceneObject playerGridGenerator
     - // @input SceneObject opponentGridGenerator
     - // @input SceneObject introScreen
     - // @input SceneObject setupScreen
     - // @input SceneObject gameScreen
     - // @input SceneObject gameOverScreen
+    - "// @input SceneObject[] introAssets = {}"
     - // @input Component.Text statusText
     - // @input Component.Text hintText
     - // @input Component.Text resultText
