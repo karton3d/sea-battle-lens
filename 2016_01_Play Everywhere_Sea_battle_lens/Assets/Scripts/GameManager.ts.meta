@@ -43,8 +43,8 @@
     playerGridGenerator: false
     reshuffleButton: false
     resultText: false
-    screenTransitionDelay: false
     sceneHandle: false
+    screenTransitionDelay: false
     setupScreen: false
     singlePlayerButton: false
     startButton: false

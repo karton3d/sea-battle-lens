@@ -2772,22 +2772,6 @@
   ScriptTypes:
     "":
       {}
-- !<SceneObject/a8838472-12ec-4d45-a0a9-00fb4fdca7de>
-  PrefabRemaps:
-    []
-  Name: Full Frame Region
-  Enabled: true
-  Layers: 1048576
-  LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    HasSegmentScaleCompensation: false
-  Children:
-    - !<own> f49f208b-c556-4dc3-a2a9-ae7a76513c08
-  Components:
-    - !<own> 801ddbd8-79c8-4ee2-b515-5500394914c8
-    - !<own> e493a6cd-c8ce-44e0-8b97-38d55eebcc90
 - !<SceneObject/a5d92e2e-014f-4188-a260-20ab056c8884>
   PrefabRemaps:
     []
@@ -2804,6 +2788,22 @@
   Components:
     - !<own> 81e24fe7-973b-4997-9250-c8dd73e9af20
     - !<own> 4a7d7680-57e4-4006-ad90-1cb2caff42cc
+- !<SceneObject/a8838472-12ec-4d45-a0a9-00fb4fdca7de>
+  PrefabRemaps:
+    []
+  Name: Full Frame Region
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> f49f208b-c556-4dc3-a2a9-ae7a76513c08
+  Components:
+    - !<own> 801ddbd8-79c8-4ee2-b515-5500394914c8
+    - !<own> e493a6cd-c8ce-44e0-8b97-38d55eebcc90
 - !<ScriptComponent/a90be38a-4713-4733-8c7c-8f4d34bfa6e1>
   PrefabRemaps:
     []
@@ -3609,13 +3609,6 @@
   Components:
     - !<own> 2a81568e-f93d-4e65-bc83-4a93b12c1162
     - !<own> 3eddc019-3c8a-4f34-b093-13c64217daab
-- !<ScreenRegionComponent/e493a6cd-c8ce-44e0-8b97-38d55eebcc90>
-  PrefabRemaps:
-    []
-  Name: Screen Region
-  Enabled: true
-  ScreenRegionType: FullFrame
-  ResizeWithKeyboard: false
 - !<SceneObject/e0568f64-3225-4059-a8f6-20a080dcf39f>
   PrefabRemaps:
     []
@@ -3631,6 +3624,13 @@
     []
   Components:
     - !<own> 4a0d3e81-df76-4e80-86ec-f291fe4a771f
+- !<ScreenRegionComponent/e493a6cd-c8ce-44e0-8b97-38d55eebcc90>
+  PrefabRemaps:
+    []
+  Name: Screen Region
+  Enabled: true
+  ScreenRegionType: FullFrame
+  ResizeWithKeyboard: false
 - !<SceneObject/ed18c24c-c1be-454e-bc3d-86f8dccd425e>
   PrefabRemaps:
     []

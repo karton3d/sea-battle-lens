@@ -720,7 +720,7 @@ export class GameManager extends BaseScriptComponent {
         }
 
         // Delay to let user see the marker, then transition
-        this.delayedCall(this.delayAfterShot, () => {
+        this.delayedCall(() => {
             // Switch to opponent's turn
             this.state.turn = 'opponent';
             this.updateStatus("Opponent's turn");
@@ -729,15 +729,15 @@ export class GameManager extends BaseScriptComponent {
             // Animate to player grid, then trigger AI after delays
             this.animateSceneHandle(false, () => {
                 if (this.state.mode === 'single') {
-                    this.delayedCall(this.delayBeforeAI, () => {
+                    this.delayedCall(() => {
                         this.aiTurn();
-                    });
+                    }, this.delayBeforeAI);
                 } else {
                     // Multiplayer: submit turn
                     this.submitTurn(x, y, result);
                 }
             });
-        });
+        }, this.delayAfterShot);
     }
     
     /**
@@ -839,15 +839,6 @@ export class GameManager extends BaseScriptComponent {
             .start();
     }
 
-    /**
-     * Helper to create a delayed callback
-     */
-    private delayedCall(delay: number, callback: () => void): void {
-        const delayEvent = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent;
-        delayEvent.bind(callback);
-        delayEvent.reset(delay);
-    }
-
     // ==================== AI OPPONENT ====================
     
     /**
@@ -897,13 +888,13 @@ export class GameManager extends BaseScriptComponent {
         }
 
         // Delay to let user see the marker, then transition
-        this.delayedCall(this.delayAfterShot, () => {
+        this.delayedCall(() => {
             // Switch to player's turn
             this.state.turn = 'player';
             this.updateStatus("Your turn");
             this.updateHint("Tap opponent's cell to shoot");
             this.animateSceneHandle(true); // Move to show opponent grid
-        });
+        }, this.delayAfterShot);
     }
 
     /**
