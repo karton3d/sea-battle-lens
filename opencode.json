@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "lens-studio": {
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer YsMbQhHSMcAYmXmFQLdWRIoeQ3iVrmwyNXaXfBiZhSEFWTfCGJxwt2OtdqwRHwZ3"
+      },
+      "type": "remote",
+      "url": "http://localhost:50050/mcp"
+    }
+  }
+}

@@ -539,7 +539,34 @@ export class SeaBattleGrid extends BaseScriptComponent {
         this.initShipGrid();
         this.generateGrid();
     }
-    
+
+    /**
+     * Reshuffle ships without regenerating grid cells
+     * More efficient than full resetGame() - keeps grid intact
+     */
+    reshuffleShips(): void {
+        print(`[SeaBattleGrid] ${this.getSceneObject().name} reshuffling ships`);
+
+        // Clear only ships (keep grid cells and markers)
+        this.clearShips();
+
+        // Reset ship occupancy grid
+        this.initShipGrid();
+
+        // Place ships randomly again
+        if (this.useRandomPlacement) {
+            const success = this.placeShipsRandomly();
+            if (!success) {
+                print("[SeaBattleGrid] Random placement failed, using test placement");
+                this.placeTestShips();
+            }
+        } else {
+            this.placeTestShips();
+        }
+
+        print(`[SeaBattleGrid] Reshuffle complete, ${this.placedShips.length} ships placed`);
+    }
+
     /**
      * Get cell SceneObject at grid position
      */
@@ -577,10 +604,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
     private spawnMarker(gridX: number, gridY: number, prefab: ObjectPrefab, type: string) {
         // Get cell position and spawn marker above it
         const cellPos = this.gridToWorldPosition(gridX, gridY, 0);
-        
+
         // Marker height - same as ships (cellSize + shipHeightOffset)
         const markerHeight = this.cellSize + this.shipHeightOffset;
-        
+
         // Get parent
         let parent: SceneObject;
         if (this.gridParent) {
@@ -588,17 +615,22 @@ export class SeaBattleGrid extends BaseScriptComponent {
         } else {
             parent = this.getSceneObject();
         }
-        
+
         // Spawn marker - uses prefab's original scale (like ships)
         const marker = prefab.instantiate(parent);
         marker.name = `Marker_${type}_${gridX}_${gridY}`;
-        
+
+        // Enable the marker (prefab might be disabled by default)
+        marker.enabled = true;
+
         const transform = marker.getTransform();
         transform.setLocalPosition(new vec3(cellPos.x, markerHeight, cellPos.z));
-        // No setLocalScale - marker keeps its prefab size
-        
+
+        // Reset rotation to identity (flat on grid)
+        transform.setLocalRotation(quat.quatIdentity());
+
         this.placedMarkers.push(marker);
-        
+
         print(`SeaBattleGrid: Spawned ${type} marker at (${gridX}, ${gridY}) height=${markerHeight}`);
     }
     

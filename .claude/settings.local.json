@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:developers.snap.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(brew install:*)",
+      "Skill(bmad:bmm:workflows:dev-story)",
+      "Skill(bmad:bmm:workflows:create-story)",
+      "Skill(bmad:bmm:workflows:code-review)",
+      "Skill(bmad:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git worktree:*)",
+      "Bash(grep:*)",
+      "mcp__lens-studio__GetLensStudioLogsTool",
+      "mcp__lens-studio__*"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "lens-studio"
+  ]
+}
