@@ -819,7 +819,6 @@ export class GameManager extends BaseScriptComponent {
         const start = { x: currentPos.x };
         const end = { x: targetX };
 
-        const TWEEN = (global as any).TWEEN;
         new TWEEN.Tween(start)
             .to(end, this.handleAnimDuration * 1000)
             .easing(TWEEN.Easing.Sinusoidal.InOut)
