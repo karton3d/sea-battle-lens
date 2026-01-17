@@ -1344,6 +1344,7 @@
   Enabled: true
   ScriptAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
   ScriptInputsDefault:
+    aimMarkerPrefab: true
     gridRows: true
     gridCols: true
     useRandomPlacement: true
@@ -1359,6 +1360,7 @@
       ship4Prefab: !<reference.ObjectPrefab> cd5891c5-49ab-490e-a7d4-a531e5df0fcb
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridRows: !<float> 10.000000
       gridCols: !<float> 10.000000
       cellSpacing: !<float> 14.000000
@@ -1845,7 +1847,7 @@
   PrefabRemaps:
     []
   Name: RevealController
-  Enabled: false
+  Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -2032,6 +2034,7 @@
   Enabled: true
   ScriptAsset: !<reference> 7da3f725-a1dc-4fde-bc6c-9e2fd979a336
   ScriptInputsDefault:
+    aimMarkerPrefab: true
     gridRows: true
     gridCols: true
     useRandomPlacement: true
@@ -2047,6 +2050,7 @@
       ship4Prefab: !<reference.ObjectPrefab> d41f1311-1520-4662-a9d0-bdbf2c7768b9
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridRows: !<float> 10.000000
       gridCols: !<float> 10.000000
       cellSpacing: !<float> 14.000000
@@ -2533,6 +2537,7 @@
   Enabled: true
   ScriptAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
   ScriptInputsDefault:
+    aimMarkerPrefab: true
     gridSize: true
     shipHeightOffset: true
     useRandomPlacement: true
@@ -2548,6 +2553,7 @@
       ship4Prefab: !<reference.ObjectPrefab> d41f1311-1520-4662-a9d0-bdbf2c7768b9
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridSize: !<float> 10.000000
       cellSize: !<float> 10.000000
       cellSpacing: !<float> 1.000000
@@ -3082,6 +3088,7 @@
   Enabled: true
   ScriptAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
   ScriptInputsDefault:
+    aimMarkerPrefab: true
     gridSize: true
     shipHeightOffset: true
     useRandomPlacement: true
@@ -3097,6 +3104,7 @@
       ship4Prefab: !<reference.ObjectPrefab> cd5891c5-49ab-490e-a7d4-a531e5df0fcb
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
+      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridSize: !<float> 10.000000
       cellSize: !<float> 10.000000
       cellSpacing: !<float> 1.000000

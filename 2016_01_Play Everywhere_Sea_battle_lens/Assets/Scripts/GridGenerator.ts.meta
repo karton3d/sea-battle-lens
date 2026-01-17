@@ -26,6 +26,7 @@
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
+    aimMarkerPrefab: false
     autoGenerate: false
     cellPrefab: false
     cellSize: false
@@ -58,6 +59,7 @@
       ship4Prefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       hitMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       missMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
+      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
       gridSize: !<float> 10.000000
       cellSize: !<float> 1.000000
       cellSpacing: 0.100000
@@ -78,6 +80,7 @@
     - // @input Asset.ObjectPrefab ship4Prefab
     - // @input Asset.ObjectPrefab hitMarkerPrefab
     - // @input Asset.ObjectPrefab missMarkerPrefab
+    - // @input Asset.ObjectPrefab aimMarkerPrefab
     - // @input float gridSize = 10
     - // @input float cellSize = 1
     - // @input float cellSpacing = 0.1

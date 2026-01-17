@@ -150,11 +150,19 @@ export class GameManager extends BaseScriptComponent {
     // ==================== GRID HELPERS ====================
 
     private getGridScript(gridObject: SceneObject): any {
-        if (!gridObject) return null;
+        if (!gridObject) {
+            print(`[GameManager] getGridScript: gridObject is null`);
+            return null;
+        }
+        print(`[GameManager] getGridScript: Looking in ${gridObject.name}`);
         const scripts = gridObject.getComponents("Component.ScriptComponent");
+        print(`[GameManager] getGridScript: Found ${scripts.length} script components`);
         for (let i = 0; i < scripts.length; i++) {
             const script = scripts[i] as any;
-            if (script && typeof script.generate === 'function') {
+            const hasGenerate = script && typeof script.generate === 'function';
+            const hasShowAimMarker = script && typeof script.showAimMarker === 'function';
+            print(`[GameManager] getGridScript: Script ${i} - generate: ${hasGenerate}, showAimMarker: ${hasShowAimMarker}`);
+            if (hasGenerate) {
                 return script;
             }
         }
@@ -201,11 +209,18 @@ export class GameManager extends BaseScriptComponent {
      * Show aim marker on opponent grid (for multiplayer aiming)
      */
     showAimMarker(x: number, y: number) {
+        print(`[GameManager] showAimMarker called for (${x}, ${y})`);
         const gridScript = this.getGridScript(this.opponentGridGenerator);
-        if (gridScript && typeof gridScript.showAimMarker === 'function') {
-            gridScript.showAimMarker(x, y);
-            this.log(`Showing aim marker at (${x}, ${y})`);
+        if (!gridScript) {
+            print(`[GameManager] ERROR: Could not get opponent grid script`);
+            return;
         }
+        if (typeof gridScript.showAimMarker !== 'function') {
+            print(`[GameManager] ERROR: showAimMarker is not a function on grid script`);
+            return;
+        }
+        gridScript.showAimMarker(x, y);
+        print(`[GameManager] showAimMarker completed`);
     }
 
     /**
@@ -890,7 +905,7 @@ export class GameManager extends BaseScriptComponent {
             return;
         }
 
-        this.log(`handleMultiplayerCellTap: Selected aim (${x}, ${y})`);
+        print(`[GameManager] handleMultiplayerCellTap: Selected aim (${x}, ${y})`);
 
         // Clear previous aim marker
         if (this.mpSelectedAim) {
@@ -899,6 +914,7 @@ export class GameManager extends BaseScriptComponent {
 
         // Set new aim
         this.mpSelectedAim = { x, y };
+        print(`[GameManager] About to call showAimMarker...`);
         this.showAimMarker(x, y);
 
         // Transition to confirm_send phase (waiting for Snap button)

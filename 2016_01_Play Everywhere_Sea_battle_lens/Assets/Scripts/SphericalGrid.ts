@@ -19,6 +19,10 @@ export class SphericalGrid extends BaseScriptComponent {
     @input hitMarkerPrefab: ObjectPrefab;
     @input missMarkerPrefab: ObjectPrefab;
 
+    /** Aim marker prefab (for multiplayer aiming phase) */
+    @allowUndefined
+    @input aimMarkerPrefab: ObjectPrefab;
+
     // ==================== GRID PARAMETERS ====================
 
     /** Number of rows */
@@ -72,6 +76,9 @@ export class SphericalGrid extends BaseScriptComponent {
 
     /** Placed markers */
     private placedMarkers: SceneObject[] = [];
+
+    /** Current aim marker */
+    private currentAimMarker: SceneObject | null = null;
 
     /** Ship occupancy grid [row][col] -> boolean */
     private shipGrid: boolean[][] = [];
@@ -639,4 +646,75 @@ export class SphericalGrid extends BaseScriptComponent {
     getCellSpacing(): number { return this.cellSpacing; }
     getCurvature(): number { return this.curvature; }
     getIsVisible(): boolean { return this.isVisible; }
+
+    // ==================== AIM MARKER ====================
+
+    /**
+     * Show aim marker at grid position (for multiplayer aiming)
+     */
+    showAimMarker(row: number, col: number): void {
+        print(`[SphericalGrid] showAimMarker called for (${row}, ${col})`);
+
+        // Remove existing aim marker
+        this.hideAimMarker();
+
+        // Use aim marker prefab, or fall back to miss marker
+        const prefab = this.aimMarkerPrefab || this.missMarkerPrefab;
+        if (!prefab) {
+            print(`[SphericalGrid] ERROR: No aim marker prefab available!`);
+            return;
+        }
+
+        // Get position with height offset
+        const position = this.getCellWorldPosition(row, col, this.objectHeightOffset);
+
+        // Get parent
+        let parent: SceneObject;
+        if (this.gridParent) {
+            parent = this.gridParent;
+        } else {
+            parent = this.getSceneObject();
+        }
+
+        // Spawn aim marker
+        this.currentAimMarker = prefab.instantiate(parent);
+        this.currentAimMarker.name = `AimMarker_${row}_${col}`;
+
+        const transform = this.currentAimMarker.getTransform();
+        transform.setLocalPosition(position);
+
+        // Rotate marker to lay flat on the curved surface
+        const layFlat = quat.fromEulerAngles(-Math.PI / 2, 0, 0);
+        const cellRot = this.getCellRotation(row, col);
+        transform.setLocalRotation(cellRot.multiply(layFlat));
+
+        // Enable marker and all children recursively
+        this.enableSceneObjectRecursive(this.currentAimMarker, true);
+
+        print(`[SphericalGrid] Aim marker shown at (${row}, ${col})`);
+    }
+
+    /**
+     * Hide/remove current aim marker
+     */
+    hideAimMarker(): void {
+        if (this.currentAimMarker) {
+            this.currentAimMarker.destroy();
+            this.currentAimMarker = null;
+            print(`[SphericalGrid] Aim marker hidden`);
+        }
+    }
+
+    /**
+     * Enable/disable a SceneObject and all its children recursively
+     */
+    private enableSceneObjectRecursive(obj: SceneObject, enabled: boolean): void {
+        if (!obj) return;
+        obj.enabled = enabled;
+
+        const childCount = obj.getChildrenCount();
+        for (let i = 0; i < childCount; i++) {
+            this.enableSceneObjectRecursive(obj.getChild(i), enabled);
+        }
+    }
 }

@@ -14,6 +14,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
     // Marker prefabs for hit/miss visualization
     @input hitMarkerPrefab: ObjectPrefab;   // Spawned when hitting an object
     @input missMarkerPrefab: ObjectPrefab;  // Spawned when hitting empty cell
+
+    // Aim marker prefab (for multiplayer aiming phase)
+    @allowUndefined
+    @input aimMarkerPrefab: ObjectPrefab;
     
     // Grid size (default 10x10)
     @input gridSize: number = 10;
@@ -51,7 +55,10 @@ export class SeaBattleGrid extends BaseScriptComponent {
     
     // Placed markers (hit/miss indicators)
     private placedMarkers: SceneObject[] = [];
-    
+
+    // Current aim marker (for multiplayer aiming)
+    private currentAimMarker: SceneObject | null = null;
+
     // Ship grid (tracks occupied cells)
     private shipGrid: boolean[][] = [];
     
@@ -656,5 +663,84 @@ export class SeaBattleGrid extends BaseScriptComponent {
      */
     getGridSize(): number {
         return this.gridSize;
+    }
+
+    /**
+     * Show aim marker at grid position (for multiplayer aiming)
+     * Removes any existing aim marker first
+     */
+    showAimMarker(x: number, y: number): void {
+        print(`[SeaBattleGrid] showAimMarker called for (${x}, ${y})`);
+        print(`[SeaBattleGrid] aimMarkerPrefab: ${this.aimMarkerPrefab ? 'SET' : 'NULL'}`);
+        print(`[SeaBattleGrid] missMarkerPrefab: ${this.missMarkerPrefab ? 'SET' : 'NULL'}`);
+
+        // Remove existing aim marker
+        this.hideAimMarker();
+
+        // Use aim marker prefab, or fall back to miss marker
+        const prefab = this.aimMarkerPrefab || this.missMarkerPrefab;
+        if (!prefab) {
+            print(`[SeaBattleGrid] ERROR: No aim marker prefab available!`);
+            return;
+        }
+
+        // Get cell position
+        const cellPos = this.gridToWorldPosition(x, y, 0);
+        const markerHeight = this.cellSize + this.shipHeightOffset;
+        print(`[SeaBattleGrid] Cell position: (${cellPos.x}, ${cellPos.y}, ${cellPos.z}), markerHeight: ${markerHeight}`);
+
+        // Get parent
+        let parent: SceneObject;
+        if (this.gridParent) {
+            parent = this.gridParent;
+            print(`[SeaBattleGrid] Using gridParent: ${parent.name}`);
+        } else {
+            parent = this.getSceneObject();
+            print(`[SeaBattleGrid] Using self as parent: ${parent.name}`);
+        }
+
+        // Spawn aim marker
+        this.currentAimMarker = prefab.instantiate(parent);
+        if (!this.currentAimMarker) {
+            print(`[SeaBattleGrid] ERROR: Failed to instantiate aim marker!`);
+            return;
+        }
+        this.currentAimMarker.name = `AimMarker_${x}_${y}`;
+        print(`[SeaBattleGrid] Aim marker instantiated: ${this.currentAimMarker.name}`);
+
+        const transform = this.currentAimMarker.getTransform();
+        transform.setLocalPosition(new vec3(cellPos.x, markerHeight, cellPos.z));
+        transform.setLocalRotation(quat.quatIdentity());
+
+        // Enable marker and all children recursively
+        this.enableSceneObjectRecursive(this.currentAimMarker, true);
+
+        const finalPos = transform.getLocalPosition();
+        print(`[SeaBattleGrid] Aim marker final position: (${finalPos.x}, ${finalPos.y}, ${finalPos.z})`);
+        print(`[SeaBattleGrid] Aim marker enabled: ${this.currentAimMarker.enabled}`);
+    }
+
+    /**
+     * Enable/disable a SceneObject and all its children recursively
+     */
+    private enableSceneObjectRecursive(obj: SceneObject, enabled: boolean): void {
+        if (!obj) return;
+        obj.enabled = enabled;
+
+        const childCount = obj.getChildrenCount();
+        for (let i = 0; i < childCount; i++) {
+            this.enableSceneObjectRecursive(obj.getChild(i), enabled);
+        }
+    }
+
+    /**
+     * Hide/remove current aim marker
+     */
+    hideAimMarker(): void {
+        if (this.currentAimMarker) {
+            this.currentAimMarker.destroy();
+            this.currentAimMarker = null;
+            print(`SeaBattleGrid: Aim marker hidden`);
+        }
     }
 }
