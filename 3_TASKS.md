@@ -1,15 +1,16 @@
 # Tasks
 
-## 🟡 IN PROGRESS — Multiplayer (Epic 1 Done)
+## 🟡 IN PROGRESS — Multiplayer (Ready for Testing)
 
 - [x] Turn-Based integration (TurnBasedManager.ts created)
 - [x] State serialization (TurnData JSON)
 - [x] Turn submission (submitTurn)
 - [x] Opponent turn handling (onTurnReceived)
-- [ ] Mode selection UI (Epic 2)
-- [ ] Ship position exchange (Epic 2)
-- [ ] Waiting states UI (Epic 4)
-- [ ] Two-device testing (Epic 5)
+- [x] Mode selection UI (buttons wired in GameManager)
+- [x] Ship position exchange (first turn includes shipPositions)
+- [x] Scene wiring (TurnBasedManager ↔ Turn Based ↔ GameManager)
+- [ ] Waiting states UI ("Waiting for opponent...")
+- [ ] Two-device testing
 
 ## 🔴 TODO — UI Polish
 

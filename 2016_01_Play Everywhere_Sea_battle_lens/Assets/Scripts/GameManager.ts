@@ -75,6 +75,9 @@ export class GameManager extends BaseScriptComponent {
     // Active turn handler (AITurnHandler or TurnBasedManager)
     private turnHandler: ITurnHandler | null = null;
 
+    // Guard to prevent duplicate button callbacks
+    private buttonsInitialized: boolean = false;
+
     // ==================== LOGGING ====================
 
     private log(message: string): void {
@@ -88,6 +91,7 @@ export class GameManager extends BaseScriptComponent {
     }
 
     onAwake() {
+        print(`[GameManager] onAwake called, buttonsInitialized=${this.buttonsInitialized}`);
         this.initializeState();
         this.setupButtons();
         
@@ -247,11 +251,18 @@ export class GameManager extends BaseScriptComponent {
      * Uses UI Button component events (onPress) to allow animations to play
      */
     setupButtons() {
+        // Guard against duplicate setup (callbacks would accumulate)
+        if (this.buttonsInitialized) {
+            this.log('setupButtons: Already initialized, skipping');
+            return;
+        }
+        this.buttonsInitialized = true;
+
         // Single Player button
         if (this.singlePlayerButton) {
             const buttonScript = this.getUIButtonScript(this.singlePlayerButton);
-            if (buttonScript && buttonScript.onPress) {
-                buttonScript.onPress.add(() => this.onSinglePlayerTap());
+            if (buttonScript && buttonScript.onPressDown) {
+                buttonScript.onPressDown.add(() => this.onSinglePlayerTap());
                 this.log('Single Player button setup (UI Button)');
             } else {
                 // Fallback to Component.Touch if UI Button not found
@@ -262,8 +273,8 @@ export class GameManager extends BaseScriptComponent {
         // Multiplayer button
         if (this.multiplayerButton) {
             const buttonScript = this.getUIButtonScript(this.multiplayerButton);
-            if (buttonScript && buttonScript.onPress) {
-                buttonScript.onPress.add(() => this.onMultiplayerTap());
+            if (buttonScript && buttonScript.onPressDown) {
+                buttonScript.onPressDown.add(() => this.onMultiplayerTap());
                 this.log('Multiplayer button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.multiplayerButton, () => this.onMultiplayerTap());
@@ -273,8 +284,8 @@ export class GameManager extends BaseScriptComponent {
         // Start button
         if (this.startButton) {
             const buttonScript = this.getUIButtonScript(this.startButton);
-            if (buttonScript && buttonScript.onPress) {
-                buttonScript.onPress.add(() => this.onStartTap());
+            if (buttonScript && buttonScript.onPressDown) {
+                buttonScript.onPressDown.add(() => this.onStartTap());
                 this.log('Start button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.startButton, () => this.onStartTap());
@@ -296,8 +307,8 @@ export class GameManager extends BaseScriptComponent {
         // Play Again button
         if (this.playAgainButton) {
             const buttonScript = this.getUIButtonScript(this.playAgainButton);
-            if (buttonScript && buttonScript.onPress) {
-                buttonScript.onPress.add(() => this.onPlayAgainTap());
+            if (buttonScript && buttonScript.onPressDown) {
+                buttonScript.onPressDown.add(() => this.onPlayAgainTap());
                 this.log('Play Again button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.playAgainButton, () => this.onPlayAgainTap());
@@ -314,7 +325,7 @@ export class GameManager extends BaseScriptComponent {
         for (let i = 0; i < scripts.length; i++) {
             const script = scripts[i] as any;
             // Check if it's UI Button (has onPress event)
-            if (script && script.onPress && typeof script.onPress.add === 'function') {
+            if (script && script.onPressDown && typeof script.onPressDown.add === 'function') {
                 return script;
             }
         }

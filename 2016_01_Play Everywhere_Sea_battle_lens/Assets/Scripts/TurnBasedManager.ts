@@ -138,56 +138,47 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     /**
      * Register callbacks with Turn-Based component
+     * Uses the correct Turn-Based API: onTurnStart, onTurnEnd, onGameOver, onError
      */
     private registerCallbacks(): void {
         if (!this.turnBasedScript) return;
 
-        // Register turn start callback
-        if (this.tryRegisterCallback('_onTurnStartResponses', (turnData: string) => {
-            this.handleTurnStart(turnData);
-        })) {
+        // Register turn start callback - fires when turn begins with previous turn data
+        if (this.turnBasedScript.onTurnStart && typeof this.turnBasedScript.onTurnStart.add === 'function') {
+            this.turnBasedScript.onTurnStart.add((eventData: any) => {
+                this.log(`onTurnStart fired: turnCount=${eventData.turnCount}, userIndex=${eventData.currentUserIndex}`);
+                this.handleTurnStart(eventData);
+            });
             this.log('registerCallbacks: onTurnStart registered');
+        } else {
+            this.log('registerCallbacks: WARNING - onTurnStart not found');
         }
 
         // Register turn end callback
-        if (this.tryRegisterCallback('_onTurnEndResponses', () => {
-            this.handleTurnEnd();
-        })) {
+        if (this.turnBasedScript.onTurnEnd && typeof this.turnBasedScript.onTurnEnd.add === 'function') {
+            this.turnBasedScript.onTurnEnd.add(() => {
+                this.handleTurnEnd();
+            });
             this.log('registerCallbacks: onTurnEnd registered');
         }
 
         // Register game over callback
-        if (this.tryRegisterCallback('_onGameOverResponses', () => {
-            this.handleGameOverFromTurnBased();
-        })) {
+        if (this.turnBasedScript.onGameOver && typeof this.turnBasedScript.onGameOver.add === 'function') {
+            this.turnBasedScript.onGameOver.add(() => {
+                this.handleGameOverFromTurnBased();
+            });
             this.log('registerCallbacks: onGameOver registered');
         }
 
+        // Register error callback
+        if (this.turnBasedScript.onError && typeof this.turnBasedScript.onError.add === 'function') {
+            this.turnBasedScript.onError.add((errorData: any) => {
+                this.logError(`Turn-Based error: ${errorData.code} - ${errorData.description}`);
+            });
+            this.log('registerCallbacks: onError registered');
+        }
+
         this.log('registerCallbacks: Done');
-    }
-
-    /**
-     * Safely try to register a callback on the Turn-Based script
-     */
-    private tryRegisterCallback(eventName: string, callback: Function): boolean {
-        const event = this.turnBasedScript[eventName];
-        if (!event) {
-            this.log(`tryRegisterCallback: "${eventName}" not found`);
-            return false;
-        }
-
-        if (typeof event.add === 'function') {
-            event.add(callback);
-            return true;
-        }
-
-        // Maybe it's a different API pattern
-        if (typeof event === 'function') {
-            this.log(`tryRegisterCallback: "${eventName}" is a function, not an event`);
-        } else {
-            this.log(`tryRegisterCallback: "${eventName}" exists but .add is not a function (type: ${typeof event})`);
-        }
-        return false;
     }
 
     // ==================== PUBLIC API ====================
@@ -280,17 +271,11 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     /**
      * Submit turn data via Turn-Based component
+     * Uses setCurrentTurnVariable() + endTurn() API
      */
     submitTurn(turnData: TurnData): void {
         this.log('submitTurn: Submitting turn data');
         this.log(`[TURN] Submit: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
-
-        // Serialize turn data
-        const serialized = this.serializeTurnData(turnData);
-        if (!serialized) {
-            this.logError('submitTurn: Serialization failed');
-            return;
-        }
 
         // Check if Turn-Based component is ready
         if (!this.turnBasedScript) {
@@ -298,27 +283,45 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             return;
         }
 
-        // Submit via Turn-Based API
-        if (typeof this.turnBasedScript.submitTurn === 'function') {
-            this.turnBasedScript.submitTurn(serialized);
-            this._isMyTurn = false;
-            this.log('submitTurn: Turn submitted successfully');
-        } else {
-            this.logError('submitTurn: submitTurn method not found');
+        // Check for setCurrentTurnVariable method
+        if (typeof this.turnBasedScript.setCurrentTurnVariable !== 'function') {
+            this.logError('submitTurn: setCurrentTurnVariable method not found');
+            return;
         }
-    }
 
-    /**
-     * Serialize turn data to JSON string
-     */
-    private serializeTurnData(turnData: TurnData): string | null {
-        try {
-            const json = JSON.stringify(turnData);
-            this.log(`serializeTurnData: ${json.length} bytes`);
-            return json;
-        } catch (e) {
-            this.logError('serializeTurnData: JSON.stringify failed');
-            return null;
+        // Set turn variables using the correct API
+        this.turnBasedScript.setCurrentTurnVariable('shotX', turnData.shotX);
+        this.turnBasedScript.setCurrentTurnVariable('shotY', turnData.shotY);
+        this.turnBasedScript.setCurrentTurnVariable('result', turnData.result);
+        this.turnBasedScript.setCurrentTurnVariable('isGameOver', turnData.isGameOver);
+
+        if (turnData.hitsCount !== undefined) {
+            this.turnBasedScript.setCurrentTurnVariable('hitsCount', turnData.hitsCount);
+        }
+        if (turnData.winner) {
+            this.turnBasedScript.setCurrentTurnVariable('winner', turnData.winner);
+        }
+
+        // Include ship positions on first turn (as JSON string since it's complex)
+        if (turnData.shipPositions) {
+            this.turnBasedScript.setCurrentTurnVariable('shipPositions', JSON.stringify(turnData.shipPositions));
+            this.log('submitTurn: Including ship positions');
+        }
+
+        this.log('submitTurn: Turn variables set, calling endTurn()');
+
+        // Mark as final turn if game over
+        if (turnData.isGameOver && typeof this.turnBasedScript.setIsFinalTurn === 'function') {
+            this.turnBasedScript.setIsFinalTurn(true);
+        }
+
+        // Complete the turn - this triggers Snap capture
+        if (typeof this.turnBasedScript.endTurn === 'function') {
+            this.turnBasedScript.endTurn();
+            this._isMyTurn = false;
+            this.log('submitTurn: endTurn() called successfully');
+        } else {
+            this.logError('submitTurn: endTurn method not found');
         }
     }
 
@@ -327,15 +330,26 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     /**
      * Handle turn start callback from Turn-Based component
      * Called when it becomes this player's turn (with opponent's previous turn data)
+     * eventData contains: currentUserIndex, tappedKey, turnCount, previousTurnVariables
      */
-    private handleTurnStart(turnDataJson: string): void {
+    private handleTurnStart(eventData: any): void {
         this.log('handleTurnStart: Received turn data');
         this._isMyTurn = true;
 
-        // Deserialize turn data
-        const turnData = this.deserializeTurnData(turnDataJson);
+        const prevVars = eventData.previousTurnVariables || {};
+        this.log(`handleTurnStart: turnCount=${eventData.turnCount}, prevVars keys: ${Object.keys(prevVars).join(', ')}`);
+
+        // First turn (turnCount=0) has no previous data
+        if (eventData.turnCount === 0 || Object.keys(prevVars).length === 0) {
+            this.log('handleTurnStart: First turn, no previous data');
+            this.notifyGameManagerTurnStart(null);
+            return;
+        }
+
+        // Parse turn data from previousTurnVariables
+        const turnData = this.parseTurnVariables(prevVars);
         if (!turnData) {
-            this.log('handleTurnStart: No valid turn data (may be first turn)');
+            this.log('handleTurnStart: Could not parse turn variables');
             this.notifyGameManagerTurnStart(null);
             return;
         }
@@ -363,46 +377,45 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     }
 
     /**
-     * Deserialize turn data from JSON string
+     * Parse turn data from previousTurnVariables map
      */
-    private deserializeTurnData(json: string): TurnData | null {
-        if (!json || json.trim() === '') {
+    private parseTurnVariables(vars: any): TurnData | null {
+        // Check for required shot coordinates
+        if (typeof vars.shotX !== 'number' || typeof vars.shotY !== 'number') {
+            this.log('parseTurnVariables: Missing shotX/shotY');
             return null;
         }
 
-        try {
-            const data = JSON.parse(json);
-
-            // Validate required fields
-            if (typeof data.shotX !== 'number' || typeof data.shotY !== 'number') {
-                this.log('deserializeTurnData: Missing required fields');
-                return null;
-            }
-
-            // Validate shot coordinates
-            if (data.shotX < 0 || data.shotX >= GRID_SIZE || data.shotY < 0 || data.shotY >= GRID_SIZE) {
-                this.log(`deserializeTurnData: Invalid coordinates (${data.shotX}, ${data.shotY})`);
-                return null;
-            }
-
-            // Type coercion for safety
-            const turnData: TurnData = {
-                shotX: Math.floor(data.shotX),
-                shotY: Math.floor(data.shotY),
-                result: data.result || 'miss',
-                hitsCount: data.hitsCount ? Math.floor(data.hitsCount) : undefined,
-                isGameOver: Boolean(data.isGameOver),
-                winner: data.winner || null,
-                shipPositions: data.shipPositions || undefined
-            };
-
-            this.log('deserializeTurnData: Valid turn data parsed');
-            return turnData;
-
-        } catch (e) {
-            this.logError('deserializeTurnData: JSON.parse failed');
+        // Validate shot coordinates
+        if (vars.shotX < 0 || vars.shotX >= GRID_SIZE || vars.shotY < 0 || vars.shotY >= GRID_SIZE) {
+            this.log(`parseTurnVariables: Invalid coordinates (${vars.shotX}, ${vars.shotY})`);
             return null;
         }
+
+        // Parse ship positions if present (stored as JSON string)
+        let shipPositions = undefined;
+        if (vars.shipPositions) {
+            try {
+                shipPositions = typeof vars.shipPositions === 'string'
+                    ? JSON.parse(vars.shipPositions)
+                    : vars.shipPositions;
+            } catch (e) {
+                this.log('parseTurnVariables: Could not parse shipPositions');
+            }
+        }
+
+        const turnData: TurnData = {
+            shotX: Math.floor(vars.shotX),
+            shotY: Math.floor(vars.shotY),
+            result: vars.result || 'miss',
+            hitsCount: vars.hitsCount ? Math.floor(vars.hitsCount) : undefined,
+            isGameOver: Boolean(vars.isGameOver),
+            winner: vars.winner || null,
+            shipPositions: shipPositions
+        };
+
+        this.log('parseTurnVariables: Valid turn data parsed');
+        return turnData;
     }
 
     /**
