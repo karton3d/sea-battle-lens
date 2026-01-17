@@ -17,7 +17,8 @@
       "Bash(grep:*)",
       "mcp__lens-studio__GetLensStudioLogsTool",
       "mcp__lens-studio__*",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "mcp__ide__getDiagnostics"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -6,23 +6,11 @@
     - !<own> bfbf0c9c-5b78-4ef0-ac38-9617c633f5e6
     - !<own> 57c2db50-a721-4ed9-8098-02ffa9db0ae3
     - !<own> 0005641c-028d-459a-0000-000000014b4d
-    - !<own> dcede660-de62-4244-9306-28fea4829179
-    - !<own> 3bc88fa3-c923-46f0-a35e-7062028485f4
-    - !<own> 89bef635-2d16-4001-9db1-ec6298e90505
-    - !<own> 0d1dd6db-8861-47a3-a7d9-4598c1b839b6
-    - !<own> 2a3a2204-9a16-445b-8632-689f863f4524
-    - !<own> bb63588e-918d-476f-b481-0c46bf2e7747
-    - !<own> 64e1c9cd-0fe3-4f9a-9c22-281e817375a6
-    - !<own> 75f96f61-6b17-4a1e-b2bd-f56f8feca37a
-    - !<own> 89ec6cc5-373e-489b-b03f-df885ca452de
+    - !<own> b01fd4b1-b45d-4193-9ab4-57fbc9478b4c
     - !<own> 9129c439-40f1-4777-884d-a1e0f69039ca
     - !<own> cb6a6285-7f8f-4d35-9c4f-528b4308b527
-    - !<own> 2a61fdd6-7865-4f30-a26a-692de094d004
-    - !<own> d35ce454-0744-4b55-bd47-3cb04feba12a
     - !<own> ed18c24c-c1be-454e-bc3d-86f8dccd425e
     - !<own> 3a4ab60a-1de9-4fb3-8350-a5bff391e896
-    - !<own> 3d55b809-bc01-4139-8c44-a4baa1f6664f
-    - !<own> afd35fc7-02dc-43c1-a731-3ddbdc800f01
     - !<own> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
     - !<own> e0568f64-3225-4059-a8f6-20a080dcf39f
     - !<own> 6a72ec62-bb3a-4734-939d-df5883ad09ae
@@ -2126,6 +2114,8 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
+    aiTurnHandler: true
+    turnBasedManager: true
     handleAnimDuration: true
     delayBeforeAI: true
     delayAfterAnimation: true
@@ -2154,6 +2144,8 @@
       startButton: !<reference.SceneObject> ae3a7a66-ad78-45f7-b2cc-2bb7827d4e58
       reshuffleButton: !<reference.SceneObject> a5d92e2e-014f-4188-a260-20ab056c8884
       playAgainButton: !<reference.SceneObject> 0608ea05-e637-444e-b01e-82251b902bd8
+      aiTurnHandler: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      turnBasedManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       sceneHandle: !<reference.SceneObject> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
       handleAnimDuration: 0.500000
       delayBeforeAI: !<float> 1.000000
@@ -2970,6 +2962,33 @@
     []
   Components:
     - !<own> 73c51eba-8395-4d11-8110-f03648dbda8a
+- !<SceneObject/b01fd4b1-b45d-4193-9ab4-57fbc9478b4c>
+  PrefabRemaps:
+    []
+  Name: Prefabs
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> dcede660-de62-4244-9306-28fea4829179
+    - !<own> 3bc88fa3-c923-46f0-a35e-7062028485f4
+    - !<own> 89bef635-2d16-4001-9db1-ec6298e90505
+    - !<own> 0d1dd6db-8861-47a3-a7d9-4598c1b839b6
+    - !<own> 2a3a2204-9a16-445b-8632-689f863f4524
+    - !<own> bb63588e-918d-476f-b481-0c46bf2e7747
+    - !<own> 64e1c9cd-0fe3-4f9a-9c22-281e817375a6
+    - !<own> 75f96f61-6b17-4a1e-b2bd-f56f8feca37a
+    - !<own> 89ec6cc5-373e-489b-b03f-df885ca452de
+    - !<own> 3d55b809-bc01-4139-8c44-a4baa1f6664f
+    - !<own> afd35fc7-02dc-43c1-a731-3ddbdc800f01
+    - !<own> 2a61fdd6-7865-4f30-a26a-692de094d004
+    - !<own> d35ce454-0744-4b55-bd47-3cb04feba12a
+  Components:
+    []
 - !<SceneObject/b26258da-6ef5-40a4-89c6-9de1a729516b>
   PrefabRemaps:
     []

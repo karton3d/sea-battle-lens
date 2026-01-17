@@ -22,11 +22,13 @@
   VersionMajor: 0
   VersionMinor: 0
   VersionPatch: 0
-  ComponentUid: 00000000-0000-0000-0000-000000000000
+  ComponentUid: 03630546-2e96-45f6-8221-0a53becfade1
   ExportUid: 00000000-0000-0000-0000-000000000000
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
-    {}
+    debugMode: false
+    gameManager: false
+    turnBasedObject: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -36,10 +38,13 @@
   Attachments:
     []
   DefaultScriptInputs:
-    -
-      {}
+    - turnBasedObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      debugMode: false
   ScriptTypes:
     -
       {}
   InputLines:
-    []
+    - // @input SceneObject turnBasedObject
+    - // @input SceneObject gameManager
+    - // @input bool debugMode
