@@ -1546,7 +1546,6 @@
     user1FlowObjectsInputSO: true
     user2FlowObjectsInputSO: true
     gameOverObjectsInputSO: true
-    debugMode: true
     swapPlayersAfterSimulatedTurn: true
     debugTappedKeySimulateTurn: true
     debugTurnCount: true
@@ -1563,7 +1562,6 @@
     _onGameOverResponses: true
     printLogsInput: true
     loggerConfig: true
-    showDebugView: true
     _advancedOptions: true
     defaultTurnVariables: true
     remoteServiceModule: true
@@ -1587,7 +1585,7 @@
         []
       gameOverObjectsInputSO: !<reference.SceneObject[]>
         []
-      debugMode: Simulate Turns
+      debugMode: None
       swapPlayersAfterSimulatedTurn: true
       debugTappedKeySimulateTurn: ""
       debugTurnCount: 0
@@ -1617,7 +1615,7 @@
         printErrors: true
         printWarnings: true
         printInfoLogs: false
-      showDebugView: false
+      showDebugView: true
       _advancedOptions: false
       defaultTurnVariables:
         []
