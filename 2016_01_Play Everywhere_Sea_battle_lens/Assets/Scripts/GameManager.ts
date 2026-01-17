@@ -477,6 +477,9 @@ export class GameManager extends BaseScriptComponent {
         this.state.phase = 'setup';
         this.showScreen('setup');
 
+        // Reset scene handle to show player grid (position 0)
+        this.resetSceneHandleToPlayerGrid();
+
         this.generateGrids();
         this.showPlayerGrid();
 
@@ -486,6 +489,18 @@ export class GameManager extends BaseScriptComponent {
         this.updateHint("Tap Start to begin");
 
         this.log('Setup phase started');
+    }
+
+    /**
+     * Reset scene handle to player grid position (no animation)
+     */
+    private resetSceneHandleToPlayerGrid(): void {
+        if (!this.sceneHandle) return;
+
+        const transform = this.sceneHandle.getTransform();
+        const currentPos = transform.getLocalPosition();
+        transform.setLocalPosition(new vec3(0, currentPos.y, currentPos.z));
+        this.log('Scene handle reset to player grid position');
     }
 
     generatePlacements() {
