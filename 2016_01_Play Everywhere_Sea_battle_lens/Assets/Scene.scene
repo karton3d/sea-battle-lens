@@ -14,6 +14,7 @@
     - !<own> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
     - !<own> e0568f64-3225-4059-a8f6-20a080dcf39f
     - !<own> 6a72ec62-bb3a-4734-939d-df5883ad09ae
+    - !<own> 66334933-ef88-41b4-b726-adfa6667729c
   layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
     userLayers:
       []
@@ -1056,6 +1057,7 @@
   Children:
     - !<own> 8bca6923-60b6-4d5c-a180-4515d8ecc600
     - !<own> a0e42477-4f5b-437b-a60d-29e398251c8e
+    - !<own> 581823b2-fac5-4e6f-b8e1-b1e1e670f9a6
   Components:
     []
 - !<SceneObject/3bc88fa3-c923-46f0-a35e-7062028485f4>
@@ -1276,6 +1278,25 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/467410c5-db18-4dcc-84b9-c3fc4dbcd22d>
+  PrefabRemaps:
+    []
+  Name: AITurnHandler
+  Enabled: true
+  ScriptAsset: !<reference> 6baf1a0f-e936-4751-a6a3-78a9cf4beacb
+  ScriptInputsDefault:
+    aiDelay: true
+    gridSize: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
+      aiDelay: !<float> 1000.000000
+      gridSize: !<float> 10.000000
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/48fae487-09d9-4aeb-9148-198f3b15e0cb>
   PrefabRemaps:
     []
@@ -1326,6 +1347,7 @@
     gridRows: true
     gridCols: true
     useRandomPlacement: true
+    debugMode: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1348,6 +1370,7 @@
       enableCellTapping: true
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
       autoGenerate: true
+      debugMode: false
   ScriptTypes:
     "":
       {}
@@ -1580,6 +1603,21 @@
     - !<own> d3b3285a-1111-452e-ae9c-c26bdf19ee38
     - !<own> f22bd7e5-aa71-440a-92c7-e32cecce21f2
     - !<own> 0aa04fce-b540-4cf7-bb24-8f9b9c6e6d2c
+- !<SceneObject/581823b2-fac5-4e6f-b8e1-b1e1e670f9a6>
+  PrefabRemaps:
+    []
+  Name: AITurnHandler
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 467410c5-db18-4dcc-84b9-c3fc4dbcd22d
 - !<ScreenRegionComponent/58aef579-6080-4a71-bcad-7e71f45441a7>
   PrefabRemaps:
     []
@@ -1788,6 +1826,21 @@
   ScriptTypes:
     "":
       {}
+- !<SceneObject/66334933-ef88-41b4-b726-adfa6667729c>
+  PrefabRemaps:
+    []
+  Name: TurnBasedManager
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> d6e1ea19-272d-48c7-8c42-7137689b8b85
 - !<SceneObject/6a72ec62-bb3a-4734-939d-df5883ad09ae>
   PrefabRemaps:
     []
@@ -1982,6 +2035,7 @@
     gridRows: true
     gridCols: true
     useRandomPlacement: true
+    debugMode: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1996,7 +2050,7 @@
       gridRows: !<float> 10.000000
       gridCols: !<float> 10.000000
       cellSpacing: !<float> 14.000000
-      curvature: -0.040000
+      curvature: -0.020000
       objectHeightOffset: !<float> 11.000000
       missMarkerHeightOffset: !<float> 6.000000
       gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
@@ -2004,6 +2058,7 @@
       enableCellTapping: true
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
       autoGenerate: true
+      debugMode: false
   ScriptTypes:
     "":
       {}
@@ -2114,8 +2169,7 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
-    aiTurnHandler: true
-    turnBasedManager: true
+    debugMode: true
     handleAnimDuration: true
     delayBeforeAI: true
     delayAfterAnimation: true
@@ -2127,6 +2181,7 @@
       gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
       screenTransitionDelay: 0.200000
+      debugMode: false
       playerGridGenerator: !<reference.SceneObject> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
       opponentGridGenerator: !<reference.SceneObject> e0568f64-3225-4059-a8f6-20a080dcf39f
       introScreen: !<reference.SceneObject> 2ad497af-e8ce-4dde-958d-857383ec56a9
@@ -2144,8 +2199,8 @@
       startButton: !<reference.SceneObject> ae3a7a66-ad78-45f7-b2cc-2bb7827d4e58
       reshuffleButton: !<reference.SceneObject> a5d92e2e-014f-4188-a260-20ab056c8884
       playAgainButton: !<reference.SceneObject> 0608ea05-e637-444e-b01e-82251b902bd8
-      aiTurnHandler: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      turnBasedManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      aiTurnHandler: !<reference.SceneObject> 581823b2-fac5-4e6f-b8e1-b1e1e670f9a6
+      turnBasedManager: !<reference.SceneObject> 66334933-ef88-41b4-b726-adfa6667729c
       sceneHandle: !<reference.SceneObject> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
       handleAnimDuration: 0.500000
       delayBeforeAI: !<float> 1.000000
@@ -2526,7 +2581,7 @@
   PrefabRemaps:
     []
   Name: Turn Based
-  Enabled: false
+  Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -3514,6 +3569,25 @@
     bottom: 0.000000
     right: 0.000000
     top: 0.000000
+- !<ScriptComponent/d6e1ea19-272d-48c7-8c42-7137689b8b85>
+  PrefabRemaps:
+    []
+  Name: TurnBasedManager
+  Enabled: true
+  ScriptAsset: !<reference> 461b4806-6035-4c9f-bab9-aa4b90492ed3
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      turnBasedObject: !<reference.SceneObject> 9129c439-40f1-4777-884d-a1e0f69039ca
+      turnBasedScriptInput: !<reference.ScriptComponent> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
+      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
+      debugMode: true
+  ScriptTypes:
+    "":
+      {}
 - !<ScreenTransform/d8a54b78-ef67-4018-81f4-0ed53686ff67>
   PrefabRemaps:
     []

@@ -56,6 +56,9 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Auto-generate on start */
     @input autoGenerate: boolean = false;
 
+    /** Enable debug logging */
+    @input debugMode: boolean = false;
+
     // ==================== PRIVATE STATE ====================
 
     /** Grid cells [row][col] -> SceneObject */
@@ -79,6 +82,18 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Cell tap callback */
     public onCellTap: ((row: number, col: number) => void) | null = null;
 
+    // ==================== LOGGING ====================
+
+    private log(message: string): void {
+        if (this.debugMode) {
+            print(`[SphericalGrid] ${message}`);
+        }
+    }
+
+    private logError(message: string): void {
+        print(`[SphericalGrid] ERROR: ${message}`);
+    }
+
     // ==================== LIFECYCLE ====================
 
     onAwake(): void {
@@ -88,7 +103,7 @@ export class SphericalGrid extends BaseScriptComponent {
             this.generate();
         }
 
-        print(`[SphericalGrid] Initialized - grid: ${this.gridRows}x${this.gridCols}, spacing: ${this.cellSpacing}, curvature: ${this.curvature}`);
+        this.log(`Initialized - grid: ${this.gridRows}x${this.gridCols}, spacing: ${this.cellSpacing}, curvature: ${this.curvature}`);
     }
 
     // ==================== PUBLIC API ====================
@@ -102,14 +117,14 @@ export class SphericalGrid extends BaseScriptComponent {
         if (this.useRandomPlacement) {
             const success = this.placeShipsRandomly();
             if (!success) {
-                print('[SphericalGrid] Random placement failed, using test placement');
+                this.log('Random placement failed, using test placement');
                 this.placeTestShips();
             }
         } else {
             this.placeTestShips();
         }
 
-        print('[SphericalGrid] Generation complete');
+        this.log('Generation complete');
     }
 
     /**
@@ -128,7 +143,7 @@ export class SphericalGrid extends BaseScriptComponent {
             if (marker) marker.enabled = true;
         }
 
-        print(`[SphericalGrid] Shown`);
+        this.log('Shown');
     }
 
     /**
@@ -147,7 +162,7 @@ export class SphericalGrid extends BaseScriptComponent {
             if (marker) marker.enabled = false;
         }
 
-        print(`[SphericalGrid] Hidden`);
+        this.log('Hidden');
     }
 
     /**
@@ -170,14 +185,14 @@ export class SphericalGrid extends BaseScriptComponent {
             this.spawnMarker(row, col, this.missMarkerPrefab, 'miss');
         }
 
-        print(`[SphericalGrid] Cell (${row}, ${col}) state: ${state}`);
+        this.log(`Cell (${row}, ${col}) state: ${state}`);
     }
 
     /**
      * Reshuffle ships
      */
     reshuffleShips(): void {
-        print('[SphericalGrid] Reshuffling ships');
+        this.log('Reshuffling ships');
 
         this.clearShips();
         this.initShipGrid();
@@ -191,7 +206,7 @@ export class SphericalGrid extends BaseScriptComponent {
             this.placeTestShips();
         }
 
-        print(`[SphericalGrid] Reshuffle complete, ${this.placedShips.length} ships placed`);
+        this.log(`Reshuffle complete, ${this.placedShips.length} ships placed`);
     }
 
     /**
@@ -299,7 +314,7 @@ export class SphericalGrid extends BaseScriptComponent {
         this.clearGrid();
 
         if (!this.cellPrefab) {
-            print('[SphericalGrid] ERROR: cellPrefab not assigned');
+            this.logError('cellPrefab not assigned');
             return;
         }
 
@@ -343,7 +358,7 @@ export class SphericalGrid extends BaseScriptComponent {
             }
         }
 
-        print(`[SphericalGrid] Grid generated: ${this.gridRows}x${this.gridCols} = ${this.gridCells.length} cells`);
+        this.log(`Grid generated: ${this.gridRows}x${this.gridCols} = ${this.gridCells.length} cells`);
     }
 
     /**
@@ -366,7 +381,7 @@ export class SphericalGrid extends BaseScriptComponent {
      * Handle cell tap
      */
     private handleCellTap(row: number, col: number): void {
-        print(`[SphericalGrid] Cell tapped: (${row}, ${col})`);
+        this.log(`Cell tapped: (${row}, ${col})`);
 
         if (this.onCellTap) {
             this.onCellTap(row, col);
@@ -418,7 +433,7 @@ export class SphericalGrid extends BaseScriptComponent {
                 }
 
                 if (!placed) {
-                    print(`[SphericalGrid] Failed to place ${length}-cell ship after ${maxAttempts} attempts`);
+                    this.log(`Failed to place ${length}-cell ship after ${maxAttempts} attempts`);
                     return false;
                 }
             }
@@ -469,7 +484,7 @@ export class SphericalGrid extends BaseScriptComponent {
     private placeShip(row: number, col: number, length: number, horizontal: boolean): SceneObject | null {
         const prefab = this.getShipPrefab(length);
         if (!prefab) {
-            print(`[SphericalGrid] No prefab for ship length ${length}`);
+            this.logError(`No prefab for ship length ${length}`);
             return null;
         }
 
@@ -516,7 +531,7 @@ export class SphericalGrid extends BaseScriptComponent {
 
         this.placedShips.push(ship);
 
-        print(`[SphericalGrid] Placed ${length}-cell ship at (${row}, ${col}) ${horizontal ? "horizontal" : "vertical"}`);
+        this.log(`Placed ${length}-cell ship at (${row}, ${col}) ${horizontal ? "horizontal" : "vertical"}`);
         return ship;
     }
 
@@ -539,7 +554,7 @@ export class SphericalGrid extends BaseScriptComponent {
         this.placeShip(6, 9, 1, true);
         this.placeShip(8, 5, 1, true);
 
-        print(`[SphericalGrid] Test ships placed: ${this.placedShips.length}`);
+        this.log(`Test ships placed: ${this.placedShips.length}`);
     }
 
     /**
@@ -590,7 +605,7 @@ export class SphericalGrid extends BaseScriptComponent {
 
         this.placedMarkers.push(marker);
 
-        print(`[SphericalGrid] Spawned ${type} marker at (${row}, ${col})`);
+        this.log(`Spawned ${type} marker at (${row}, ${col})`);
     }
 
     // ==================== CLEANUP ====================

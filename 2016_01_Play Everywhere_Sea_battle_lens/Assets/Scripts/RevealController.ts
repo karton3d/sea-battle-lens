@@ -45,7 +45,7 @@ export class RevealController extends BaseScriptComponent {
         // Initial update
         this.updateAllMaterials();
 
-        print(`[RevealController] Initialized - minRadius: ${this.minRadius}, maxRadius: ${this.maxRadius}, materials: ${this.materials.length}`);
+        // print(`[RevealController] Initialized - minRadius: ${this.minRadius}, maxRadius: ${this.maxRadius}, materials: ${this.materials.length}`);
     }
 
     onUpdate(): void {

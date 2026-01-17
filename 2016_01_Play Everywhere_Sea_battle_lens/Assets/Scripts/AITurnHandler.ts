@@ -9,6 +9,7 @@ export class AITurnHandler extends BaseScriptComponent implements ITurnHandler {
     // ==================== INPUTS ====================
 
     /** Reference to GameManager for callbacks */
+    @allowUndefined
     @input gameManager: SceneObject;
 
     /** Delay before AI makes its move (milliseconds) */

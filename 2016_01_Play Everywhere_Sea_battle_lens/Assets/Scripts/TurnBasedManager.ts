@@ -9,13 +9,31 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     // ==================== INPUTS ====================
 
     /** Reference to Turn-Based SceneObject from scene */
+    @allowUndefined
     @input turnBasedObject: SceneObject;
 
+    /** Direct reference to Turn-Based script (alternative to turnBasedObject) */
+    @allowUndefined
+    @input turnBasedScriptInput: ScriptComponent;
+
     /** Reference to GameManager for callbacks */
+    @allowUndefined
     @input gameManager: SceneObject;
 
-    /** Enable debug mode for single-device testing */
+    /** Enable debug logging */
     @input debugMode: boolean = false;
+
+    // ==================== LOGGING ====================
+
+    private log(message: string): void {
+        if (this.debugMode) {
+            print(`[TurnBasedManager] ${message}`);
+        }
+    }
+
+    private logError(message: string): void {
+        print(`[TurnBasedManager] ERROR: ${message}`);
+    }
 
     // ==================== PRIVATE STATE ====================
 
@@ -37,7 +55,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     // ==================== LIFECYCLE ====================
 
     onAwake(): void {
-        print('[TurnBasedManager] onAwake: Initializing');
+        this.log('onAwake: Initializing');
         this.initializeTurnBased();
     }
 
@@ -48,41 +66,74 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     private initializeTurnBased(): void {
         if (!this.turnBasedObject) {
-            print('[TurnBasedManager] initializeTurnBased: WARNING - turnBasedObject not set');
+            this.log('initializeTurnBased: WARNING - turnBasedObject not set');
             return;
         }
 
         // Get Turn-Based script component
         this.turnBasedScript = this.getTurnBasedScript();
         if (!this.turnBasedScript) {
-            print('[TurnBasedManager] initializeTurnBased: ERROR - Turn-Based script not found');
+            this.logError('initializeTurnBased: Turn-Based script not found');
             return;
         }
 
         // Register callbacks
         this.registerCallbacks();
 
-        print('[TurnBasedManager] initializeTurnBased: Complete');
+        this.log('initializeTurnBased: Complete');
     }
 
     /**
-     * Get Turn-Based script from SceneObject
+     * Get Turn-Based script from direct input or SceneObject
      */
     private getTurnBasedScript(): any {
-        if (!this.turnBasedObject) return null;
-
-        const scripts = this.turnBasedObject.getComponents("Component.ScriptComponent");
-        for (let i = 0; i < scripts.length; i++) {
-            const script = scripts[i] as any;
-            // Check for Turn-Based component markers
-            if (script && typeof script.submitTurn === 'function') {
-                print('[TurnBasedManager] getTurnBasedScript: Found Turn-Based component');
-                return script;
-            }
+        // Option 1: Direct script input (preferred)
+        if (this.turnBasedScriptInput) {
+            const script = this.turnBasedScriptInput as any;
+            this.log('getTurnBasedScript: Using direct turnBasedScriptInput');
+            this.logAvailableMethods(script, 'turnBasedScriptInput');
+            return script;
         }
 
-        print('[TurnBasedManager] getTurnBasedScript: Turn-Based component not found');
+        // Option 2: Search in SceneObject
+        if (!this.turnBasedObject) {
+            this.log('getTurnBasedScript: No turnBasedObject or turnBasedScriptInput set');
+            return null;
+        }
+
+        this.log(`getTurnBasedScript: Searching in object "${this.turnBasedObject.name}"`);
+        const scripts = this.turnBasedObject.getComponents("Component.ScriptComponent");
+        this.log(`getTurnBasedScript: Found ${scripts.length} ScriptComponent(s)`);
+
+        // Just return the first script component found
+        if (scripts.length > 0) {
+            const script = scripts[0] as any;
+            this.logAvailableMethods(script, 'Script[0]');
+            return script;
+        }
+
+        this.log('getTurnBasedScript: No ScriptComponent found');
         return null;
+    }
+
+    /**
+     * Log available methods/properties on a script for debugging
+     */
+    private logAvailableMethods(script: any, label: string): void {
+        try {
+            const keys = Object.keys(script);
+            this.log(`${label} properties: ${keys.slice(0, 20).join(', ')}${keys.length > 20 ? '...' : ''}`);
+
+            // Check for common Turn-Based patterns
+            const patterns = ['submitTurn', 'endTurn', 'onTurnStart', 'onTurnEnd', '_onTurnStartResponses'];
+            for (const p of patterns) {
+                if (script[p] !== undefined) {
+                    this.log(`${label} has "${p}": ${typeof script[p]}`);
+                }
+            }
+        } catch (e) {
+            this.log(`${label}: Could not enumerate properties`);
+        }
     }
 
     /**
@@ -92,30 +143,51 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         if (!this.turnBasedScript) return;
 
         // Register turn start callback
-        if (this.turnBasedScript._onTurnStartResponses) {
-            this.turnBasedScript._onTurnStartResponses.add((turnData: string) => {
-                this.handleTurnStart(turnData);
-            });
-            print('[TurnBasedManager] registerCallbacks: onTurnStart registered');
+        if (this.tryRegisterCallback('_onTurnStartResponses', (turnData: string) => {
+            this.handleTurnStart(turnData);
+        })) {
+            this.log('registerCallbacks: onTurnStart registered');
         }
 
         // Register turn end callback
-        if (this.turnBasedScript._onTurnEndResponses) {
-            this.turnBasedScript._onTurnEndResponses.add(() => {
-                this.handleTurnEnd();
-            });
-            print('[TurnBasedManager] registerCallbacks: onTurnEnd registered');
+        if (this.tryRegisterCallback('_onTurnEndResponses', () => {
+            this.handleTurnEnd();
+        })) {
+            this.log('registerCallbacks: onTurnEnd registered');
         }
 
         // Register game over callback
-        if (this.turnBasedScript._onGameOverResponses) {
-            this.turnBasedScript._onGameOverResponses.add(() => {
-                this.handleGameOverFromTurnBased();
-            });
-            print('[TurnBasedManager] registerCallbacks: onGameOver registered');
+        if (this.tryRegisterCallback('_onGameOverResponses', () => {
+            this.handleGameOverFromTurnBased();
+        })) {
+            this.log('registerCallbacks: onGameOver registered');
         }
 
-        print('[TurnBasedManager] registerCallbacks: All callbacks registered');
+        this.log('registerCallbacks: Done');
+    }
+
+    /**
+     * Safely try to register a callback on the Turn-Based script
+     */
+    private tryRegisterCallback(eventName: string, callback: Function): boolean {
+        const event = this.turnBasedScript[eventName];
+        if (!event) {
+            this.log(`tryRegisterCallback: "${eventName}" not found`);
+            return false;
+        }
+
+        if (typeof event.add === 'function') {
+            event.add(callback);
+            return true;
+        }
+
+        // Maybe it's a different API pattern
+        if (typeof event === 'function') {
+            this.log(`tryRegisterCallback: "${eventName}" is a function, not an event`);
+        } else {
+            this.log(`tryRegisterCallback: "${eventName}" exists but .add is not a function (type: ${typeof event})`);
+        }
+        return false;
     }
 
     // ==================== PUBLIC API ====================
@@ -133,7 +205,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     setShipPositions(positions: TurnData['shipPositions']): void {
         this.pendingShipPositions = positions;
-        print(`[TurnBasedManager] setShipPositions: ${positions?.length || 0} ships set`);
+        this.log(`setShipPositions: ${positions?.length || 0} ships set`);
     }
 
     // ==================== ITurnHandler IMPLEMENTATION ====================
@@ -143,7 +215,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * For multiplayer: we wait for Turn-Based callback with opponent's turn data
      */
     startOpponentTurn(): void {
-        print('[TurnBasedManager] startOpponentTurn: Waiting for opponent turn data');
+        this.log('startOpponentTurn: Waiting for opponent turn data');
         this._isMyTurn = false;
 
         // In multiplayer, we don't actively do anything here
@@ -155,7 +227,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Submits turn data via Turn-Based component
      */
     onPlayerShotComplete(x: number, y: number, result: ShotResult): void {
-        print(`[TurnBasedManager] onPlayerShotComplete: Shot (${x}, ${y}) = ${result}`);
+        this.log(`onPlayerShotComplete: Shot (${x}, ${y}) = ${result}`);
 
         // Check for game over (handled separately)
         const gm = this.getGameManagerScript();
@@ -177,7 +249,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             turnData.shipPositions = this.pendingShipPositions;
             this.pendingShipPositions = null;
             this.isFirstTurn = false;
-            print('[TurnBasedManager] onPlayerShotComplete: Including ship positions in first turn');
+            this.log('onPlayerShotComplete: Including ship positions in first turn');
         }
 
         // Submit turn
@@ -188,7 +260,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Called when game ends
      */
     onGameOver(winner: 'player' | 'opponent'): void {
-        print(`[TurnBasedManager] onGameOver: Winner is ${winner}`);
+        this.log(`onGameOver: Winner is ${winner}`);
         // Turn-Based component may handle game over state automatically
         // Final turn data is submitted in onPlayerShotComplete with isGameOver=true
     }
@@ -201,7 +273,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         this.isFirstTurn = true;
         this.pendingShipPositions = null;
         this.pendingTurnData = null;
-        print('[TurnBasedManager] reset: State cleared');
+        this.log('reset: State cleared');
     }
 
     // ==================== TURN SUBMISSION (Story 1.2) ====================
@@ -210,19 +282,19 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Submit turn data via Turn-Based component
      */
     submitTurn(turnData: TurnData): void {
-        print(`[TurnBasedManager] submitTurn: Submitting turn data`);
-        print(`[TURN] Submit: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
+        this.log('submitTurn: Submitting turn data');
+        this.log(`[TURN] Submit: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
 
         // Serialize turn data
         const serialized = this.serializeTurnData(turnData);
         if (!serialized) {
-            print('[TurnBasedManager] submitTurn: ERROR - Serialization failed');
+            this.logError('submitTurn: Serialization failed');
             return;
         }
 
         // Check if Turn-Based component is ready
         if (!this.turnBasedScript) {
-            print('[TurnBasedManager] submitTurn: ERROR - Turn-Based component not ready');
+            this.logError('submitTurn: Turn-Based component not ready');
             return;
         }
 
@@ -230,9 +302,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         if (typeof this.turnBasedScript.submitTurn === 'function') {
             this.turnBasedScript.submitTurn(serialized);
             this._isMyTurn = false;
-            print('[TurnBasedManager] submitTurn: Turn submitted successfully');
+            this.log('submitTurn: Turn submitted successfully');
         } else {
-            print('[TurnBasedManager] submitTurn: ERROR - submitTurn method not found');
+            this.logError('submitTurn: submitTurn method not found');
         }
     }
 
@@ -242,10 +314,10 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     private serializeTurnData(turnData: TurnData): string | null {
         try {
             const json = JSON.stringify(turnData);
-            print(`[TurnBasedManager] serializeTurnData: ${json.length} bytes`);
+            this.log(`serializeTurnData: ${json.length} bytes`);
             return json;
         } catch (e) {
-            print('[TurnBasedManager] serializeTurnData: ERROR - JSON.stringify failed');
+            this.logError('serializeTurnData: JSON.stringify failed');
             return null;
         }
     }
@@ -257,18 +329,18 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Called when it becomes this player's turn (with opponent's previous turn data)
      */
     private handleTurnStart(turnDataJson: string): void {
-        print(`[TurnBasedManager] handleTurnStart: Received turn data`);
+        this.log('handleTurnStart: Received turn data');
         this._isMyTurn = true;
 
         // Deserialize turn data
         const turnData = this.deserializeTurnData(turnDataJson);
         if (!turnData) {
-            print('[TurnBasedManager] handleTurnStart: No valid turn data (may be first turn)');
+            this.log('handleTurnStart: No valid turn data (may be first turn)');
             this.notifyGameManagerTurnStart(null);
             return;
         }
 
-        print(`[TURN] Received: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
+        this.log(`[TURN] Received: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
 
         // Process opponent's turn data
         this.processReceivedTurn(turnData);
@@ -278,7 +350,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Handle turn end callback
      */
     private handleTurnEnd(): void {
-        print('[TurnBasedManager] handleTurnEnd: Turn ended');
+        this.log('handleTurnEnd: Turn ended');
         this._isMyTurn = false;
     }
 
@@ -286,7 +358,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Handle game over callback from Turn-Based
      */
     private handleGameOverFromTurnBased(): void {
-        print('[TurnBasedManager] handleGameOverFromTurnBased: Game over signal received');
+        this.log('handleGameOverFromTurnBased: Game over signal received');
         // GameManager will handle game over UI
     }
 
@@ -303,13 +375,13 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
             // Validate required fields
             if (typeof data.shotX !== 'number' || typeof data.shotY !== 'number') {
-                print('[TurnBasedManager] deserializeTurnData: Missing required fields');
+                this.log('deserializeTurnData: Missing required fields');
                 return null;
             }
 
             // Validate shot coordinates
             if (data.shotX < 0 || data.shotX >= GRID_SIZE || data.shotY < 0 || data.shotY >= GRID_SIZE) {
-                print(`[TurnBasedManager] deserializeTurnData: Invalid coordinates (${data.shotX}, ${data.shotY})`);
+                this.log(`deserializeTurnData: Invalid coordinates (${data.shotX}, ${data.shotY})`);
                 return null;
             }
 
@@ -324,11 +396,11 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
                 shipPositions: data.shipPositions || undefined
             };
 
-            print(`[TurnBasedManager] deserializeTurnData: Valid turn data parsed`);
+            this.log('deserializeTurnData: Valid turn data parsed');
             return turnData;
 
         } catch (e) {
-            print('[TurnBasedManager] deserializeTurnData: ERROR - JSON.parse failed');
+            this.logError('deserializeTurnData: JSON.parse failed');
             return null;
         }
     }
@@ -337,17 +409,17 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Process received turn data - apply opponent's shot to player grid
      */
     private processReceivedTurn(turnData: TurnData): void {
-        print(`[TurnBasedManager] processReceivedTurn: Processing opponent shot (${turnData.shotX}, ${turnData.shotY})`);
+        this.log(`processReceivedTurn: Processing opponent shot (${turnData.shotX}, ${turnData.shotY})`);
 
         // Store ship positions if this is first turn with positions
         if (turnData.shipPositions && turnData.shipPositions.length > 0) {
-            print(`[TurnBasedManager] processReceivedTurn: Received ${turnData.shipPositions.length} opponent ship positions`);
+            this.log(`processReceivedTurn: Received ${turnData.shipPositions.length} opponent ship positions`);
             this.storeOpponentShipPositions(turnData.shipPositions);
         }
 
         // Check for game over
         if (turnData.isGameOver) {
-            print(`[TurnBasedManager] processReceivedTurn: Game over! Winner: ${turnData.winner}`);
+            this.log(`processReceivedTurn: Game over! Winner: ${turnData.winner}`);
             this.notifyGameManagerGameOver(turnData.winner === 'player' ? 'opponent' : 'player'); // Flip perspective
             return;
         }
@@ -363,9 +435,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         const gm = this.getGameManagerScript();
         if (gm && typeof gm.setOpponentShipPositions === 'function') {
             gm.setOpponentShipPositions(positions);
-            print('[TurnBasedManager] storeOpponentShipPositions: Positions sent to GameManager');
+            this.log('storeOpponentShipPositions: Positions sent to GameManager');
         } else {
-            print('[TurnBasedManager] storeOpponentShipPositions: WARNING - setOpponentShipPositions not found');
+            this.log('storeOpponentShipPositions: WARNING - setOpponentShipPositions not found');
         }
     }
 
@@ -386,9 +458,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         const gm = this.getGameManagerScript();
         if (gm && typeof gm.processOpponentShot === 'function') {
             gm.processOpponentShot(x, y, result);
-            print(`[TurnBasedManager] notifyGameManagerOpponentShot: Sent (${x}, ${y}) = ${result}`);
+            this.log(`notifyGameManagerOpponentShot: Sent (${x}, ${y}) = ${result}`);
         } else {
-            print('[TurnBasedManager] notifyGameManagerOpponentShot: ERROR - processOpponentShot not found');
+            this.logError('notifyGameManagerOpponentShot: processOpponentShot not found');
         }
     }
 
@@ -399,7 +471,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         const gm = this.getGameManagerScript();
         if (gm && typeof gm.onMultiplayerGameOver === 'function') {
             gm.onMultiplayerGameOver(winner);
-            print(`[TurnBasedManager] notifyGameManagerGameOver: Winner is ${winner}`);
+            this.log(`notifyGameManagerGameOver: Winner is ${winner}`);
         }
     }
 
@@ -410,7 +482,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     private getGameManagerScript(): any {
         if (!this.gameManager) {
-            print('[TurnBasedManager] getGameManagerScript: ERROR - gameManager not set');
+            this.logError('getGameManagerScript: gameManager not set');
             return null;
         }
 
@@ -423,7 +495,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             }
         }
 
-        print('[TurnBasedManager] getGameManagerScript: GameManager script not found');
+        this.logError('getGameManagerScript: GameManager script not found');
         return null;
     }
 }

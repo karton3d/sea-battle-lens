@@ -28,6 +28,7 @@
   ScriptInputsHidden:
     aiDelay: false
     aiTurnHandler: false
+    debugMode: false
     delayAfterAnimation: false
     delayAfterShot: false
     delayBeforeAI: false
@@ -63,6 +64,7 @@
     - gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
       screenTransitionDelay: 0.500000
+      debugMode: false
       playerGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       opponentGridGenerator: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       introScreen: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
@@ -93,6 +95,7 @@
     - // @input float gridSize = 10
     - // @input float aiDelay = 1000
     - // @input float screenTransitionDelay = 0.5
+    - // @input bool debugMode
     - // @input SceneObject playerGridGenerator
     - // @input SceneObject opponentGridGenerator
     - // @input SceneObject introScreen

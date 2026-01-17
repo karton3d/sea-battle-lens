@@ -13,6 +13,9 @@ export class GameManager extends BaseScriptComponent {
     @input gridSize: number = 10;
     @input aiDelay: number = 1000;
     @input screenTransitionDelay: number = 0.5; // Delay before switching screens (seconds)
+
+    /** Enable debug logging */
+    @input debugMode: boolean = false;
     
     // ==================== GRIDS ====================
     @input playerGridGenerator: SceneObject = null;
@@ -44,10 +47,12 @@ export class GameManager extends BaseScriptComponent {
     @input playAgainButton: SceneObject = null;
 
     // ==================== TURN HANDLERS ====================
-    /** AI turn handler for single-player mode */
-    @input aiTurnHandler: SceneObject = null;
-    /** Turn-Based manager for multiplayer mode */
-    @input turnBasedManager: SceneObject = null;
+    /** AI turn handler for single-player mode (optional) */
+    @allowUndefined
+    @input aiTurnHandler: SceneObject;
+    /** Turn-Based manager for multiplayer mode (optional) */
+    @allowUndefined
+    @input turnBasedManager: SceneObject;
 
     // ==================== SCENE HANDLE ANIMATION ====================
     /** Scene handle that moves view between player/opponent grids */
@@ -69,7 +74,19 @@ export class GameManager extends BaseScriptComponent {
 
     // Active turn handler (AITurnHandler or TurnBasedManager)
     private turnHandler: ITurnHandler | null = null;
-    
+
+    // ==================== LOGGING ====================
+
+    private log(message: string): void {
+        if (this.debugMode) {
+            print(`[GameManager] ${message}`);
+        }
+    }
+
+    private logError(message: string): void {
+        print(`[GameManager] ERROR: ${message}`);
+    }
+
     onAwake() {
         this.initializeState();
         this.setupButtons();
@@ -78,8 +95,8 @@ export class GameManager extends BaseScriptComponent {
         this.hideGrids();
         
         this.showScreen('intro');
-        print("GameManager: Initialized");
-        print(`GameManager: playerGrid=${this.playerGridGenerator ? 'set' : 'null'}, opponentGrid=${this.opponentGridGenerator ? 'set' : 'null'}`);
+        this.log('Initialized');
+        this.log(`playerGrid=${this.playerGridGenerator ? 'set' : 'null'}, opponentGrid=${this.opponentGridGenerator ? 'set' : 'null'}`);
     }
     
     /**
@@ -112,7 +129,7 @@ export class GameManager extends BaseScriptComponent {
             opponentScript.hide();
         }
         
-        print("GameManager: Grids hidden");
+        this.log('Grids hidden');
     }
     
     /**
@@ -122,7 +139,7 @@ export class GameManager extends BaseScriptComponent {
         const playerScript = this.getGridScript(this.playerGridGenerator);
         if (playerScript && typeof playerScript.show === 'function') {
             playerScript.show();
-            print("GameManager: Player grid shown");
+            this.log('Player grid shown');
         }
     }
     
@@ -133,7 +150,7 @@ export class GameManager extends BaseScriptComponent {
         const opponentScript = this.getGridScript(this.opponentGridGenerator);
         if (opponentScript && typeof opponentScript.show === 'function') {
             opponentScript.show();
-            print("GameManager: Opponent grid shown");
+            this.log('Opponent grid shown');
         }
     }
     
@@ -144,9 +161,9 @@ export class GameManager extends BaseScriptComponent {
         const gridScript = this.getGridScript(gridObject);
         if (gridScript && typeof gridScript.setCellState === 'function') {
             gridScript.setCellState(x, y, state);
-            print(`GameManager: Updated cell (${x}, ${y}) visual to ${state}`);
+            this.log(`Updated cell (${x}, ${y}) visual to ${state}`);
         } else {
-            print(`GameManager: WARNING - Could not update cell visual, setCellState not found`);
+            this.logError(`Could not update cell visual, setCellState not found`);
         }
     }
     
@@ -154,34 +171,34 @@ export class GameManager extends BaseScriptComponent {
      * Generate grids (call generate() method on grid scripts)
      */
     generateGrids() {
-        print("GameManager: generateGrids() called");
-        
+        this.log('generateGrids() called');
+
         // Generate player grid
         if (this.playerGridGenerator) {
-            print(`GameManager: playerGridGenerator found: ${this.playerGridGenerator.name}`);
+            this.log(`playerGridGenerator found: ${this.playerGridGenerator.name}`);
             const playerScript = this.getGridScript(this.playerGridGenerator);
             if (playerScript) {
                 playerScript.generate();
-                print("GameManager: Player grid generated successfully");
+                this.log('Player grid generated successfully');
             } else {
-                print("GameManager: ERROR - Player grid script not found!");
+                this.logError('Player grid script not found!');
             }
         } else {
-            print("GameManager: ERROR - playerGridGenerator is null!");
+            this.logError('playerGridGenerator is null!');
         }
-        
+
         // Generate opponent grid
         if (this.opponentGridGenerator) {
-            print(`GameManager: opponentGridGenerator found: ${this.opponentGridGenerator.name}`);
+            this.log(`opponentGridGenerator found: ${this.opponentGridGenerator.name}`);
             const opponentScript = this.getGridScript(this.opponentGridGenerator);
             if (opponentScript) {
                 opponentScript.generate();
-                print("GameManager: Opponent grid generated successfully");
+                this.log('Opponent grid generated successfully');
             } else {
-                print("GameManager: ERROR - Opponent grid script not found!");
+                this.logError('Opponent grid script not found!');
             }
         } else {
-            print("GameManager: ERROR - opponentGridGenerator is null!");
+            this.logError('opponentGridGenerator is null!');
         }
     }
     
@@ -235,7 +252,7 @@ export class GameManager extends BaseScriptComponent {
             const buttonScript = this.getUIButtonScript(this.singlePlayerButton);
             if (buttonScript && buttonScript.onPress) {
                 buttonScript.onPress.add(() => this.onSinglePlayerTap());
-                print("GameManager: Single Player button setup (UI Button)");
+                this.log('Single Player button setup (UI Button)');
             } else {
                 // Fallback to Component.Touch if UI Button not found
                 this.setupTouchButton(this.singlePlayerButton, () => this.onSinglePlayerTap());
@@ -247,7 +264,7 @@ export class GameManager extends BaseScriptComponent {
             const buttonScript = this.getUIButtonScript(this.multiplayerButton);
             if (buttonScript && buttonScript.onPress) {
                 buttonScript.onPress.add(() => this.onMultiplayerTap());
-                print("GameManager: Multiplayer button setup (UI Button)");
+                this.log('Multiplayer button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.multiplayerButton, () => this.onMultiplayerTap());
             }
@@ -258,7 +275,7 @@ export class GameManager extends BaseScriptComponent {
             const buttonScript = this.getUIButtonScript(this.startButton);
             if (buttonScript && buttonScript.onPress) {
                 buttonScript.onPress.add(() => this.onStartTap());
-                print("GameManager: Start button setup (UI Button)");
+                this.log('Start button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.startButton, () => this.onStartTap());
             }
@@ -272,7 +289,7 @@ export class GameManager extends BaseScriptComponent {
             }
             if (interaction) {
                 interaction.onTap.add(() => this.onReshuffleTap());
-                print("GameManager: Reshuffle button setup");
+                this.log('Reshuffle button setup');
             }
         }
 
@@ -281,7 +298,7 @@ export class GameManager extends BaseScriptComponent {
             const buttonScript = this.getUIButtonScript(this.playAgainButton);
             if (buttonScript && buttonScript.onPress) {
                 buttonScript.onPress.add(() => this.onPlayAgainTap());
-                print("GameManager: Play Again button setup (UI Button)");
+                this.log('Play Again button setup (UI Button)');
             } else {
                 this.setupTouchButton(this.playAgainButton, () => this.onPlayAgainTap());
             }
@@ -314,7 +331,7 @@ export class GameManager extends BaseScriptComponent {
         }
         if (interaction) {
             interaction.onTap.add(callback);
-            print(`GameManager: ${buttonObject.name} setup (Component.Touch fallback)`);
+            this.log(`${buttonObject.name} setup (Component.Touch fallback)`);
         }
     }
     
@@ -330,7 +347,7 @@ export class GameManager extends BaseScriptComponent {
         // Toggle screen assets
         this.setAssetsEnabled(this.introAssets, screen === 'intro');
         
-        print(`GameManager: Showing screen: ${screen}`);
+        this.log(`Showing screen: ${screen}`);
     }
     
     /**
@@ -351,7 +368,7 @@ export class GameManager extends BaseScriptComponent {
         if (this.statusText) {
             this.statusText.text = message;
         }
-        print(`GameManager: Status: ${message}`);
+        this.log(`Status: ${message}`);
     }
     
     /**
@@ -370,7 +387,7 @@ export class GameManager extends BaseScriptComponent {
         if (this.resultText) {
             this.resultText.text = message;
         }
-        print(`GameManager: Result: ${message}`);
+        this.log(`Result: ${message}`);
     }
     
     // ==================== BUTTON HANDLERS ====================
@@ -379,7 +396,7 @@ export class GameManager extends BaseScriptComponent {
      * Single Player button tapped
      */
     onSinglePlayerTap() {
-        print("GameManager: Single Player selected");
+        this.log('Single Player selected');
         this.state.mode = 'single';
         this.delayedCall(() => this.startSetup(), this.screenTransitionDelay);
     }
@@ -388,7 +405,7 @@ export class GameManager extends BaseScriptComponent {
      * Multiplayer button tapped
      */
     onMultiplayerTap() {
-        print("GameManager: Multiplayer selected");
+        this.log('Multiplayer selected');
         this.state.mode = 'multiplayer';
         this.delayedCall(() => this.startSetup(), this.screenTransitionDelay);
     }
@@ -397,7 +414,7 @@ export class GameManager extends BaseScriptComponent {
      * Start button tapped
      */
     onStartTap() {
-        print("GameManager: Start button tapped");
+        this.log('Start button tapped');
         this.delayedCall(() => this.startGame(), this.screenTransitionDelay);
     }
 
@@ -407,11 +424,11 @@ export class GameManager extends BaseScriptComponent {
     onReshuffleTap() {
         // Only allow during setup phase
         if (this.state.phase !== 'setup') {
-            print("[GameManager] onReshuffleTap: Ignored - not in setup phase");
+            this.log('onReshuffleTap: Ignored - not in setup phase');
             return;
         }
 
-        print("[GameManager] onReshuffleTap: Reshuffling ship placements");
+        this.log('onReshuffleTap: Reshuffling ship placements');
 
         // Reshuffle player grid ships
         const playerScript = this.getGridScript(this.playerGridGenerator);
@@ -433,14 +450,14 @@ export class GameManager extends BaseScriptComponent {
         this.updateStatus("New positions!");
         this.updateHint("Tap Reshuffle again or Start");
 
-        print("[GameManager] onReshuffleTap: Reshuffle complete");
+        this.log('onReshuffleTap: Reshuffle complete');
     }
 
     /**
      * Play Again button tapped
      */
     onPlayAgainTap() {
-        print("GameManager: Play Again tapped");
+        this.log('Play Again tapped');
         this.delayedCall(() => this.resetGame(), this.screenTransitionDelay);
     }
     
@@ -477,7 +494,7 @@ export class GameManager extends BaseScriptComponent {
         this.updateStatus("Your objects are placed!");
         this.updateHint("Tap Start to begin");
         
-        print("GameManager: Setup phase started");
+        this.log('Setup phase started');
     }
     
     /**
@@ -492,7 +509,7 @@ export class GameManager extends BaseScriptComponent {
         this.state.opponentShips = this.generateShipPlacements();
         // Don't mark on opponentGrid - those cells stay 'unknown' until shot
         
-        print(`GameManager: Generated ${this.state.playerShips.length} ships for each player`);
+        this.log(`Generated ${this.state.playerShips.length} ships for each player`);
     }
     
     /**
@@ -572,7 +589,7 @@ export class GameManager extends BaseScriptComponent {
             }
         }
         
-        print(`GameManager: Failed to place ship of length ${length}`);
+        this.log(`Failed to place ship of length ${length}`);
         return null;
     }
     
@@ -645,7 +662,7 @@ export class GameManager extends BaseScriptComponent {
         this.updateResult("");
         this.animateSceneHandle(true); // Move to show opponent grid
 
-        print(`GameManager: Game started! Mode: ${this.state.mode}`);
+        this.log(`Game started! Mode: ${this.state.mode}`);
     }
     
     // ==================== SHOOTING LOGIC ====================
@@ -657,7 +674,7 @@ export class GameManager extends BaseScriptComponent {
     playerShoot(x: number, y: number) {
         // Check if it's player's turn
         if (this.state.turn !== 'player' || this.state.phase !== 'playing') {
-            print("GameManager: Not player's turn");
+            this.log("Not player's turn");
             return;
         }
 
@@ -729,10 +746,10 @@ export class GameManager extends BaseScriptComponent {
             
             if (isPlayerShot) {
                 this.state.playerHits++;
-                print(`GameManager: Player hit at (${x}, ${y})! Total hits: ${this.state.playerHits}/${TOTAL_OBJECT_CELLS}`);
+                this.log(`Player hit at (${x}, ${y})! Total hits: ${this.state.playerHits}/${TOTAL_OBJECT_CELLS}`);
             } else {
                 this.state.opponentHits++;
-                print(`GameManager: AI hit at (${x}, ${y})! Total hits: ${this.state.opponentHits}/${TOTAL_OBJECT_CELLS}`);
+                this.log(`AI hit at (${x}, ${y})! Total hits: ${this.state.opponentHits}/${TOTAL_OBJECT_CELLS}`);
             }
             
             this.updateResult("HIT!");
@@ -753,7 +770,7 @@ export class GameManager extends BaseScriptComponent {
         if (gridScript && typeof gridScript.hasShipAt === 'function') {
             return gridScript.hasShipAt(x, y);
         }
-        print(`GameManager: WARNING - Could not check ship at (${x}, ${y}), hasShipAt not found`);
+        this.logError(`Could not check ship at (${x}, ${y}), hasShipAt not found`);
         return false;
     }
     
@@ -799,7 +816,7 @@ export class GameManager extends BaseScriptComponent {
                 transform.setLocalPosition(new vec3(start.x, currentPos.y, currentPos.z));
             })
             .onComplete(() => {
-                print(`[GameManager] Scene handle animation complete: x=${targetX}`);
+                this.log(`Scene handle animation complete: x=${targetX}`);
                 // Add delay after animation before callback
                 if (onComplete) {
                     const delayEvent = this.createEvent("DelayedCallbackEvent") as DelayedCallbackEvent;
@@ -836,11 +853,11 @@ export class GameManager extends BaseScriptComponent {
         // Get AI's shot
         const shot = this.getAIShot();
         if (!shot) {
-            print("GameManager: AI couldn't find a cell to shoot");
+            this.log("AI couldn't find a cell to shoot");
             return;
         }
 
-        print(`GameManager: AI shoots at (${shot.x}, ${shot.y})`);
+        this.log(`AI shoots at (${shot.x}, ${shot.y})`);
 
         // Process shot on player's grid
         const result = this.processShot(shot.x, shot.y, this.state.playerGrid, this.state.playerShips, false);
@@ -991,7 +1008,7 @@ export class GameManager extends BaseScriptComponent {
         const won = hits >= TOTAL_OBJECT_CELLS;
 
         if (won) {
-            print(`GameManager: ${who} WON! Hits: ${hits}/${TOTAL_OBJECT_CELLS}`);
+            this.log(`${who} WON! Hits: ${hits}/${TOTAL_OBJECT_CELLS}`);
         }
 
         return won;
@@ -1011,7 +1028,7 @@ export class GameManager extends BaseScriptComponent {
             this.updateStatus("YOU LOST!");
         }
         
-        print(`GameManager: Game over! Winner: ${winner}`);
+        this.log(`Game over! Winner: ${winner}`);
     }
     
     /**
@@ -1042,7 +1059,7 @@ export class GameManager extends BaseScriptComponent {
 
         this.showScreen('intro');
         this.updateResult("");
-        print("GameManager: Game reset");
+        this.log('Game reset');
     }
     
     // ==================== TURN HANDLER INTEGRATION ====================
@@ -1076,20 +1093,20 @@ export class GameManager extends BaseScriptComponent {
             // Single-player: use AITurnHandler
             this.turnHandler = this.getTurnHandlerScript(this.aiTurnHandler);
             if (this.turnHandler) {
-                print('[GameManager] initializeTurnHandler: Using AITurnHandler');
+                this.log('initializeTurnHandler: Using AITurnHandler');
                 // Set player grid reference for AI
                 const aiScript = this.turnHandler as any;
                 if (typeof aiScript.setPlayerGrid === 'function') {
                     aiScript.setPlayerGrid(this.state.playerGrid);
                 }
             } else {
-                print('[GameManager] initializeTurnHandler: AITurnHandler not found, using legacy AI');
+                this.log('initializeTurnHandler: AITurnHandler not found, using legacy AI');
             }
         } else {
             // Multiplayer: use TurnBasedManager
             this.turnHandler = this.getTurnHandlerScript(this.turnBasedManager);
             if (this.turnHandler) {
-                print('[GameManager] initializeTurnHandler: Using TurnBasedManager');
+                this.log('initializeTurnHandler: Using TurnBasedManager');
                 // Set ship positions for exchange
                 const tbScript = this.turnHandler as any;
                 if (typeof tbScript.setShipPositions === 'function') {
@@ -1097,7 +1114,7 @@ export class GameManager extends BaseScriptComponent {
                     tbScript.setShipPositions(shipPositions);
                 }
             } else {
-                print('[GameManager] initializeTurnHandler: ERROR - TurnBasedManager not found for multiplayer');
+                this.logError('initializeTurnHandler: TurnBasedManager not found for multiplayer');
             }
         }
     }
@@ -1124,7 +1141,7 @@ export class GameManager extends BaseScriptComponent {
      * Called by TurnBasedManager when it's player's turn (multiplayer)
      */
     onMultiplayerTurnStart(turnData: TurnData | null): void {
-        print('[GameManager] onMultiplayerTurnStart: Player turn started');
+        this.log('onMultiplayerTurnStart: Player turn started');
         this.state.turn = 'player';
         this.updateStatus("Your turn");
         this.updateHint("Tap opponent's cell to shoot");
@@ -1135,7 +1152,7 @@ export class GameManager extends BaseScriptComponent {
      * Called by TurnBasedManager to process opponent's shot (multiplayer)
      */
     processOpponentShot(x: number, y: number, result: ShotResult): void {
-        print(`[GameManager] processOpponentShot: Opponent shot (${x}, ${y}) = ${result}`);
+        this.log(`processOpponentShot: Opponent shot (${x}, ${y}) = ${result}`);
 
         // Update player grid state
         if (result === 'hit' || result === 'destroyed') {
@@ -1170,7 +1187,7 @@ export class GameManager extends BaseScriptComponent {
      * Called by TurnBasedManager when game ends (multiplayer)
      */
     onMultiplayerGameOver(winner: 'player' | 'opponent'): void {
-        print(`[GameManager] onMultiplayerGameOver: Winner is ${winner}`);
+        this.log(`onMultiplayerGameOver: Winner is ${winner}`);
         this.endGame(winner);
     }
 
@@ -1180,7 +1197,7 @@ export class GameManager extends BaseScriptComponent {
     setOpponentShipPositions(positions: TurnData['shipPositions']): void {
         if (!positions) return;
 
-        print(`[GameManager] setOpponentShipPositions: Received ${positions.length} ship positions`);
+        this.log(`setOpponentShipPositions: Received ${positions.length} ship positions`);
 
         // Convert positions to ShipInfo format
         this.state.opponentShips = positions.map((pos, index) => {
@@ -1211,7 +1228,7 @@ export class GameManager extends BaseScriptComponent {
      * Called by AITurnHandler to process AI's shot
      */
     processAIShot(x: number, y: number): void {
-        print(`[GameManager] processAIShot: AI shoots at (${x}, ${y})`);
+        this.log(`processAIShot: AI shoots at (${x}, ${y})`);
 
         // Process shot on player's grid
         const result = this.processShot(x, y, this.state.playerGrid, this.state.playerShips, false);
