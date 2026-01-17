@@ -28,8 +28,7 @@
   ScriptInputsHidden:
     debugMode: false
     gameManager: false
-    turnBasedObject: false
-    turnBasedScriptInput: false
+    turnBasedScript: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -39,15 +38,13 @@
   Attachments:
     []
   DefaultScriptInputs:
-    - turnBasedObject: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
-      turnBasedScriptInput: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+    - turnBasedScript: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
       gameManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       debugMode: false
   ScriptTypes:
     -
       {}
   InputLines:
-    - // @input SceneObject turnBasedObject
-    - // @input Component.ScriptComponent turnBasedScriptInput
+    - // @input Component.ScriptComponent turnBasedScript
     - // @input SceneObject gameManager
     - // @input bool debugMode

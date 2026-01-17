@@ -3740,8 +3740,7 @@
     {}
   ScriptInputs:
     "":
-      turnBasedObject: !<reference.SceneObject> 9129c439-40f1-4777-884d-a1e0f69039ca
-      turnBasedScriptInput: !<reference.ScriptComponent> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
+      turnBasedScript: !<reference.ScriptComponent> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
       debugMode: true
   ScriptTypes:

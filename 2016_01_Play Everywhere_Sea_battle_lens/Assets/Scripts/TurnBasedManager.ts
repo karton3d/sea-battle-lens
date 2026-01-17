@@ -10,13 +10,8 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     // ==================== INPUTS ====================
 
-    /** Reference to Turn-Based SceneObject from scene */
-    @allowUndefined
-    @input turnBasedObject: SceneObject;
-
-    /** Direct reference to Turn-Based script (alternative to turnBasedObject) */
-    @allowUndefined
-    @input turnBasedScriptInput: ScriptComponent;
+    /** Turn-Based script component - drag the Turn-Based component here directly */
+    @input turnBasedScript: ScriptComponent;
 
     /** Reference to GameManager for callbacks */
     @allowUndefined
@@ -39,9 +34,6 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     // ==================== PRIVATE STATE ====================
 
-    /** Reference to Turn-Based script component */
-    private turnBasedScript: any = null;
-
     /** Multiplayer session state */
     private mpState: MultiplayerState = {
         turnCount: 0,
@@ -59,77 +51,49 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     // ==================== LIFECYCLE ====================
 
     onAwake(): void {
-        this.log('onAwake: Initializing');
-        this.initializeTurnBased();
-    }
+        print(`[TurnBasedManager] onAwake: turnBasedScript=${this.turnBasedScript ? 'SET' : 'NULL'}`);
 
-    // ==================== INITIALIZATION ====================
-
-    private initializeTurnBased(): void {
-        if (!this.turnBasedObject && !this.turnBasedScriptInput) {
-            this.log('initializeTurnBased: WARNING - no Turn-Based reference set');
-            return;
-        }
-
-        this.turnBasedScript = this.getTurnBasedScript();
         if (!this.turnBasedScript) {
-            this.logError('initializeTurnBased: Turn-Based script not found');
+            this.logError('turnBasedScript not assigned! Drag the Turn-Based component here.');
             return;
         }
 
         this.registerCallbacks();
-        this.log('initializeTurnBased: Complete');
+        print(`[TurnBasedManager] Initialized successfully`);
     }
 
-    private getTurnBasedScript(): any {
-        if (this.turnBasedScriptInput) {
-            const script = this.turnBasedScriptInput as any;
-            this.log('getTurnBasedScript: Using direct turnBasedScriptInput');
-            return script;
-        }
-
-        if (!this.turnBasedObject) {
-            return null;
-        }
-
-        const scripts = this.turnBasedObject.getComponents("Component.ScriptComponent");
-        if (scripts.length > 0) {
-            return scripts[0] as any;
-        }
-
-        return null;
-    }
+    // ==================== INITIALIZATION ====================
 
     private registerCallbacks(): void {
-        if (!this.turnBasedScript) return;
+        const tb = this.turnBasedScript as any;
 
         // onTurnStart - fires when it becomes our turn
-        if (this.turnBasedScript.onTurnStart && typeof this.turnBasedScript.onTurnStart.add === 'function') {
-            this.turnBasedScript.onTurnStart.add((eventData: any) => {
-                this.log(`onTurnStart: turnCount=${eventData.turnCount}`);
+        if (tb.onTurnStart && typeof tb.onTurnStart.add === 'function') {
+            tb.onTurnStart.add((eventData: any) => {
+                print(`[TurnBasedManager] onTurnStart: turnCount=${eventData.turnCount}`);
                 this.handleTurnStart(eventData);
             });
-            this.log('registerCallbacks: onTurnStart registered');
+            print(`[TurnBasedManager] onTurnStart registered`);
         }
 
         // onTurnEnd
-        if (this.turnBasedScript.onTurnEnd && typeof this.turnBasedScript.onTurnEnd.add === 'function') {
-            this.turnBasedScript.onTurnEnd.add(() => {
+        if (tb.onTurnEnd && typeof tb.onTurnEnd.add === 'function') {
+            tb.onTurnEnd.add(() => {
                 this.log('onTurnEnd fired');
             });
         }
 
         // onGameOver
-        if (this.turnBasedScript.onGameOver && typeof this.turnBasedScript.onGameOver.add === 'function') {
-            this.turnBasedScript.onGameOver.add(() => {
+        if (tb.onGameOver && typeof tb.onGameOver.add === 'function') {
+            tb.onGameOver.add(() => {
                 this.log('onGameOver fired');
                 this.notifyGameManagerGameOver();
             });
         }
 
         // onError
-        if (this.turnBasedScript.onError && typeof this.turnBasedScript.onError.add === 'function') {
-            this.turnBasedScript.onError.add((errorData: any) => {
+        if (tb.onError && typeof tb.onError.add === 'function') {
+            tb.onError.add((errorData: any) => {
                 this.logError(`Turn-Based error: ${errorData.code} - ${errorData.description}`);
             });
         }
@@ -275,6 +239,10 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Called when player taps "Send" button
      */
     submitSelectedAim(isGameOver: boolean = false, winner: 'player' | 'opponent' | null = null): void {
+        print(`[TurnBasedManager] submitSelectedAim called`);
+        print(`[TurnBasedManager] selectedAim: ${this.mpState.selectedAim ? `(${this.mpState.selectedAim.x}, ${this.mpState.selectedAim.y})` : 'NULL'}`);
+        print(`[TurnBasedManager] turnBasedScript: ${this.turnBasedScript ? 'SET' : 'NULL'}`);
+
         if (!this.mpState.selectedAim) {
             this.logError('submitSelectedAim: No aim selected');
             return;
@@ -285,44 +253,46 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             return;
         }
 
+        const tb = this.turnBasedScript as any;
         const { x, y } = this.mpState.selectedAim;
-        this.log(`submitSelectedAim: Sending aim (${x}, ${y})`);
+        print(`[TurnBasedManager] submitSelectedAim: Sending aim (${x}, ${y})`);
 
         // Set turn variables
-        this.turnBasedScript.setCurrentTurnVariable('shotX', x);
-        this.turnBasedScript.setCurrentTurnVariable('shotY', y);
-        this.turnBasedScript.setCurrentTurnVariable('isGameOver', isGameOver);
+        tb.setCurrentTurnVariable('shotX', x);
+        tb.setCurrentTurnVariable('shotY', y);
+        tb.setCurrentTurnVariable('isGameOver', isGameOver);
 
         if (winner) {
-            this.turnBasedScript.setCurrentTurnVariable('winner', winner);
+            tb.setCurrentTurnVariable('winner', winner);
         }
 
         // Send result of opponent's previous shot (if we evaluated one)
         if (this.incomingShotResult) {
-            this.turnBasedScript.setCurrentTurnVariable('incomingShotResult', this.incomingShotResult);
+            tb.setCurrentTurnVariable('incomingShotResult', this.incomingShotResult);
             this.log(`submitSelectedAim: Including incomingShotResult=${this.incomingShotResult}`);
             this.incomingShotResult = null;
         }
 
         // Include ship positions on first turn
         if (!this.mpState.hasSentFirstTurn && this.mpState.ourShipPositions) {
-            this.turnBasedScript.setCurrentTurnVariable('shipPositions', JSON.stringify(this.mpState.ourShipPositions));
+            tb.setCurrentTurnVariable('shipPositions', JSON.stringify(this.mpState.ourShipPositions));
             this.mpState.hasSentFirstTurn = true;
             this.log('submitSelectedAim: Including ship positions (first turn)');
         }
 
         // Mark final turn if game over
-        if (isGameOver && typeof this.turnBasedScript.setIsFinalTurn === 'function') {
-            this.turnBasedScript.setIsFinalTurn(true);
+        if (isGameOver && typeof tb.setIsFinalTurn === 'function') {
+            tb.setIsFinalTurn(true);
         }
 
         // End turn - triggers Snap capture
-        if (typeof this.turnBasedScript.endTurn === 'function') {
-            this.turnBasedScript.endTurn();
+        print(`[TurnBasedManager] About to call endTurn...`);
+        if (typeof tb.endTurn === 'function') {
+            tb.endTurn();
             this.mpState.selectedAim = null;
-            this.log('submitSelectedAim: endTurn() called');
+            print(`[TurnBasedManager] endTurn() called successfully!`);
         } else {
-            this.logError('submitSelectedAim: endTurn method not found');
+            print(`[TurnBasedManager] ERROR: endTurn method not found`);
         }
     }
 
