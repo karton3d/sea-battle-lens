@@ -2169,7 +2169,6 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
-    debugMode: true
     handleAnimDuration: true
     delayBeforeAI: true
     delayAfterAnimation: true
@@ -2181,7 +2180,7 @@
       gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
       screenTransitionDelay: 0.200000
-      debugMode: false
+      debugMode: true
       playerGridGenerator: !<reference.SceneObject> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
       opponentGridGenerator: !<reference.SceneObject> e0568f64-3225-4059-a8f6-20a080dcf39f
       introScreen: !<reference.SceneObject> 2ad497af-e8ce-4dde-958d-857383ec56a9

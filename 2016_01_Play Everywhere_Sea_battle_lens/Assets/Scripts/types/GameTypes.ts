@@ -4,7 +4,14 @@
 // ==================== GAME STATE TYPES ====================
 
 /** Game phases */
-export type GamePhase = 'intro' | 'setup' | 'playing' | 'gameover';
+export type GamePhase =
+    | 'intro'
+    | 'setup'              // Initial setup (single player or Player 1 first turn)
+    | 'setup_pending'      // Multiplayer: setup with pending incoming shot to evaluate
+    | 'playing'            // Single player: active gameplay
+    | 'aiming'             // Multiplayer: selecting target cell
+    | 'confirm_send'       // Multiplayer: aim selected, waiting for Send tap
+    | 'gameover';
 
 /** Turn states */
 export type TurnState = 'player' | 'opponent' | 'waiting';
@@ -112,27 +119,69 @@ export interface IGridController {
 /**
  * Turn data schema for multiplayer serialization
  * Sent via Turn-Based component as JSON
+ *
+ * Flow:
+ * - Player sends: shotX, shotY (aim), shipPositions (first turn only)
+ * - Player also sends: incomingShotResult (result of opponent's previous shot, evaluated locally)
+ * - Receiver evaluates the incoming shot against their own grid
  */
 export interface TurnData {
-    /** Shot column (0-9) */
+    /** Shot column (0-9) - the aim coordinates */
     shotX: number;
-    /** Shot row (0-9) */
+    /** Shot row (0-9) - the aim coordinates */
     shotY: number;
-    /** Result of the shot */
-    result: ShotResult;
-    /** Current hit count for sender */
+
+    /**
+     * Result of opponent's PREVIOUS shot, evaluated locally by this player
+     * This tells the opponent what happened to their shot
+     */
+    incomingShotResult?: ShotResult;
+
+    /** Current hit count for sender (how many hits they've landed on opponent) */
     hitsCount?: number;
-    /** Whether game is over */
+
+    /** Whether game is over (checked after evaluating incoming shot) */
     isGameOver: boolean;
+
     /** Winner if game over */
     winner: 'player' | 'opponent' | null;
-    /** Ship positions (first turn only) */
+
+    /** Ship positions (Player 1's first turn only - for opponent to evaluate future shots) */
     shipPositions?: Array<{
         x: number;
         y: number;
         length: number;
         horizontal: boolean;
     }>;
+}
+
+/**
+ * Pending shot waiting to be evaluated
+ * Stored when receiving opponent's turn, evaluated after setup confirmation
+ */
+export interface PendingShot {
+    x: number;
+    y: number;
+}
+
+/**
+ * Multiplayer session state
+ */
+export interface MultiplayerState {
+    /** Current turn count from Turn-Based component */
+    turnCount: number;
+    /** Pending incoming shot to evaluate after setup */
+    pendingShot: PendingShot | null;
+    /** Selected aim for current turn (before sending) */
+    selectedAim: PendingShot | null;
+    /** Opponent's ship positions (received on their first turn) */
+    opponentShipPositions: TurnData['shipPositions'] | null;
+    /** Our ship positions to send */
+    ourShipPositions: TurnData['shipPositions'] | null;
+    /** Whether we've sent our first turn */
+    hasSentFirstTurn: boolean;
+    /** Result of our previous shot (received from opponent) */
+    previousShotResult: ShotResult | null;
 }
 
 // ==================== CONSTANTS ====================

@@ -87,11 +87,11 @@ In multiplayer, players take turns asynchronously via Snapchat. Each player's fi
 - **Visual**: Aim marker appears on selected cell
 
 ### M4. Confirm & Send
-- **Button**: "Send" (appears after aim selected)
-- **Action**: Calls `endTurn()` with:
+- **Action**: Player taps **Snap button** to confirm aim
+- **On Snap**: Calls `endTurn()` with:
   - `shotX`, `shotY` (aim coordinates)
   - Player 1's ship positions (for later evaluation)
-- **Result**: Snap capture triggered, user sends to friend
+- **Result**: Snap captured, user sends to friend
 
 ---
 
@@ -124,8 +124,8 @@ In multiplayer, players take turns asynchronously via Snapchat. Each player's fi
 - **Action**: User taps cell to select aim
 
 ### M9. Confirm & Send
-- **Button**: "Send"
-- **Action**: Calls `endTurn()` with:
+- **Action**: Player taps **Snap button** to confirm aim
+- **On Snap**: Calls `endTurn()` with:
   - `shotX`, `shotY` (aim coordinates)
   - Result of Player 1's shot (hit/miss) — for their records
 - **Result**: Snap sent back to Player 1

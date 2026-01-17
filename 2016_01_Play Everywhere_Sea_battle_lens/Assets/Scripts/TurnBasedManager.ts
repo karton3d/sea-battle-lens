@@ -1,7 +1,9 @@
 // TurnBasedManager - Handles multiplayer turn logic via Snap's Turn-Based component
-// Implements ITurnHandler interface for turn abstraction
+// Implements deferred shot evaluation: shots are evaluated by the RECEIVER, not sender
 
-import { ITurnHandler, TurnData, ShotResult, GRID_SIZE } from './types/GameTypes';
+import {
+    ITurnHandler, TurnData, ShotResult, PendingShot, MultiplayerState, GRID_SIZE
+} from './types/GameTypes';
 
 @component
 export class TurnBasedManager extends BaseScriptComponent implements ITurnHandler {
@@ -40,17 +42,19 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     /** Reference to Turn-Based script component */
     private turnBasedScript: any = null;
 
-    /** Whether it's currently this player's turn */
-    private _isMyTurn: boolean = false;
+    /** Multiplayer session state */
+    private mpState: MultiplayerState = {
+        turnCount: 0,
+        pendingShot: null,
+        selectedAim: null,
+        opponentShipPositions: null,
+        ourShipPositions: null,
+        hasSentFirstTurn: false,
+        previousShotResult: null
+    };
 
-    /** Whether this is the first turn (for ship position exchange) */
-    private isFirstTurn: boolean = true;
-
-    /** Ship positions to send on first turn */
-    private pendingShipPositions: TurnData['shipPositions'] | null = null;
-
-    /** Queued turn data waiting to be processed */
-    private pendingTurnData: TurnData | null = null;
+    /** Result of evaluating incoming shot (to send back to opponent) */
+    private incomingShotResult: ShotResult | null = null;
 
     // ==================== LIFECYCLE ====================
 
@@ -61,190 +65,183 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     // ==================== INITIALIZATION ====================
 
-    /**
-     * Initialize Turn-Based component reference and callbacks
-     */
     private initializeTurnBased(): void {
-        if (!this.turnBasedObject) {
-            this.log('initializeTurnBased: WARNING - turnBasedObject not set');
+        if (!this.turnBasedObject && !this.turnBasedScriptInput) {
+            this.log('initializeTurnBased: WARNING - no Turn-Based reference set');
             return;
         }
 
-        // Get Turn-Based script component
         this.turnBasedScript = this.getTurnBasedScript();
         if (!this.turnBasedScript) {
             this.logError('initializeTurnBased: Turn-Based script not found');
             return;
         }
 
-        // Register callbacks
         this.registerCallbacks();
-
         this.log('initializeTurnBased: Complete');
     }
 
-    /**
-     * Get Turn-Based script from direct input or SceneObject
-     */
     private getTurnBasedScript(): any {
-        // Option 1: Direct script input (preferred)
         if (this.turnBasedScriptInput) {
             const script = this.turnBasedScriptInput as any;
             this.log('getTurnBasedScript: Using direct turnBasedScriptInput');
-            this.logAvailableMethods(script, 'turnBasedScriptInput');
             return script;
         }
 
-        // Option 2: Search in SceneObject
         if (!this.turnBasedObject) {
-            this.log('getTurnBasedScript: No turnBasedObject or turnBasedScriptInput set');
             return null;
         }
 
-        this.log(`getTurnBasedScript: Searching in object "${this.turnBasedObject.name}"`);
         const scripts = this.turnBasedObject.getComponents("Component.ScriptComponent");
-        this.log(`getTurnBasedScript: Found ${scripts.length} ScriptComponent(s)`);
-
-        // Just return the first script component found
         if (scripts.length > 0) {
-            const script = scripts[0] as any;
-            this.logAvailableMethods(script, 'Script[0]');
-            return script;
+            return scripts[0] as any;
         }
 
-        this.log('getTurnBasedScript: No ScriptComponent found');
         return null;
     }
 
-    /**
-     * Log available methods/properties on a script for debugging
-     */
-    private logAvailableMethods(script: any, label: string): void {
-        try {
-            const keys = Object.keys(script);
-            this.log(`${label} properties: ${keys.slice(0, 20).join(', ')}${keys.length > 20 ? '...' : ''}`);
-
-            // Check for common Turn-Based patterns
-            const patterns = ['submitTurn', 'endTurn', 'onTurnStart', 'onTurnEnd', '_onTurnStartResponses'];
-            for (const p of patterns) {
-                if (script[p] !== undefined) {
-                    this.log(`${label} has "${p}": ${typeof script[p]}`);
-                }
-            }
-        } catch (e) {
-            this.log(`${label}: Could not enumerate properties`);
-        }
-    }
-
-    /**
-     * Register callbacks with Turn-Based component
-     * Uses the correct Turn-Based API: onTurnStart, onTurnEnd, onGameOver, onError
-     */
     private registerCallbacks(): void {
         if (!this.turnBasedScript) return;
 
-        // Register turn start callback - fires when turn begins with previous turn data
+        // onTurnStart - fires when it becomes our turn
         if (this.turnBasedScript.onTurnStart && typeof this.turnBasedScript.onTurnStart.add === 'function') {
             this.turnBasedScript.onTurnStart.add((eventData: any) => {
-                this.log(`onTurnStart fired: turnCount=${eventData.turnCount}, userIndex=${eventData.currentUserIndex}`);
+                this.log(`onTurnStart: turnCount=${eventData.turnCount}`);
                 this.handleTurnStart(eventData);
             });
             this.log('registerCallbacks: onTurnStart registered');
-        } else {
-            this.log('registerCallbacks: WARNING - onTurnStart not found');
         }
 
-        // Register turn end callback
+        // onTurnEnd
         if (this.turnBasedScript.onTurnEnd && typeof this.turnBasedScript.onTurnEnd.add === 'function') {
             this.turnBasedScript.onTurnEnd.add(() => {
-                this.handleTurnEnd();
+                this.log('onTurnEnd fired');
             });
-            this.log('registerCallbacks: onTurnEnd registered');
         }
 
-        // Register game over callback
+        // onGameOver
         if (this.turnBasedScript.onGameOver && typeof this.turnBasedScript.onGameOver.add === 'function') {
             this.turnBasedScript.onGameOver.add(() => {
-                this.handleGameOverFromTurnBased();
+                this.log('onGameOver fired');
+                this.notifyGameManagerGameOver();
             });
-            this.log('registerCallbacks: onGameOver registered');
         }
 
-        // Register error callback
+        // onError
         if (this.turnBasedScript.onError && typeof this.turnBasedScript.onError.add === 'function') {
             this.turnBasedScript.onError.add((errorData: any) => {
                 this.logError(`Turn-Based error: ${errorData.code} - ${errorData.description}`);
             });
-            this.log('registerCallbacks: onError registered');
         }
-
-        this.log('registerCallbacks: Done');
     }
 
     // ==================== PUBLIC API ====================
 
     /**
-     * Check if it's currently this player's turn
+     * Check if this is the first turn (turnCount === 0)
+     * Player 1 initiates, has no pending shot
      */
-    isMyTurn(): boolean {
-        return this._isMyTurn;
+    isFirstTurn(): boolean {
+        return this.mpState.turnCount === 0;
     }
 
     /**
-     * Set ship positions for first turn exchange
-     * Called by GameManager during setup phase
+     * Get current turn count
+     */
+    getTurnCount(): number {
+        return this.mpState.turnCount;
+    }
+
+    /**
+     * Check if there's a pending shot to evaluate
+     */
+    hasPendingShot(): boolean {
+        return this.mpState.pendingShot !== null;
+    }
+
+    /**
+     * Get pending shot coordinates (for showing indicator during setup)
+     */
+    getPendingShot(): PendingShot | null {
+        return this.mpState.pendingShot;
+    }
+
+    /**
+     * Set our ship positions (called by GameManager during setup)
      */
     setShipPositions(positions: TurnData['shipPositions']): void {
-        this.pendingShipPositions = positions;
-        this.log(`setShipPositions: ${positions?.length || 0} ships set`);
+        this.mpState.ourShipPositions = positions;
+        this.log(`setShipPositions: ${positions?.length || 0} ships stored`);
+    }
+
+    /**
+     * Set the result of evaluating the incoming shot
+     * Called by GameManager after evaluating pending shot against our grid
+     */
+    setIncomingShotResult(result: ShotResult): void {
+        this.incomingShotResult = result;
+        this.log(`setIncomingShotResult: ${result}`);
+    }
+
+    /**
+     * Set selected aim for current turn
+     * Called when player taps a cell on opponent grid
+     */
+    setSelectedAim(x: number, y: number): void {
+        this.mpState.selectedAim = { x, y };
+        this.log(`setSelectedAim: (${x}, ${y})`);
+    }
+
+    /**
+     * Clear selected aim
+     */
+    clearSelectedAim(): void {
+        this.mpState.selectedAim = null;
+    }
+
+    /**
+     * Get selected aim
+     */
+    getSelectedAim(): PendingShot | null {
+        return this.mpState.selectedAim;
+    }
+
+    /**
+     * Get opponent's ship positions (if received)
+     */
+    getOpponentShipPositions(): TurnData['shipPositions'] | null {
+        return this.mpState.opponentShipPositions;
+    }
+
+    /**
+     * Get result of our previous shot (from opponent's response)
+     */
+    getPreviousShotResult(): ShotResult | null {
+        return this.mpState.previousShotResult;
+    }
+
+    /**
+     * Clear previous shot result after it's been displayed
+     */
+    clearPreviousShotResult(): void {
+        this.mpState.previousShotResult = null;
     }
 
     // ==================== ITurnHandler IMPLEMENTATION ====================
 
     /**
-     * Called when it's the opponent's turn to act
-     * For multiplayer: we wait for Turn-Based callback with opponent's turn data
+     * Not used in deferred flow - multiplayer waits for Turn-Based callback
      */
     startOpponentTurn(): void {
-        this.log('startOpponentTurn: Waiting for opponent turn data');
-        this._isMyTurn = false;
-
-        // In multiplayer, we don't actively do anything here
-        // The Turn-Based component will call our callback when opponent submits
+        this.log('startOpponentTurn: Waiting for Turn-Based callback');
     }
 
     /**
-     * Called after player makes a shot
-     * Submits turn data via Turn-Based component
+     * Not used in deferred flow - we use submitSelectedAim instead
      */
     onPlayerShotComplete(x: number, y: number, result: ShotResult): void {
-        this.log(`onPlayerShotComplete: Shot (${x}, ${y}) = ${result}`);
-
-        // Check for game over (handled separately)
-        const gm = this.getGameManagerScript();
-        const isGameOver = gm ? gm.isGameOver() : false;
-        const winner = gm ? gm.getWinner() : null;
-
-        // Build turn data
-        const turnData: TurnData = {
-            shotX: x,
-            shotY: y,
-            result: result,
-            hitsCount: gm ? gm.getPlayerHits() : 0,
-            isGameOver: isGameOver,
-            winner: isGameOver ? (winner === 'player' ? 'opponent' : 'player') : null // Flip perspective for opponent
-        };
-
-        // Include ship positions on first turn
-        if (this.isFirstTurn && this.pendingShipPositions) {
-            turnData.shipPositions = this.pendingShipPositions;
-            this.pendingShipPositions = null;
-            this.isFirstTurn = false;
-            this.log('onPlayerShotComplete: Including ship positions in first turn');
-        }
-
-        // Submit turn
-        this.submitTurn(turnData);
+        // Legacy - not used in deferred evaluation flow
+        this.log('onPlayerShotComplete: (legacy, not used in deferred flow)');
     }
 
     /**
@@ -252,247 +249,166 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     onGameOver(winner: 'player' | 'opponent'): void {
         this.log(`onGameOver: Winner is ${winner}`);
-        // Turn-Based component may handle game over state automatically
-        // Final turn data is submitted in onPlayerShotComplete with isGameOver=true
     }
 
     /**
      * Reset state for new game
      */
     reset(): void {
-        this._isMyTurn = false;
-        this.isFirstTurn = true;
-        this.pendingShipPositions = null;
-        this.pendingTurnData = null;
+        this.mpState = {
+            turnCount: 0,
+            pendingShot: null,
+            selectedAim: null,
+            opponentShipPositions: null,
+            ourShipPositions: null,
+            hasSentFirstTurn: false,
+            previousShotResult: null
+        };
+        this.incomingShotResult = null;
         this.log('reset: State cleared');
     }
 
-    // ==================== TURN SUBMISSION (Story 1.2) ====================
+    // ==================== TURN SUBMISSION ====================
 
     /**
-     * Submit turn data via Turn-Based component
-     * Uses setCurrentTurnVariable() + endTurn() API
+     * Submit turn with selected aim
+     * Called when player taps "Send" button
      */
-    submitTurn(turnData: TurnData): void {
-        this.log('submitTurn: Submitting turn data');
-        this.log(`[TURN] Submit: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
+    submitSelectedAim(isGameOver: boolean = false, winner: 'player' | 'opponent' | null = null): void {
+        if (!this.mpState.selectedAim) {
+            this.logError('submitSelectedAim: No aim selected');
+            return;
+        }
 
-        // Check if Turn-Based component is ready
         if (!this.turnBasedScript) {
-            this.logError('submitTurn: Turn-Based component not ready');
+            this.logError('submitSelectedAim: Turn-Based component not ready');
             return;
         }
 
-        // Check for setCurrentTurnVariable method
-        if (typeof this.turnBasedScript.setCurrentTurnVariable !== 'function') {
-            this.logError('submitTurn: setCurrentTurnVariable method not found');
-            return;
+        const { x, y } = this.mpState.selectedAim;
+        this.log(`submitSelectedAim: Sending aim (${x}, ${y})`);
+
+        // Set turn variables
+        this.turnBasedScript.setCurrentTurnVariable('shotX', x);
+        this.turnBasedScript.setCurrentTurnVariable('shotY', y);
+        this.turnBasedScript.setCurrentTurnVariable('isGameOver', isGameOver);
+
+        if (winner) {
+            this.turnBasedScript.setCurrentTurnVariable('winner', winner);
         }
 
-        // Set turn variables using the correct API
-        this.turnBasedScript.setCurrentTurnVariable('shotX', turnData.shotX);
-        this.turnBasedScript.setCurrentTurnVariable('shotY', turnData.shotY);
-        this.turnBasedScript.setCurrentTurnVariable('result', turnData.result);
-        this.turnBasedScript.setCurrentTurnVariable('isGameOver', turnData.isGameOver);
-
-        if (turnData.hitsCount !== undefined) {
-            this.turnBasedScript.setCurrentTurnVariable('hitsCount', turnData.hitsCount);
-        }
-        if (turnData.winner) {
-            this.turnBasedScript.setCurrentTurnVariable('winner', turnData.winner);
+        // Send result of opponent's previous shot (if we evaluated one)
+        if (this.incomingShotResult) {
+            this.turnBasedScript.setCurrentTurnVariable('incomingShotResult', this.incomingShotResult);
+            this.log(`submitSelectedAim: Including incomingShotResult=${this.incomingShotResult}`);
+            this.incomingShotResult = null;
         }
 
-        // Include ship positions on first turn (as JSON string since it's complex)
-        if (turnData.shipPositions) {
-            this.turnBasedScript.setCurrentTurnVariable('shipPositions', JSON.stringify(turnData.shipPositions));
-            this.log('submitTurn: Including ship positions');
+        // Include ship positions on first turn
+        if (!this.mpState.hasSentFirstTurn && this.mpState.ourShipPositions) {
+            this.turnBasedScript.setCurrentTurnVariable('shipPositions', JSON.stringify(this.mpState.ourShipPositions));
+            this.mpState.hasSentFirstTurn = true;
+            this.log('submitSelectedAim: Including ship positions (first turn)');
         }
 
-        this.log('submitTurn: Turn variables set, calling endTurn()');
-
-        // Mark as final turn if game over
-        if (turnData.isGameOver && typeof this.turnBasedScript.setIsFinalTurn === 'function') {
+        // Mark final turn if game over
+        if (isGameOver && typeof this.turnBasedScript.setIsFinalTurn === 'function') {
             this.turnBasedScript.setIsFinalTurn(true);
         }
 
-        // Complete the turn - this triggers Snap capture
+        // End turn - triggers Snap capture
         if (typeof this.turnBasedScript.endTurn === 'function') {
             this.turnBasedScript.endTurn();
-            this._isMyTurn = false;
-            this.log('submitTurn: endTurn() called successfully');
+            this.mpState.selectedAim = null;
+            this.log('submitSelectedAim: endTurn() called');
         } else {
-            this.logError('submitTurn: endTurn method not found');
+            this.logError('submitSelectedAim: endTurn method not found');
         }
     }
 
-    // ==================== TURN RECEIVING (Story 1.3) ====================
+    // ==================== TURN RECEIVING ====================
 
     /**
      * Handle turn start callback from Turn-Based component
-     * Called when it becomes this player's turn (with opponent's previous turn data)
-     * eventData contains: currentUserIndex, tappedKey, turnCount, previousTurnVariables
      */
     private handleTurnStart(eventData: any): void {
-        this.log('handleTurnStart: Received turn data');
-        this._isMyTurn = true;
+        this.mpState.turnCount = eventData.turnCount || 0;
+        this.log(`handleTurnStart: turnCount=${this.mpState.turnCount}`);
 
         const prevVars = eventData.previousTurnVariables || {};
-        this.log(`handleTurnStart: turnCount=${eventData.turnCount}, prevVars keys: ${Object.keys(prevVars).join(', ')}`);
+        this.log(`handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);
 
-        // First turn (turnCount=0) has no previous data
-        if (eventData.turnCount === 0 || Object.keys(prevVars).length === 0) {
-            this.log('handleTurnStart: First turn, no previous data');
-            this.notifyGameManagerTurnStart(null);
+        // First turn (turnCount=0) - Player 1 initiates, no previous data
+        if (this.mpState.turnCount === 0 || Object.keys(prevVars).length === 0) {
+            this.log('handleTurnStart: First turn, no incoming data');
+            this.notifyGameManagerTurnStart(false, null);
             return;
         }
 
-        // Parse turn data from previousTurnVariables
-        const turnData = this.parseTurnVariables(prevVars);
-        if (!turnData) {
-            this.log('handleTurnStart: Could not parse turn variables');
-            this.notifyGameManagerTurnStart(null);
-            return;
-        }
-
-        this.log(`[TURN] Received: shot=(${turnData.shotX}, ${turnData.shotY}), result=${turnData.result}, gameOver=${turnData.isGameOver}`);
-
-        // Process opponent's turn data
-        this.processReceivedTurn(turnData);
+        // Parse incoming data
+        this.parseIncomingTurnData(prevVars);
     }
 
     /**
-     * Handle turn end callback
+     * Parse turn data from previousTurnVariables
      */
-    private handleTurnEnd(): void {
-        this.log('handleTurnEnd: Turn ended');
-        this._isMyTurn = false;
-    }
-
-    /**
-     * Handle game over callback from Turn-Based
-     */
-    private handleGameOverFromTurnBased(): void {
-        this.log('handleGameOverFromTurnBased: Game over signal received');
-        // GameManager will handle game over UI
-    }
-
-    /**
-     * Parse turn data from previousTurnVariables map
-     */
-    private parseTurnVariables(vars: any): TurnData | null {
-        // Check for required shot coordinates
-        if (typeof vars.shotX !== 'number' || typeof vars.shotY !== 'number') {
-            this.log('parseTurnVariables: Missing shotX/shotY');
-            return null;
-        }
-
-        // Validate shot coordinates
-        if (vars.shotX < 0 || vars.shotX >= GRID_SIZE || vars.shotY < 0 || vars.shotY >= GRID_SIZE) {
-            this.log(`parseTurnVariables: Invalid coordinates (${vars.shotX}, ${vars.shotY})`);
-            return null;
-        }
-
-        // Parse ship positions if present (stored as JSON string)
-        let shipPositions = undefined;
+    private parseIncomingTurnData(vars: any): void {
+        // Extract opponent's ship positions (if present - their first turn)
         if (vars.shipPositions) {
             try {
-                shipPositions = typeof vars.shipPositions === 'string'
+                this.mpState.opponentShipPositions = typeof vars.shipPositions === 'string'
                     ? JSON.parse(vars.shipPositions)
                     : vars.shipPositions;
+                this.log(`parseIncomingTurnData: Received ${this.mpState.opponentShipPositions?.length} opponent ship positions`);
             } catch (e) {
-                this.log('parseTurnVariables: Could not parse shipPositions');
+                this.logError('parseIncomingTurnData: Could not parse shipPositions');
             }
         }
 
-        const turnData: TurnData = {
-            shotX: Math.floor(vars.shotX),
-            shotY: Math.floor(vars.shotY),
-            result: vars.result || 'miss',
-            hitsCount: vars.hitsCount ? Math.floor(vars.hitsCount) : undefined,
-            isGameOver: Boolean(vars.isGameOver),
-            winner: vars.winner || null,
-            shipPositions: shipPositions
-        };
+        // Extract result of OUR previous shot (opponent tells us what happened)
+        if (vars.incomingShotResult) {
+            this.mpState.previousShotResult = vars.incomingShotResult as ShotResult;
+            this.log(`parseIncomingTurnData: Our previous shot result: ${this.mpState.previousShotResult}`);
+        }
 
-        this.log('parseTurnVariables: Valid turn data parsed');
-        return turnData;
-    }
-
-    /**
-     * Process received turn data - apply opponent's shot to player grid
-     */
-    private processReceivedTurn(turnData: TurnData): void {
-        this.log(`processReceivedTurn: Processing opponent shot (${turnData.shotX}, ${turnData.shotY})`);
-
-        // Store ship positions if this is first turn with positions
-        if (turnData.shipPositions && turnData.shipPositions.length > 0) {
-            this.log(`processReceivedTurn: Received ${turnData.shipPositions.length} opponent ship positions`);
-            this.storeOpponentShipPositions(turnData.shipPositions);
+        // Extract opponent's aim (pending shot for us to evaluate)
+        if (typeof vars.shotX === 'number' && typeof vars.shotY === 'number') {
+            // Validate coordinates
+            if (vars.shotX >= 0 && vars.shotX < GRID_SIZE && vars.shotY >= 0 && vars.shotY < GRID_SIZE) {
+                this.mpState.pendingShot = {
+                    x: Math.floor(vars.shotX),
+                    y: Math.floor(vars.shotY)
+                };
+                this.log(`parseIncomingTurnData: Pending shot at (${this.mpState.pendingShot.x}, ${this.mpState.pendingShot.y})`);
+            } else {
+                this.logError(`parseIncomingTurnData: Invalid shot coordinates (${vars.shotX}, ${vars.shotY})`);
+            }
         }
 
         // Check for game over
-        if (turnData.isGameOver) {
-            this.log(`processReceivedTurn: Game over! Winner: ${turnData.winner}`);
-            this.notifyGameManagerGameOver(turnData.winner === 'player' ? 'opponent' : 'player'); // Flip perspective
+        if (vars.isGameOver) {
+            this.log(`parseIncomingTurnData: Game over! Winner: ${vars.winner}`);
+            // Flip perspective: if opponent says "player" won, that means they won, so we lost
+            const ourResult = vars.winner === 'player' ? 'opponent' : 'player';
+            this.notifyGameManagerGameOver(ourResult);
             return;
         }
 
-        // Notify GameManager of opponent's shot
-        this.notifyGameManagerOpponentShot(turnData.shotX, turnData.shotY, turnData.result);
+        // Notify GameManager
+        const hasPending = this.mpState.pendingShot !== null;
+        this.notifyGameManagerTurnStart(hasPending, this.mpState.previousShotResult);
     }
 
     /**
-     * Store opponent's ship positions
+     * Clear pending shot after it's been evaluated
      */
-    private storeOpponentShipPositions(positions: TurnData['shipPositions']): void {
-        const gm = this.getGameManagerScript();
-        if (gm && typeof gm.setOpponentShipPositions === 'function') {
-            gm.setOpponentShipPositions(positions);
-            this.log('storeOpponentShipPositions: Positions sent to GameManager');
-        } else {
-            this.log('storeOpponentShipPositions: WARNING - setOpponentShipPositions not found');
-        }
+    clearPendingShot(): void {
+        this.mpState.pendingShot = null;
+        this.log('clearPendingShot: Pending shot cleared');
     }
 
-    /**
-     * Notify GameManager that it's player's turn
-     */
-    private notifyGameManagerTurnStart(turnData: TurnData | null): void {
-        const gm = this.getGameManagerScript();
-        if (gm && typeof gm.onMultiplayerTurnStart === 'function') {
-            gm.onMultiplayerTurnStart(turnData);
-        }
-    }
+    // ==================== GAMEMANAGER NOTIFICATIONS ====================
 
-    /**
-     * Notify GameManager of opponent's shot
-     */
-    private notifyGameManagerOpponentShot(x: number, y: number, result: ShotResult): void {
-        const gm = this.getGameManagerScript();
-        if (gm && typeof gm.processOpponentShot === 'function') {
-            gm.processOpponentShot(x, y, result);
-            this.log(`notifyGameManagerOpponentShot: Sent (${x}, ${y}) = ${result}`);
-        } else {
-            this.logError('notifyGameManagerOpponentShot: processOpponentShot not found');
-        }
-    }
-
-    /**
-     * Notify GameManager of game over
-     */
-    private notifyGameManagerGameOver(winner: 'player' | 'opponent'): void {
-        const gm = this.getGameManagerScript();
-        if (gm && typeof gm.onMultiplayerGameOver === 'function') {
-            gm.onMultiplayerGameOver(winner);
-            this.log(`notifyGameManagerGameOver: Winner is ${winner}`);
-        }
-    }
-
-    // ==================== HELPERS ====================
-
-    /**
-     * Get GameManager script from reference
-     */
     private getGameManagerScript(): any {
         if (!this.gameManager) {
             this.logError('getGameManagerScript: gameManager not set');
@@ -502,7 +418,6 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         const scripts = this.gameManager.getComponents("Component.ScriptComponent");
         for (let i = 0; i < scripts.length; i++) {
             const script = scripts[i] as any;
-            // Check for GameManager markers
             if (script && typeof script.getState === 'function') {
                 return script;
             }
@@ -510,5 +425,25 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
         this.logError('getGameManagerScript: GameManager script not found');
         return null;
+    }
+
+    /**
+     * Notify GameManager that it's our turn
+     */
+    private notifyGameManagerTurnStart(hasPendingShot: boolean, previousShotResult: ShotResult | null): void {
+        const gm = this.getGameManagerScript();
+        if (gm && typeof gm.onMultiplayerTurnStart === 'function') {
+            gm.onMultiplayerTurnStart(this.mpState.turnCount, hasPendingShot, previousShotResult);
+        }
+    }
+
+    /**
+     * Notify GameManager of game over
+     */
+    private notifyGameManagerGameOver(winner?: 'player' | 'opponent'): void {
+        const gm = this.getGameManagerScript();
+        if (gm && typeof gm.onMultiplayerGameOver === 'function') {
+            gm.onMultiplayerGameOver(winner || 'opponent');
+        }
     }
 }
