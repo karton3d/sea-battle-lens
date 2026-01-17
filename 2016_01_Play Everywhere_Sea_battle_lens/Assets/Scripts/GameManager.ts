@@ -1,56 +1,10 @@
 // Game Manager - Central controller for Fleet Yeet!
 
-// Game phases
-type GamePhase = 'intro' | 'setup' | 'playing' | 'gameover';
-
-// Turn states
-type TurnState = 'player' | 'opponent' | 'waiting';
-
-// Game modes
-type GameMode = 'single' | 'multiplayer';
-
-// Cell states
-type CellState = 'unknown' | 'empty' | 'hit' | 'object' | 'destroyed';
-
-// Ship info
-interface ShipInfo {
-    id: number;
-    length: number;
-    cells: Array<{x: number, y: number}>;
-    hitCells: number;
-    destroyed: boolean;
-}
-
-// AI state for smart targeting
-interface AIState {
-    mode: 'hunt' | 'target';
-    targetCells: Array<{x: number, y: number}>;
-    hitCells: Array<{x: number, y: number}>;
-    lastHitDirection: 'horizontal' | 'vertical' | null;
-}
-
-// Complete game state
-interface GameState {
-    mode: GameMode;
-    phase: GamePhase;
-    turn: TurnState;
-    
-    // Grids: [x][y] = CellState
-    playerGrid: CellState[][];
-    opponentGrid: CellState[][];
-    
-    // Ships info
-    playerShips: ShipInfo[];
-    opponentShips: ShipInfo[];
-    
-    // Stats
-    playerHits: number;
-    opponentHits: number;
-    totalObjectCells: number; // 20 cells total
-    
-    // Winner
-    winner: 'player' | 'opponent' | null;
-}
+import {
+    GamePhase, TurnState, GameMode, CellState, ShotResult,
+    ShipInfo, AIState, GameState, ITurnHandler, TurnData,
+    TOTAL_OBJECT_CELLS, GRID_SIZE
+} from './types/GameTypes';
 
 @component
 export class GameManager extends BaseScriptComponent {
@@ -89,6 +43,12 @@ export class GameManager extends BaseScriptComponent {
     // ==================== GAMEOVER BUTTONS ====================
     @input playAgainButton: SceneObject = null;
 
+    // ==================== TURN HANDLERS ====================
+    /** AI turn handler for single-player mode */
+    @input aiTurnHandler: SceneObject = null;
+    /** Turn-Based manager for multiplayer mode */
+    @input turnBasedManager: SceneObject = null;
+
     // ==================== SCENE HANDLE ANIMATION ====================
     /** Scene handle that moves view between player/opponent grids */
     @input sceneHandle: SceneObject = null;
@@ -103,12 +63,12 @@ export class GameManager extends BaseScriptComponent {
 
     // Game state
     private state: GameState;
-    
-    // AI state
+
+    // AI state (kept for legacy single-player when no AITurnHandler set)
     private aiState: AIState;
-    
-    // Total cells with objects (classic battleship: 4+3+3+2+2+2+1+1+1+1 = 20)
-    private readonly TOTAL_OBJECT_CELLS = 20;
+
+    // Active turn handler (AITurnHandler or TurnBasedManager)
+    private turnHandler: ITurnHandler | null = null;
     
     onAwake() {
         this.initializeState();
@@ -239,10 +199,10 @@ export class GameManager extends BaseScriptComponent {
             opponentShips: [],
             playerHits: 0,
             opponentHits: 0,
-            totalObjectCells: this.TOTAL_OBJECT_CELLS,
+            totalObjectCells: TOTAL_OBJECT_CELLS,
             winner: null
         };
-        
+
         this.aiState = {
             mode: 'hunt',
             targetCells: [],
@@ -672,17 +632,20 @@ export class GameManager extends BaseScriptComponent {
         this.state.phase = 'playing';
         this.state.turn = 'player';
         this.showScreen('game');
-        
+
+        // Initialize turn handler based on mode
+        this.initializeTurnHandler();
+
         // Show both grids for gameplay
         this.showPlayerGrid();
         this.showOpponentGrid();
-        
+
         this.updateStatus("Your turn");
         this.updateHint("Tap opponent's cell to shoot");
         this.updateResult("");
         this.animateSceneHandle(true); // Move to show opponent grid
-        
-        print("GameManager: Game started!");
+
+        print(`GameManager: Game started! Mode: ${this.state.mode}`);
     }
     
     // ==================== SHOOTING LOGIC ====================
@@ -715,8 +678,16 @@ export class GameManager extends BaseScriptComponent {
 
         // Check win
         if (this.checkWin('player')) {
+            if (this.turnHandler) {
+                this.turnHandler.onGameOver('player');
+            }
             this.endGame('player');
             return;
+        }
+
+        // Notify turn handler of shot completion
+        if (this.turnHandler) {
+            this.turnHandler.onPlayerShotComplete(x, y, result);
         }
 
         // Delay to let user see the marker, then transition
@@ -726,16 +697,18 @@ export class GameManager extends BaseScriptComponent {
             this.updateStatus("Opponent's turn");
             this.updateHint("Waiting...");
 
-            // Animate to player grid, then trigger AI after delays
+            // Animate to player grid, then trigger opponent turn
             this.animateSceneHandle(false, () => {
-                if (this.state.mode === 'single') {
+                if (this.turnHandler) {
+                    // Use turn handler (AITurnHandler or TurnBasedManager)
+                    this.turnHandler.startOpponentTurn();
+                } else if (this.state.mode === 'single') {
+                    // Fallback: legacy AI turn
                     this.delayedCall(() => {
                         this.aiTurn();
                     }, this.delayBeforeAI);
-                } else {
-                    // Multiplayer: submit turn
-                    this.submitTurn(x, y, result);
                 }
+                // Multiplayer without turn handler: waiting for Turn-Based callback
             });
         }, this.delayAfterShot);
     }
@@ -756,10 +729,10 @@ export class GameManager extends BaseScriptComponent {
             
             if (isPlayerShot) {
                 this.state.playerHits++;
-                print(`GameManager: Player hit at (${x}, ${y})! Total hits: ${this.state.playerHits}/${this.TOTAL_OBJECT_CELLS}`);
+                print(`GameManager: Player hit at (${x}, ${y})! Total hits: ${this.state.playerHits}/${TOTAL_OBJECT_CELLS}`);
             } else {
                 this.state.opponentHits++;
-                print(`GameManager: AI hit at (${x}, ${y})! Total hits: ${this.state.opponentHits}/${this.TOTAL_OBJECT_CELLS}`);
+                print(`GameManager: AI hit at (${x}, ${y})! Total hits: ${this.state.opponentHits}/${TOTAL_OBJECT_CELLS}`);
             }
             
             this.updateResult("HIT!");
@@ -1015,12 +988,12 @@ export class GameManager extends BaseScriptComponent {
      */
     checkWin(who: 'player' | 'opponent'): boolean {
         const hits = who === 'player' ? this.state.playerHits : this.state.opponentHits;
-        const won = hits >= this.TOTAL_OBJECT_CELLS;
-        
+        const won = hits >= TOTAL_OBJECT_CELLS;
+
         if (won) {
-            print(`GameManager: ${who} WON! Hits: ${hits}/${this.TOTAL_OBJECT_CELLS}`);
+            print(`GameManager: ${who} WON! Hits: ${hits}/${TOTAL_OBJECT_CELLS}`);
         }
-        
+
         return won;
     }
     
@@ -1045,43 +1018,265 @@ export class GameManager extends BaseScriptComponent {
      * Reset game to initial state
      */
     resetGame() {
+        // Reset turn handler
+        if (this.turnHandler) {
+            this.turnHandler.reset();
+            this.turnHandler = null;
+        }
+
         this.initializeState();
-        
+
         // Hide grids
         this.hideGrids();
-        
+
         // Reset grid scripts
         const playerScript = this.getGridScript(this.playerGridGenerator);
         if (playerScript && typeof playerScript.resetGame === 'function') {
             playerScript.resetGame();
         }
-        
+
         const opponentScript = this.getGridScript(this.opponentGridGenerator);
         if (opponentScript && typeof opponentScript.resetGame === 'function') {
             opponentScript.resetGame();
         }
-        
+
         this.showScreen('intro');
         this.updateResult("");
         print("GameManager: Game reset");
     }
     
-    // ==================== MULTIPLAYER (PLACEHOLDER) ====================
-    
+    // ==================== TURN HANDLER INTEGRATION ====================
+
     /**
-     * Submit turn to Turn-Based system (multiplayer)
+     * Get turn handler script from SceneObject
      */
-    submitTurn(x: number, y: number, result: 'hit' | 'miss' | 'destroyed') {
-        // TODO: Implement Turn-Based integration
-        print(`GameManager: Would submit turn - shot (${x}, ${y}), result: ${result}`);
+    private getTurnHandlerScript(handlerObject: SceneObject): ITurnHandler | null {
+        if (!handlerObject) return null;
+
+        const scripts = handlerObject.getComponents("Component.ScriptComponent");
+        for (let i = 0; i < scripts.length; i++) {
+            const script = scripts[i] as any;
+            // Check for ITurnHandler interface methods
+            if (script &&
+                typeof script.startOpponentTurn === 'function' &&
+                typeof script.onPlayerShotComplete === 'function' &&
+                typeof script.onGameOver === 'function' &&
+                typeof script.reset === 'function') {
+                return script as ITurnHandler;
+            }
+        }
+        return null;
     }
-    
+
     /**
-     * Receive opponent's turn (multiplayer)
+     * Initialize turn handler based on game mode
      */
-    receiveTurn(x: number, y: number) {
-        // TODO: Implement Turn-Based integration
-        print(`GameManager: Would receive turn - opponent shot (${x}, ${y})`);
+    private initializeTurnHandler(): void {
+        if (this.state.mode === 'single') {
+            // Single-player: use AITurnHandler
+            this.turnHandler = this.getTurnHandlerScript(this.aiTurnHandler);
+            if (this.turnHandler) {
+                print('[GameManager] initializeTurnHandler: Using AITurnHandler');
+                // Set player grid reference for AI
+                const aiScript = this.turnHandler as any;
+                if (typeof aiScript.setPlayerGrid === 'function') {
+                    aiScript.setPlayerGrid(this.state.playerGrid);
+                }
+            } else {
+                print('[GameManager] initializeTurnHandler: AITurnHandler not found, using legacy AI');
+            }
+        } else {
+            // Multiplayer: use TurnBasedManager
+            this.turnHandler = this.getTurnHandlerScript(this.turnBasedManager);
+            if (this.turnHandler) {
+                print('[GameManager] initializeTurnHandler: Using TurnBasedManager');
+                // Set ship positions for exchange
+                const tbScript = this.turnHandler as any;
+                if (typeof tbScript.setShipPositions === 'function') {
+                    const shipPositions = this.serializeShipPositions(this.state.playerShips);
+                    tbScript.setShipPositions(shipPositions);
+                }
+            } else {
+                print('[GameManager] initializeTurnHandler: ERROR - TurnBasedManager not found for multiplayer');
+            }
+        }
+    }
+
+    /**
+     * Serialize ship positions for multiplayer exchange
+     */
+    private serializeShipPositions(ships: ShipInfo[]): TurnData['shipPositions'] {
+        return ships.map(ship => {
+            const isHorizontal = ship.cells.length > 1 &&
+                ship.cells[0].y === ship.cells[1].y;
+            return {
+                x: ship.cells[0].x,
+                y: ship.cells[0].y,
+                length: ship.length,
+                horizontal: isHorizontal
+            };
+        });
+    }
+
+    // ==================== MULTIPLAYER CALLBACKS ====================
+
+    /**
+     * Called by TurnBasedManager when it's player's turn (multiplayer)
+     */
+    onMultiplayerTurnStart(turnData: TurnData | null): void {
+        print('[GameManager] onMultiplayerTurnStart: Player turn started');
+        this.state.turn = 'player';
+        this.updateStatus("Your turn");
+        this.updateHint("Tap opponent's cell to shoot");
+        this.animateSceneHandle(true);
+    }
+
+    /**
+     * Called by TurnBasedManager to process opponent's shot (multiplayer)
+     */
+    processOpponentShot(x: number, y: number, result: ShotResult): void {
+        print(`[GameManager] processOpponentShot: Opponent shot (${x}, ${y}) = ${result}`);
+
+        // Update player grid state
+        if (result === 'hit' || result === 'destroyed') {
+            this.state.playerGrid[x][y] = 'hit';
+            this.state.opponentHits++;
+        } else {
+            this.state.playerGrid[x][y] = 'empty';
+        }
+
+        // Show visual marker on player grid
+        this.updateCellVisual(this.playerGridGenerator, x, y, result === 'miss' ? 'miss' : 'hit');
+
+        // Update UI
+        this.updateResult(`Opponent shot (${x}, ${y}) - ${result === 'miss' ? 'Miss' : 'HIT!'}`);
+
+        // Check for game over
+        if (this.checkWin('opponent')) {
+            this.endGame('opponent');
+            return;
+        }
+
+        // Delay then switch to player's turn
+        this.delayedCall(() => {
+            this.state.turn = 'player';
+            this.updateStatus("Your turn");
+            this.updateHint("Tap opponent's cell to shoot");
+            this.animateSceneHandle(true);
+        }, this.delayAfterShot);
+    }
+
+    /**
+     * Called by TurnBasedManager when game ends (multiplayer)
+     */
+    onMultiplayerGameOver(winner: 'player' | 'opponent'): void {
+        print(`[GameManager] onMultiplayerGameOver: Winner is ${winner}`);
+        this.endGame(winner);
+    }
+
+    /**
+     * Called by TurnBasedManager to store opponent's ship positions
+     */
+    setOpponentShipPositions(positions: TurnData['shipPositions']): void {
+        if (!positions) return;
+
+        print(`[GameManager] setOpponentShipPositions: Received ${positions.length} ship positions`);
+
+        // Convert positions to ShipInfo format
+        this.state.opponentShips = positions.map((pos, index) => {
+            const cells: Array<{x: number, y: number}> = [];
+            for (let i = 0; i < pos.length; i++) {
+                cells.push({
+                    x: pos.horizontal ? pos.x + i : pos.x,
+                    y: pos.horizontal ? pos.y : pos.y + i
+                });
+            }
+            return {
+                id: index,
+                length: pos.length,
+                cells: cells,
+                hitCells: 0,
+                destroyed: false
+            };
+        });
+
+        // Update opponent grid generator with positions
+        const opponentScript = this.getGridScript(this.opponentGridGenerator);
+        if (opponentScript && typeof opponentScript.setShipPositions === 'function') {
+            opponentScript.setShipPositions(positions);
+        }
+    }
+
+    /**
+     * Called by AITurnHandler to process AI's shot
+     */
+    processAIShot(x: number, y: number): void {
+        print(`[GameManager] processAIShot: AI shoots at (${x}, ${y})`);
+
+        // Process shot on player's grid
+        const result = this.processShot(x, y, this.state.playerGrid, this.state.playerShips, false);
+
+        // Update visual marker on player's grid
+        this.updateCellVisual(this.playerGridGenerator, x, y, result === 'miss' ? 'miss' : 'hit');
+
+        // Update AI state if using AITurnHandler
+        const aiScript = this.turnHandler as any;
+        if (aiScript && typeof aiScript.updateAfterShot === 'function') {
+            aiScript.updateAfterShot(x, y, result);
+        } else {
+            // Legacy AI state update
+            this.updateAIState(x, y, result);
+        }
+
+        // Update UI
+        this.updateResult(`AI shot (${x}, ${y}) - ${result === 'miss' ? 'Miss' : 'HIT!'}`);
+
+        // Check win
+        if (this.checkWin('opponent')) {
+            if (this.turnHandler) {
+                this.turnHandler.onGameOver('opponent');
+            }
+            this.endGame('opponent');
+            return;
+        }
+
+        // Delay then switch to player's turn
+        this.delayedCall(() => {
+            this.state.turn = 'player';
+            this.updateStatus("Your turn");
+            this.updateHint("Tap opponent's cell to shoot");
+            this.animateSceneHandle(true);
+        }, this.delayAfterShot);
+    }
+
+    // ==================== PUBLIC STATE ACCESSORS ====================
+
+    /**
+     * Check if game is over
+     */
+    isGameOver(): boolean {
+        return this.state.phase === 'gameover';
+    }
+
+    /**
+     * Get winner
+     */
+    getWinner(): 'player' | 'opponent' | null {
+        return this.state.winner;
+    }
+
+    /**
+     * Get player's hit count
+     */
+    getPlayerHits(): number {
+        return this.state.playerHits;
+    }
+
+    /**
+     * Get opponent's hit count
+     */
+    getOpponentHits(): number {
+        return this.state.opponentHits;
     }
     
     // ==================== PUBLIC METHODS ====================

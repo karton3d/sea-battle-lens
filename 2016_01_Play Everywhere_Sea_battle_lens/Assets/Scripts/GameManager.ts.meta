@@ -27,6 +27,7 @@
   PackagePolicy: CanBeUnpacked
   ScriptInputsHidden:
     aiDelay: false
+    aiTurnHandler: false
     delayAfterAnimation: false
     delayAfterShot: false
     delayBeforeAI: false
@@ -49,6 +50,7 @@
     singlePlayerButton: false
     startButton: false
     statusText: false
+    turnBasedManager: false
   ScriptTypesHidden:
     {}
   ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
@@ -77,6 +79,8 @@
       startButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       reshuffleButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      aiTurnHandler: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      turnBasedManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       sceneHandle: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       handleAnimDuration: 0.500000
       delayBeforeAI: !<float> 1.000000
@@ -104,6 +108,8 @@
     - // @input SceneObject startButton
     - // @input SceneObject reshuffleButton
     - // @input SceneObject playAgainButton
+    - // @input SceneObject aiTurnHandler
+    - // @input SceneObject turnBasedManager
     - // @input SceneObject sceneHandle
     - // @input float handleAnimDuration = 0.5
     - // @input float delayBeforeAI = 1
