@@ -32,6 +32,7 @@
     delayAfterAnimation: false
     delayAfterShot: false
     delayBeforeAI: false
+    fireButton: false
     gameOverScreen: false
     gameScreen: false
     gridSize: false
@@ -80,6 +81,7 @@
       multiplayerButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       startButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       reshuffleButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      fireButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       playAgainButton: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       aiTurnHandler: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
       turnBasedManager: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
@@ -110,6 +112,7 @@
     - // @input SceneObject multiplayerButton
     - // @input SceneObject startButton
     - // @input SceneObject reshuffleButton
+    - // @input SceneObject fireButton
     - // @input SceneObject playAgainButton
     - // @input SceneObject aiTurnHandler
     - // @input SceneObject turnBasedManager

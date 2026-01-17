@@ -43,6 +43,11 @@ export class GameManager extends BaseScriptComponent {
     @input startButton: SceneObject = null;
     @input reshuffleButton: SceneObject = null;
 
+    // ==================== MULTIPLAYER BUTTONS ====================
+    /** Fire button for multiplayer (confirms aim and sends turn) */
+    @allowUndefined
+    @input fireButton: SceneObject;
+
     // ==================== GAMEOVER BUTTONS ====================
     @input playAgainButton: SceneObject = null;
 
@@ -341,6 +346,20 @@ export class GameManager extends BaseScriptComponent {
             }
         }
 
+        // Fire button (multiplayer)
+        if (this.fireButton) {
+            const buttonScript = this.getUIButtonScript(this.fireButton);
+            if (buttonScript && buttonScript.onPressDown) {
+                buttonScript.onPressDown.add(() => this.onFireTap());
+                this.log('Fire button setup (UI Button)');
+            } else {
+                this.setupTouchButton(this.fireButton, () => this.onFireTap());
+                this.log('Fire button setup (Touch)');
+            }
+            // Hide initially
+            this.fireButton.enabled = false;
+        }
+
         // Play Again button
         if (this.playAgainButton) {
             const buttonScript = this.getUIButtonScript(this.playAgainButton);
@@ -469,6 +488,49 @@ export class GameManager extends BaseScriptComponent {
         }
 
         this.updateStatus("New positions!");
+    }
+
+    /**
+     * Fire button tapped (multiplayer) - sends the turn
+     */
+    onFireTap(): void {
+        if (this.state.mode !== 'multiplayer') {
+            return;
+        }
+
+        if (this.state.phase !== 'confirm_send') {
+            this.log('onFireTap: Ignored - not in confirm_send phase');
+            return;
+        }
+
+        if (!this.mpSelectedAim) {
+            this.logError('onFireTap: No aim selected');
+            return;
+        }
+
+        print(`[GameManager] onFireTap: Firing at (${this.mpSelectedAim.x}, ${this.mpSelectedAim.y})`);
+
+        // Store our shot coordinates so we can show result when it comes back
+        this.mpPreviousShotCoords = { ...this.mpSelectedAim };
+
+        // Get TurnBasedManager and submit
+        const tbm = this.getTurnBasedManagerScript();
+        if (tbm) {
+            tbm.setSelectedAim(this.mpSelectedAim.x, this.mpSelectedAim.y);
+            tbm.submitSelectedAim(false, null);
+        }
+
+        // Hide fire button
+        if (this.fireButton) {
+            this.fireButton.enabled = false;
+        }
+
+        // Clear aim
+        this.mpSelectedAim = null;
+        this.hideAimMarker();
+
+        this.updateStatus("Turn sent!");
+        this.updateHint("Waiting for friend...");
     }
 
     onPlayAgainTap() {
@@ -917,11 +979,16 @@ export class GameManager extends BaseScriptComponent {
         print(`[GameManager] About to call showAimMarker...`);
         this.showAimMarker(x, y);
 
-        // Transition to confirm_send phase (waiting for Snap button)
+        // Transition to confirm_send phase
         this.state.phase = 'confirm_send';
 
+        // Show fire button
+        if (this.fireButton) {
+            this.fireButton.enabled = true;
+        }
+
         this.updateStatus("Target selected!");
-        this.updateHint("Tap Snap to fire!");
+        this.updateHint("Tap Fire to shoot!");
         this.updateResult(`Aiming at (${x}, ${y})`);
     }
 
@@ -1138,6 +1205,11 @@ export class GameManager extends BaseScriptComponent {
             this.updateStatus("YOU LOST!");
         }
 
+        // Hide fire button
+        if (this.fireButton) {
+            this.fireButton.enabled = false;
+        }
+
         this.log(`Game over! Winner: ${winner}`);
     }
 
@@ -1158,6 +1230,11 @@ export class GameManager extends BaseScriptComponent {
         const opponentScript = this.getGridScript(this.opponentGridGenerator);
         if (opponentScript && typeof opponentScript.resetGame === 'function') {
             opponentScript.resetGame();
+        }
+
+        // Hide fire button
+        if (this.fireButton) {
+            this.fireButton.enabled = false;
         }
 
         this.showScreen('intro');
