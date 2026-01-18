@@ -10,8 +10,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     // ==================== INPUTS ====================
 
-    /** Turn-Based script component - drag the Turn-Based component here directly */
-    @input turnBasedScript: ScriptComponent;
+    /** Direct reference to the Turn-Based component (ScriptComponent) */
+    @input('Component.ScriptComponent')
+    turnBased: TurnBased;
 
     /** Reference to GameManager for callbacks */
     @allowUndefined
@@ -51,12 +52,16 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     // ==================== LIFECYCLE ====================
 
     onAwake(): void {
-        print(`[TurnBasedManager] onAwake: turnBasedScript=${this.turnBasedScript ? 'SET' : 'NULL'}`);
+        print(`[TurnBasedManager] onAwake: turnBased input=${this.turnBased ? 'SET' : 'NULL'}`);
 
-        if (!this.turnBasedScript) {
-            this.logError('turnBasedScript not assigned! Drag the Turn-Based component here.');
+        if (!this.turnBased) {
+            this.logError('turnBased not assigned! Drag the Turn-Based ScriptComponent here.');
             return;
         }
+
+        // Verify turnBased has expected methods
+        const tb = this.turnBased as any;
+        print(`[TurnBasedManager] turnBased type check: endTurn=${typeof tb.endTurn}, setCurrentTurnVariable=${typeof tb.setCurrentTurnVariable}`);
 
         this.registerCallbacks();
         print(`[TurnBasedManager] Initialized successfully`);
@@ -65,7 +70,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     // ==================== INITIALIZATION ====================
 
     private registerCallbacks(): void {
-        const tb = this.turnBasedScript as any;
+        const tb = this.turnBased as any;
 
         // onTurnStart - fires when it becomes our turn
         if (tb.onTurnStart && typeof tb.onTurnStart.add === 'function') {
@@ -79,14 +84,14 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         // onTurnEnd
         if (tb.onTurnEnd && typeof tb.onTurnEnd.add === 'function') {
             tb.onTurnEnd.add(() => {
-                this.log('onTurnEnd fired');
+                print(`[TurnBasedManager] onTurnEnd fired`);
             });
         }
 
         // onGameOver
         if (tb.onGameOver && typeof tb.onGameOver.add === 'function') {
             tb.onGameOver.add(() => {
-                this.log('onGameOver fired');
+                print(`[TurnBasedManager] onGameOver fired`);
                 this.notifyGameManagerGameOver();
             });
         }
@@ -241,19 +246,19 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     submitSelectedAim(isGameOver: boolean = false, winner: 'player' | 'opponent' | null = null): void {
         print(`[TurnBasedManager] submitSelectedAim called`);
         print(`[TurnBasedManager] selectedAim: ${this.mpState.selectedAim ? `(${this.mpState.selectedAim.x}, ${this.mpState.selectedAim.y})` : 'NULL'}`);
-        print(`[TurnBasedManager] turnBasedScript: ${this.turnBasedScript ? 'SET' : 'NULL'}`);
+        print(`[TurnBasedManager] turnBased: ${this.turnBased ? 'SET' : 'NULL'}`);
 
         if (!this.mpState.selectedAim) {
             this.logError('submitSelectedAim: No aim selected');
             return;
         }
 
-        if (!this.turnBasedScript) {
+        if (!this.turnBased) {
             this.logError('submitSelectedAim: Turn-Based component not ready');
             return;
         }
 
-        const tb = this.turnBasedScript as any;
+        const tb = this.turnBased as any;
         const { x, y } = this.mpState.selectedAim;
         print(`[TurnBasedManager] submitSelectedAim: Sending aim (${x}, ${y})`);
 
