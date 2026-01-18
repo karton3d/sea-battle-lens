@@ -827,10 +827,15 @@ export class GameManager extends BaseScriptComponent {
         if (previousResult && this.mpPreviousShotCoords) {
             // Show result of our previous shot on opponent grid
             this.animateSceneHandle(true, () => {
+                // Update opponent grid state
+                const shotX = this.mpPreviousShotCoords!.x;
+                const shotY = this.mpPreviousShotCoords!.y;
+                this.state.opponentGrid[shotX][shotY] = previousResult === 'miss' ? 'empty' : 'hit';
+
                 this.updateCellVisual(
                     this.opponentGridGenerator,
-                    this.mpPreviousShotCoords!.x,
-                    this.mpPreviousShotCoords!.y,
+                    shotX,
+                    shotY,
                     previousResult === 'miss' ? 'miss' : 'hit'
                 );
 
@@ -927,6 +932,9 @@ export class GameManager extends BaseScriptComponent {
                     this.generateGrids();
                     this.restorePlayerShips(savedShips);
                     this.state.setupComplete = true;
+
+                    // Also load and restore grid states (hits/misses)
+                    await this.restoreGridStates(tbm);
                 }
             }
 
@@ -1409,6 +1417,67 @@ export class GameManager extends BaseScriptComponent {
         const opponentScript = this.getGridScript(this.opponentGridGenerator);
         if (opponentScript && typeof opponentScript.setShipPositions === 'function') {
             opponentScript.setShipPositions(positions);
+        }
+    }
+
+    /**
+     * Restore grid states (hits/misses) from global variables
+     * Used when lens reopens mid-session
+     */
+    private async restoreGridStates(tbm: any): Promise<void> {
+        this.log('restoreGridStates: Loading grid states from global variables');
+
+        // Load player grid (hits we've received)
+        const playerGrid = await tbm.loadPlayerGrid();
+        if (playerGrid) {
+            this.log('restoreGridStates: Restoring player grid');
+            this.state.playerGrid = playerGrid;
+
+            // Count hits received and update visuals
+            let hitsReceived = 0;
+            for (let x = 0; x < this.gridSize; x++) {
+                for (let y = 0; y < this.gridSize; y++) {
+                    const cell = playerGrid[x][y];
+                    if (cell === 'hit' || cell === 'destroyed') {
+                        hitsReceived++;
+                        this.updateCellVisual(this.playerGridGenerator, x, y, 'hit');
+                    } else if (cell === 'empty') {
+                        this.updateCellVisual(this.playerGridGenerator, x, y, 'miss');
+                    }
+                }
+            }
+            this.state.opponentHits = hitsReceived;
+            this.log(`restoreGridStates: Opponent has landed ${hitsReceived} hits on us`);
+        }
+
+        // Load opponent grid (our shots on them)
+        const opponentGrid = await tbm.loadOpponentGrid();
+        if (opponentGrid) {
+            this.log('restoreGridStates: Restoring opponent grid');
+            this.state.opponentGrid = opponentGrid;
+
+            // Count our hits and update visuals
+            let ourHits = 0;
+            for (let x = 0; x < this.gridSize; x++) {
+                for (let y = 0; y < this.gridSize; y++) {
+                    const cell = opponentGrid[x][y];
+                    if (cell === 'hit' || cell === 'destroyed') {
+                        ourHits++;
+                        this.updateCellVisual(this.opponentGridGenerator, x, y, 'hit');
+                    } else if (cell === 'empty') {
+                        this.updateCellVisual(this.opponentGridGenerator, x, y, 'miss');
+                    }
+                }
+            }
+            this.state.playerHits = ourHits;
+            this.log(`restoreGridStates: We have landed ${ourHits} hits on opponent`);
+        }
+
+        // Also try to load opponent ships if available
+        const opponentShips = await tbm.loadOpponentShips();
+        if (opponentShips && opponentShips.length > 0) {
+            this.log(`restoreGridStates: Loaded ${opponentShips.length} opponent ships`);
+            this.setOpponentShipPositions(opponentShips);
         }
     }
 
