@@ -1,0 +1,60 @@
+- !<AssetImportMetadata/4868de2a-19c2-483c-accb-a94a08cde179>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 70784e30-aeba-422a-aeab-67808131eff4
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 70784e30-aeba-422a-aeab-67808131eff4
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> aedbebfd-09c7-4b0a-834f-1605eba5aa39
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/aedbebfd-09c7-4b0a-834f-1605eba5aa39>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: |-
+    Displays and manages the countdown timer for each turn.
+    Starts automatically after the first tap signal from the Tap Button script,
+    counts down from the configured startSeconds value, and marks the turn as ended when it reaches zero.
+    
+    Public API / Exposed State:
+    
+    * timerEnds:boolean : becomes true when the countdown reaches zero.
+  VersionMajor: 1
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 26d1827a-b4cc-41ed-9043-b51565d55017
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    prefix: false
+    startSeconds: false
+    tapScript: false
+    timerText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - timerText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      tapScript: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      startSeconds: !<float> 10.000000
+      prefix: "Timer: "
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Component.Text timerText
+    - // @input Component.ScriptComponent tapScript
+    - // @input number startSeconds = 10
+    - '// @input string prefix = "Timer: "'

@@ -1,0 +1,129 @@
+- !<AssetImportMetadata/bc68ae56-de6a-48fd-b236-38d6cd82a8e4>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 0e77fc41-986f-49ef-9558-f8107defa438
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 0e77fc41-986f-49ef-9558-f8107defa438
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 3f5583ba-1e3f-49c4-b649-92fd2251bf87
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/3f5583ba-1e3f-49c4-b649-92fd2251bf87>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: |-
+    Handles game flow across both players: initializing turns, starting and ending rounds, tracking each player’s best score, updating UI elements (turn banners, start cards, timers, scores, crowns), and resolving the winner at Game Over using TurnBased API.
+    
+    Public API:
+    
+    * showPlayersCards(on:boolean): Toggle visibility of Player 1 and Player 2 cards.
+  VersionMajor: 1
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: 8b9dcb8d-10b8-4eb1-a1a4-2c996ef39c8f
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    bestScoreText: false
+    captureBanner: false
+    gameOverResultText: false
+    groupGameInfo: false
+    groupGameOver: false
+    groupGameStartP1: false
+    groupGameUI: false
+    labelHighScoreFormat: false
+    labelTie: false
+    labelTurnPrefix: false
+    labelWin: false
+    player1Card: false
+    player1Crown: false
+    player1TurnCard: false
+    player2Card: false
+    player2Crown: false
+    player2TurnCard: false
+    playerTurnCard: false
+    startTurnScoreText: false
+    tapScript: false
+    timer: false
+    turnBased: false
+    turnNumberText: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - turnBased: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      tapScript: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      timer: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      groupGameUI: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      player1Card: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      player2Card: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      groupGameStartP1: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      groupGameOver: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      playerTurnCard: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      player1TurnCard: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      player2TurnCard: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      startTurnScoreText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      captureBanner: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      groupGameInfo: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      turnNumberText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      bestScoreText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      gameOverResultText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      player1Crown: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      player2Crown: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      labelTurnPrefix: "Turn: "
+      labelHighScoreFormat: "Highest Score: {score}"
+      labelTie: "It's a tie!"
+      labelWin: "{name} Wins!"
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - '// @ui {"widget":"group_start", "label":"Core Components"}'
+    - // @input Component.ScriptComponent turnBased
+    - // @input Component.ScriptComponent tapScript
+    - // @input Component.ScriptComponent timer
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Top-level Groups"}'
+    - // @input SceneObject groupGameUI
+    - // @input SceneObject player1Card
+    - // @input SceneObject player2Card
+    - // @input SceneObject groupGameStartP1
+    - // @input SceneObject groupGameOver
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Turn-Based UI Elements"}'
+    - // @input SceneObject playerTurnCard
+    - // @input SceneObject player1TurnCard
+    - // @input SceneObject player2TurnCard
+    - // @input Component.Text startTurnScoreText
+    - // @input SceneObject captureBanner
+    - // @input SceneObject groupGameInfo
+    - // @input Component.Text turnNumberText
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Game UI Elements"}'
+    - // @input Component.Text bestScoreText
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Game Over Elements"}'
+    - // @input Component.Text gameOverResultText
+    - // @input SceneObject player1Crown
+    - // @input SceneObject player2Crown
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Labels / Formatting"}'
+    - '// @input string labelTurnPrefix = "Turn: "'
+    - '// @input string labelHighScoreFormat = "Highest Score: {score}"'
+    - '// @ui {"widget":"group_end"}'
+    - '// @ui {"widget":"group_start", "label":"Game Over Labels"}'
+    - "// @input string labelTie = \"It's a tie!\""
+    - '// @input string labelWin = "{name} Wins!"'
+    - '// @ui {"widget":"group_end"}'

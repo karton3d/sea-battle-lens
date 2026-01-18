@@ -1,0 +1,66 @@
+- !<AssetImportMetadata/fa25c911-69a7-4008-8e1f-44508e6981df>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 1561d75b-4bdf-4d55-aaff-63425ad8508c
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 1561d75b-4bdf-4d55-aaff-63425ad8508c
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 0f19f1bc-43bb-4a8c-956b-b6a7918ca1ea
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/0f19f1bc-43bb-4a8c-956b-b6a7918ca1ea>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: |-
+    Handles user taps: on the first tap it signals the game to start,
+    and on every tap it increments the local score counter.
+    
+    Public API / Exposed State:
+    
+    * startGame:boolean : becomes true after the first tap, used by Timer/MainLogic to start countdown.
+    * count:number : total number of taps during the current turn, used by MainLogic to calculate score.
+  VersionMajor: 1
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: ec883cb2-e65c-4e47-a48f-911c6d358b51
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    buttonText: false
+    counterPrefix: false
+    counterText: false
+    startLabel: false
+    tapLabel: false
+    timerScript: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - timerScript: !<reference.ScriptComponent> 00000000-0000-0000-0000-000000000000
+      buttonText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      counterText: !<reference.Text> 00000000-0000-0000-0000-000000000000
+      startLabel: Tap To Start
+      tapLabel: Tap
+      counterPrefix: "Score: "
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input Component.Script timerScript
+    - // @input Component.Text buttonText
+    - // @input Component.Text counterText
+    - '// @input string startLabel = "Tap To Start"'
+    - '// @input string tapLabel = "Tap"'
+    - '// @input string counterPrefix = "Score: "'
