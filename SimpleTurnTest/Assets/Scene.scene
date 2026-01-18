@@ -1,0 +1,611 @@
+- !<Scene/0a1ccb1a-fe88-4fbb-9883-e3af3c75fd99>
+  PackagePath: ""
+  objects:
+    - !<own> 00000000-0000-0065-0000-000000000064
+    - !<own> 0005641c-028d-459a-0000-000000014b4d
+    - !<own> 8daa66b9-c587-4937-b685-23047a36c1c5
+    - !<own> d63d2c23-1fef-4b50-b634-2670328b8a14
+  layers: !<Layers/267ee9a7-aff2-4f9d-9a49-f71214747d03>
+    userLayers:
+      []
+    HasOrtho: true
+  RenderOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  RenderPreviewOutput: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  RenderOverlayOutput: !<reference> 00000000-0000-0000-0000-000000000000
+  PhysicsRootWorldSettings: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/00000000-0000-0065-0000-000000000064>
+  PrefabRemaps:
+    []
+  Name: Camera Object
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 00000000-0000-0065-0000-000000000065
+- !<Camera/00000000-0000-0065-0000-000000000065>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 1
+  MipmapLevel: 0
+  RenderOrder: 0
+  Size: 20.000000
+  Near: 1.000000
+  Far: 1000.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Perspective
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/0005641c-028d-459a-0000-000000014b4d>
+  PrefabRemaps:
+    []
+  Name: Lighting
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 00056e79-b066-62ca-0000-000000001406
+    - !<own> 0005641c-028d-4630-0000-000000014b56
+  Components:
+    []
+- !<SceneObject/0005641c-028d-4630-0000-000000014b56>
+  PrefabRemaps:
+    []
+  Name: Light
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 40.000000, y: 85.000000, z: 20.000000}
+    Rotation: {x: 70.000000, y: 10.000000, z: 150.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 0005641c-028d-463e-0000-000000014b59
+- !<LightSource/0005641c-028d-463e-0000-000000014b59>
+  PrefabRemaps:
+    []
+  Name: Light Source
+  Enabled: true
+  renderLayer: 1835007
+  LightType: Directional
+  Intensity: 1.000000
+  CastShadows: false
+  ShadowDensity: 0.440000
+  ShadowBlurRadius: 4.000000
+  ShadowTextureSize: 512
+  AutoLightSourcePosition: true
+  AutoShadowFrustumSize: true
+  AutoShadowFrustumSizeExtend: 2.000000
+  ShadowFrustumSize: 30.000000
+  ShadowFrustumNearClipPlane: 1.000000
+  ShadowFrustumFarClipPlane: 1000.000000
+  UseEnvMapFromCamera: false
+  EnvMapFromCameraMode: Auto
+  EstimationSharpness: 1.000000
+  EnvMapExposure: 1.000000
+  EnvMapRotation: 0.000000
+  DiffuseEnvTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  SpecularEnvTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowColor: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+  DynamicEnvInputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  InnerConeAngle: 0.000000
+  OuterConeAngle: 45.000000
+  DecayType: None
+  DecayLimit: false
+  DecayRange: 40.000000
+- !<SceneObject/00056e79-b066-62ca-0000-000000001406>
+  PrefabRemaps:
+    []
+  Name: Envmap
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 65.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 00056e79-b066-62f1-0000-000000001409
+- !<LightSource/00056e79-b066-62f1-0000-000000001409>
+  PrefabRemaps:
+    []
+  Name: Light Source
+  Enabled: true
+  renderLayer: 1835007
+  LightType: EnvMap
+  Intensity: 1.000000
+  CastShadows: false
+  ShadowDensity: 1.000000
+  ShadowBlurRadius: 0.000000
+  ShadowTextureSize: 512
+  AutoLightSourcePosition: false
+  AutoShadowFrustumSize: false
+  AutoShadowFrustumSizeExtend: 2.000000
+  ShadowFrustumSize: 30.000000
+  ShadowFrustumNearClipPlane: 1.000000
+  ShadowFrustumFarClipPlane: 1000.000000
+  UseEnvMapFromCamera: false
+  EnvMapFromCameraMode: Auto
+  EstimationSharpness: 1.000000
+  EnvMapExposure: 1.000000
+  EnvMapRotation: 0.000000
+  DiffuseEnvTexture: !<reference> 2013a19b-93c1-4f21-b7ea-876a33550c7b
+  SpecularEnvTexture: !<reference> d795fd46-e16b-4cb9-8dfb-4ef227298f7a
+  Color: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowColor: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+  DynamicEnvInputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  InnerConeAngle: 0.000000
+  OuterConeAngle: 45.000000
+  DecayType: None
+  DecayLimit: false
+  DecayRange: 40.000000
+- !<SceneObject/0054e400-d816-4929-9b29-7d513cb60893>
+  PrefabRemaps:
+    []
+  Name: Button Config
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 120.000000, y: 0.000000, z: -40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 624f69b6-6e9b-4074-a89a-e430256cec3a
+- !<SceneObject/0efcc92c-a133-4cc5-959f-e6790368a5f6>
+  PrefabRemaps:
+    []
+  Name: Full Frame Region
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 74d690f6-25c6-497b-a83e-7a00e20cc430
+  Components:
+    - !<own> 22e38721-f79c-48eb-bfa2-536d21090113
+    - !<own> 3b02f8d6-5614-44ba-9381-088d9d90d2c9
+- !<Camera/180e6b5e-f5ec-4ab3-a241-3928768bd908>
+  PrefabRemaps:
+    []
+  Name: Camera
+  Enabled: true
+  renderLayer: 1048576
+  MipmapLevel: 0
+  RenderOrder: 1
+  Size: 20.000000
+  Near: -1.000000
+  Far: 200.000000
+  Fov: 63.541019
+  ClearColor: !<CameraClearColor>
+    Mode: None
+    Color: {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  ClearDepth: !<CameraClearDepth>
+    Mode: Value
+    Value: 1.000000
+    InputTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  Aspect: 1.000000
+  CameraType: Orthographic
+  DepthMode: Regular
+  DeviceProperty: All
+  AspectPreset: Custom
+  OitLayers: NoOit
+  RenderTarget: !<reference> 923415f5-4245-4675-ade1-6d69d6d23e71
+  DepthStencilRenderTarget: !<reference> 00000000-0000-0000-0000-000000000000
+  MaskTexture: !<reference> 00000000-0000-0000-0000-000000000000
+  RayTracing: !<reference> 00000000-0000-0000-0000-000000000000
+  DevicePropertiesSource: !<reference> 00000000-0000-0000-0000-000000000000
+- !<ScreenTransform/22e38721-f79c-48eb-bfa2-536d21090113>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<ScreenRegionComponent/3b02f8d6-5614-44ba-9381-088d9d90d2c9>
+  PrefabRemaps:
+    []
+  Name: Screen Region
+  Enabled: true
+  ScreenRegionType: FullFrame
+  ResizeWithKeyboard: false
+- !<ScriptComponent/624f69b6-6e9b-4074-a89a-e430256cec3a>
+  PrefabRemaps:
+    []
+  Name: Button Config
+  Enabled: true
+  ScriptAsset: !<reference> 21211e0a-b592-451d-9e5e-6e78fb98995f
+  ScriptInputsDefault:
+    disableBackground: true
+    backgroundDisabledColor: true
+    labelDefaultColor: true
+    labelPressedColor: true
+    labelDisabledColor: true
+    changeTextSize: true
+    textSize: true
+    transformType: true
+    defaultOffsetPosition: true
+    pressedOffsetPosition: true
+    disabledOffsetPosition: true
+    defaultAnchorPosition: true
+    pressedAnchorPosition: true
+    disabledAnchorPosition: true
+    defaultRotation: true
+    pressedRotation: true
+    disabledRotation: true
+    defaultScale: true
+    pressedScale: true
+    disabledScale: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      button: !<reference.ScriptComponent> 964265fc-d3ea-4014-ba94-891ce7a937ec
+      disableBackground: false
+      backgroundColors: true
+      backgroundDefaultColor: !<Vec4> {x: 1.000000, y: 1.000000, z: 0.044251, w: 1.000000}
+      backgroundPressedColor: !<Vec4> {x: 0.758618, y: 0.758618, z: 0.000000, w: 0.800000}
+      backgroundDisabledColor: !<Vec4> {x: 0.250000, y: 0.250000, z: 0.250000, w: 1.000000}
+      labelColors: true
+      labelDefaultColor: !<Vec4> {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      labelPressedColor: !<Vec4> {x: 0.000000, y: 0.000000, z: 0.000000, w: 0.800000}
+      labelDisabledColor: !<Vec4> {x: 0.500000, y: 0.500000, z: 0.500000, w: 1.000000}
+      changeTextSize: false
+      textSize: !<float> 0.000000
+      animation: 2
+      transformType: 0
+      defaultOffsetPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      pressedOffsetPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      disabledOffsetPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      defaultAnchorPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      pressedAnchorPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      disabledAnchorPosition: !<Vec2> {x: 0.000000, y: 0.000000}
+      defaultRotation: !<float> 0.000000
+      pressedRotation: !<float> 0.000000
+      disabledRotation: !<float> 0.000000
+      defaultScale: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+      pressedScale: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+      disabledScale: !<Vec3> {x: 0.000000, y: 0.000000, z: 0.000000}
+  ScriptTypes:
+    "":
+      {}
+- !<SceneObject/74d690f6-25c6-497b-a83e-7a00e20cc430>
+  PrefabRemaps:
+    []
+  Name: Button
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 0054e400-d816-4929-9b29-7d513cb60893
+  Components:
+    - !<own> 964265fc-d3ea-4014-ba94-891ce7a937ec
+    - !<own> 9fa089b5-9e52-4bab-9756-9868bdf2558a
+- !<SceneObject/8daa66b9-c587-4937-b685-23047a36c1c5>
+  PrefabRemaps:
+    []
+  Name: Turn Based
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> e3eb9bf4-63af-407c-b7a6-36c731cdd7e2
+- !<ScriptComponent/964265fc-d3ea-4014-ba94-891ce7a937ec>
+  PrefabRemaps:
+    []
+  Name: Button
+  Enabled: true
+  ScriptAsset: !<reference> d1e61f97-6cb3-4de5-81ca-6f4a47d28933
+  ScriptInputsDefault:
+    editDebugSettings: true
+    printDebugStatements: true
+    printWarningStatements: true
+    setupTransform: true
+    fitBackground: true
+    center: true
+    scale: true
+    customScale: true
+    content: true
+    iconInOnlyIcon: true
+    labelInLabelWithIcon: true
+    iconInLabelWithIcon: true
+    iconAlignment: true
+    buttonColor: true
+    labelColorInLabelOnly: true
+    labelColorInLabelWithIcon: true
+    backgroundColor: true
+    _renderOrder: true
+    onPressDownBehaviors: true
+    onPressUpBehaviors: true
+    onPressBehaviors: true
+    onPressDownCustomTriggers: true
+    onPressUpCustomTriggers: true
+    onPressCustomTriggers: true
+    onPressUpFunctions: true
+    onPressFunctions: true
+    textPrefab: true
+    iconPrefab: true
+    backgroundPrefab: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      editDebugSettings: false
+      printDebugStatements: false
+      printWarningStatements: true
+      interactable: true
+      setupTransform: false
+      fitBackground: false
+      center: !<Vec2> {x: 0.000000, y: 0.000000}
+      scale: !<float> 1.000000
+      customScale: !<float> 1.000000
+      content: 0
+      labelInOnlyLabel: End Turn
+      iconInOnlyIcon: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      labelInLabelWithIcon: ""
+      iconInLabelWithIcon: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      iconAlignment: 0
+      buttonColor: 0
+      labelColorInLabelOnly: !<Vec4> {x: 0.000000, y: 0.000000, z: 0.000000, w: 0.000000}
+      labelColorInLabelWithIcon: !<Vec4> {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+      backgroundColor: !<Vec4> {x: 0.000000, y: 0.000000, z: 0.000000, w: 1.000000}
+      _renderOrder: 0
+      eventCallbacks: true
+      callbackType: 3
+      onPressDownBehaviors: !<reference.ScriptComponent[]>
+        []
+      onPressUpBehaviors: !<reference.ScriptComponent[]>
+        []
+      onPressBehaviors: !<reference.ScriptComponent[]>
+        []
+      onPressDownCustomTriggers: !<string[]>
+        []
+      onPressUpCustomTriggers: !<string[]>
+        []
+      onPressCustomTriggers: !<string[]>
+        []
+      customFunctionScript: !<reference.ScriptComponent> e3eb9bf4-63af-407c-b7a6-36c731cdd7e2
+      onPressDownFunctions: !<string[]>
+        - endTurn
+      onPressUpFunctions: !<string[]>
+        []
+      onPressFunctions: !<string[]>
+        []
+      textPrefab: !<reference.ObjectPrefab> 13250fcc-fdf3-4755-b9b4-67d29dae7c2c
+      iconPrefab: !<reference.ObjectPrefab> c05c6bd8-b8d7-43bf-874e-06d208be1959
+      backgroundPrefab: !<reference.ObjectPrefab> e68810ec-796a-4eee-b1e2-311b1d7cecdd
+  ScriptTypes:
+    "":
+      {}
+- !<Canvas/995a3797-a58f-46c2-9ed7-90752b81847f>
+  PrefabRemaps:
+    []
+  Name: Canvas
+  Enabled: true
+  UnitType: Points
+  SortingType: Hierarchy
+  WorldSpaceRect:
+    left: -15.000000
+    bottom: -20.000000
+    right: 15.000000
+    top: 20.000000
+- !<ScreenTransform/9fa089b5-9e52-4bab-9756-9868bdf2558a>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: -0.465399
+    bottom: -0.124230
+    right: 0.540157
+    top: 0.177040
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<SceneObject/d63d2c23-1fef-4b50-b634-2670328b8a14>
+  PrefabRemaps:
+    []
+  Name: Orthographic Camera
+  Enabled: true
+  Layers: 1048576
+  LocalTransform: !<TransformEntity>
+    Position: {x: -120.000000, y: 0.000000, z: 40.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 0efcc92c-a133-4cc5-959f-e6790368a5f6
+  Components:
+    - !<own> 180e6b5e-f5ec-4ab3-a241-3928768bd908
+    - !<own> 995a3797-a58f-46c2-9ed7-90752b81847f
+- !<ScriptComponent/e3eb9bf4-63af-407c-b7a6-36c731cdd7e2>
+  PrefabRemaps:
+    []
+  Name: Turn Based
+  Enabled: true
+  ScriptAsset: !<reference> 2485c892-b1f1-4924-9453-ce440bd2cdfb
+  ScriptInputsDefault:
+    requireTurnSubmission: true
+    allowChangingTurnVariablesAfterTurnSubmission: true
+    useTurnLimit: true
+    turnLimitInput: true
+    useTurnHistory: true
+    turnsSavedLimitInput: true
+    autoRestoreTurn: true
+    tappableAreasInput: true
+    user1FlowObjectsInputSO: true
+    user2FlowObjectsInputSO: true
+    gameOverObjectsInputSO: true
+    debugMode: true
+    swapPlayersAfterSimulatedTurn: true
+    debugTappedKeySimulateTurn: true
+    debugTurnCount: true
+    debugTappedKeySingleTurn: true
+    testDataType: true
+    debugIsTurnComplete: true
+    debugIsTurnRestoredFromCache: true
+    debugAssociatedDataStudioInputs: true
+    debugTurnHistoryStudioInputs: true
+    debugAssociatedDataString: true
+    debugTurnHistoryStrings: true
+    _onTurnStartResponses: true
+    _onTurnEndResponses: true
+    _onGameOverResponses: true
+    printLogsInput: true
+    loggerConfig: true
+    _advancedOptions: true
+    defaultTurnVariables: true
+    remoteServiceModule: true
+    autoCaptureHelper: true
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      requireTurnSubmission: true
+      allowChangingTurnVariablesAfterTurnSubmission: false
+      useTurnLimit: false
+      turnLimitInput: 2
+      useTurnHistory: false
+      turnsSavedLimitInput: 0
+      autoRestoreTurn: false
+      tappableAreasInput:
+        []
+      user1FlowObjectsInputSO: !<reference.SceneObject[]>
+        []
+      user2FlowObjectsInputSO: !<reference.SceneObject[]>
+        []
+      gameOverObjectsInputSO: !<reference.SceneObject[]>
+        []
+      debugMode: Simulate Turns
+      swapPlayersAfterSimulatedTurn: true
+      debugTappedKeySimulateTurn: ""
+      debugTurnCount: 0
+      debugTappedKeySingleTurn: ""
+      testDataType: Studio Inputs
+      debugIsTurnComplete: false
+      debugIsTurnRestoredFromCache: false
+      debugAssociatedDataStudioInputs:
+        []
+      debugTurnHistoryStudioInputs:
+        - variables:
+            []
+          isTurnComplete: false
+      debugAssociatedDataString: '{"key1": "value1", "key2":0}'
+      debugTurnHistoryStrings:
+        []
+      _onTurnStartResponses:
+        []
+      _onTurnEndResponses:
+        []
+      _onGameOverResponses:
+        []
+      printLogsInput: false
+      loggerConfig:
+        printOnScreen: false
+        fontSize: !<float> 12.000000
+        printErrors: true
+        printWarnings: true
+        printInfoLogs: false
+      showDebugView: true
+      _advancedOptions: false
+      defaultTurnVariables:
+        []
+      remoteServiceModule: !<reference.RemoteServiceModule> 53134e89-9460-4d35-b990-7708cd763b62
+      autoCaptureHelper: !<reference.ScriptAsset> f6c679e6-a4e6-4760-86bb-4836099db786
+  ScriptTypes:
+    "":
+      {}
