@@ -347,17 +347,20 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         }
 
         // Extract opponent's aim (pending shot for us to evaluate)
-        if (typeof vars.shotX === 'number' && typeof vars.shotY === 'number') {
-            // Validate coordinates
-            if (vars.shotX >= 0 && vars.shotX < GRID_SIZE && vars.shotY >= 0 && vars.shotY < GRID_SIZE) {
-                this.mpState.pendingShot = {
-                    x: Math.floor(vars.shotX),
-                    y: Math.floor(vars.shotY)
-                };
-                this.log(`parseIncomingTurnData: Pending shot at (${this.mpState.pendingShot.x}, ${this.mpState.pendingShot.y})`);
-            } else {
-                this.logError(`parseIncomingTurnData: Invalid shot coordinates (${vars.shotX}, ${vars.shotY})`);
-            }
+        // Handle both number and string types from Turn-Based component
+        const shotX = typeof vars.shotX === 'number' ? vars.shotX :
+                      typeof vars.shotX === 'string' ? parseInt(vars.shotX, 10) : NaN;
+        const shotY = typeof vars.shotY === 'number' ? vars.shotY :
+                      typeof vars.shotY === 'string' ? parseInt(vars.shotY, 10) : NaN;
+
+        if (!isNaN(shotX) && !isNaN(shotY) && shotX >= 0 && shotX < GRID_SIZE && shotY >= 0 && shotY < GRID_SIZE) {
+            this.mpState.pendingShot = {
+                x: Math.floor(shotX),
+                y: Math.floor(shotY)
+            };
+            this.log(`parseIncomingTurnData: Pending shot at (${this.mpState.pendingShot.x}, ${this.mpState.pendingShot.y})`);
+        } else if (vars.shotX !== undefined || vars.shotY !== undefined) {
+            this.logError(`parseIncomingTurnData: Invalid shot coordinates (${vars.shotX}, ${vars.shotY}) - types: ${typeof vars.shotX}, ${typeof vars.shotY}`);
         }
 
         // Check for game over

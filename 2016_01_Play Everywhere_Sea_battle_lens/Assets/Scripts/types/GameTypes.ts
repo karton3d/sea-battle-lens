@@ -5,6 +5,7 @@
 
 /** Game phases */
 export type GamePhase =
+    | 'waiting'            // Initial: waiting for TurnBasedManager to signal multiplayer state
     | 'intro'
     | 'setup'              // Initial setup (single player or Player 1 first turn)
     | 'setup_pending'      // Multiplayer: setup with pending incoming shot to evaluate

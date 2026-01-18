@@ -98,8 +98,10 @@ export class GameManager extends BaseScriptComponent {
         this.setupButtons();
         this.setupSnapCaptureEvent();
         this.hideGrids();
-        this.showScreen('intro');
-        this.log('Initialized');
+        // Don't show intro yet - wait for TurnBasedManager to signal multiplayer state
+        this.state.phase = 'waiting';
+        this.showScreen('none');
+        this.log('Initialized - waiting for TurnBasedManager');
     }
 
     /**
@@ -395,7 +397,7 @@ export class GameManager extends BaseScriptComponent {
 
     // ==================== SCREEN MANAGEMENT ====================
 
-    showScreen(screen: 'intro' | 'setup' | 'game' | 'gameover') {
+    showScreen(screen: 'none' | 'intro' | 'setup' | 'game' | 'gameover') {
         if (this.introScreen) this.introScreen.enabled = (screen === 'intro');
         if (this.setupScreen) this.setupScreen.enabled = (screen === 'setup');
         if (this.gameScreen) this.gameScreen.enabled = (screen === 'game');
@@ -851,41 +853,45 @@ export class GameManager extends BaseScriptComponent {
 
     /**
      * Called by TurnBasedManager when it's our turn (multiplayer)
+     * Decides whether to show intro screen or skip directly to game setup.
+     *
+     * Detection logic:
+     * - turnCount === 0 → Player 1 (initiator) or fresh start → Show intro
+     * - turnCount > 0 → Player 2 (receiver) → Skip intro, go to setup
      */
     onMultiplayerTurnStart(turnCount: number, hasPendingShot: boolean, previousShotResult: ShotResult | null): void {
         this.log(`onMultiplayerTurnStart: turn=${turnCount}, hasPending=${hasPendingShot}, prevResult=${previousShotResult}`);
 
-        if (turnCount === 0) {
-            // First turn - we're Player 1, just do normal setup
-            // Setup is already done, we just need to wait for user to tap Start
-            this.log('First turn - waiting for setup confirmation');
-            return;
-        }
+        // Player 2 receiving - any turnCount > 0 means skip intro
+        if (turnCount > 0) {
+            this.log('Player 2 flow - skipping intro');
+            this.state.mode = 'multiplayer';
+            this.state.phase = hasPendingShot ? 'setup_pending' : 'setup';
 
-        // We have incoming data - go to setup with pending shot
-        if (hasPendingShot) {
-            this.state.phase = 'setup_pending';
-
-            // If setup screen isn't showing, we might be in a subsequent turn
-            // In that case, skip setup and go straight to evaluation
+            // If we already have ships placed (subsequent turn), evaluate immediately
             if (this.state.playerShips.length > 0) {
-                // We already have ships placed, evaluate immediately
                 this.onMultiplayerSetupConfirmed();
             } else {
-                // First time receiving - show setup with pending indicator
+                // First time receiving - show setup
                 this.showScreen('setup');
                 this.generateGrids();
                 this.showPlayerGrid();
                 this.generatePlacements();
 
-                this.updateStatus("Incoming shot!");
-                this.updateHint("Place your objects, then tap Start");
+                if (hasPendingShot) {
+                    this.updateStatus("Incoming shot!");
+                    this.updateHint("Place your objects, then tap Start");
+                } else {
+                    this.updateStatus("Your turn!");
+                    this.updateHint("Place your objects, then tap Start");
+                }
             }
-        } else {
-            // No pending shot but not first turn - something's off
-            this.log('No pending shot on non-first turn');
-            this.transitionToAimingPhase();
+            return;
         }
+
+        // Fresh start (turnCount === 0) - show intro screen
+        this.log('Fresh start - showing intro screen');
+        this.showScreen('intro');
     }
 
     /**
