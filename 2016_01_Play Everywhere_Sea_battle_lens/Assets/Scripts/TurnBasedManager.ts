@@ -2,7 +2,7 @@
 // Implements deferred shot evaluation: shots are evaluated by the RECEIVER, not sender
 
 import {
-    ITurnHandler, TurnData, ShotResult, PendingShot, MultiplayerState, GRID_SIZE
+    ITurnHandler, TurnData, ShotResult, PendingShot, MultiplayerState, GRID_SIZE, CellState
 } from './types/GameTypes';
 
 @component
@@ -33,6 +33,147 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         print(`[TurnBasedManager] ERROR: ${message}`);
     }
 
+    // ==================== GLOBAL VARIABLE KEYS ====================
+
+    /**
+     * Get key for storing a player's ship positions
+     */
+    private getShipsKey(userIndex: number): string {
+        return `player${userIndex}_ships`;
+    }
+
+    /**
+     * Get key for storing a player's grid state (hits/misses received)
+     */
+    private getGridKey(userIndex: number): string {
+        return `player${userIndex}_grid`;
+    }
+
+    // ==================== PERSISTENT STORAGE API ====================
+
+    /**
+     * Save player's ship positions to global variables
+     * Called after setup confirmed
+     */
+    async savePlayerShips(ships: TurnData['shipPositions']): Promise<void> {
+        if (!this.turnBased) {
+            this.logError('savePlayerShips: Turn-Based component not ready');
+            return;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getShipsKey(userIndex);
+            await tb.setGlobalVariable(key, ships);
+            this.log(`savePlayerShips: Saved ${ships?.length || 0} ships to ${key}`);
+        } catch (e) {
+            this.logError(`savePlayerShips: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load opponent's ship positions from global variables
+     * Returns null if not yet available (opponent hasn't placed ships)
+     */
+    async loadOpponentShips(): Promise<TurnData['shipPositions'] | null> {
+        if (!this.turnBased) {
+            this.logError('loadOpponentShips: Turn-Based component not ready');
+            return null;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const opponentIndex = await tb.getOtherUserIndex();
+            const key = this.getShipsKey(opponentIndex);
+            const ships = await tb.getGlobalVariable(key);
+            if (ships) {
+                this.log(`loadOpponentShips: Loaded ${(ships as any[]).length} ships from ${key}`);
+                return ships as TurnData['shipPositions'];
+            }
+            this.log(`loadOpponentShips: No ships found at ${key} (opponent may not have placed yet)`);
+            return null;
+        } catch (e) {
+            this.logError(`loadOpponentShips: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Save current player's grid state to global variables
+     * Called after a shot is evaluated on our grid
+     */
+    async savePlayerGrid(grid: CellState[][]): Promise<void> {
+        if (!this.turnBased) {
+            this.logError('savePlayerGrid: Turn-Based component not ready');
+            return;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getGridKey(userIndex);
+            await tb.setGlobalVariable(key, grid);
+            this.log(`savePlayerGrid: Saved grid to ${key}`);
+        } catch (e) {
+            this.logError(`savePlayerGrid: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load opponent's grid state from global variables
+     * Used to see where we've hit on opponent's grid
+     */
+    async loadOpponentGrid(): Promise<CellState[][] | null> {
+        if (!this.turnBased) {
+            this.logError('loadOpponentGrid: Turn-Based component not ready');
+            return null;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const opponentIndex = await tb.getOtherUserIndex();
+            const key = this.getGridKey(opponentIndex);
+            const grid = await tb.getGlobalVariable(key);
+            if (grid) {
+                this.log(`loadOpponentGrid: Loaded grid from ${key}`);
+                return grid as CellState[][];
+            }
+            this.log(`loadOpponentGrid: No grid found at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadOpponentGrid: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Load player's own grid state from global variables
+     * Used when reopening lens mid-session to restore state
+     */
+    async loadPlayerGrid(): Promise<CellState[][] | null> {
+        if (!this.turnBased) {
+            this.logError('loadPlayerGrid: Turn-Based component not ready');
+            return null;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getGridKey(userIndex);
+            const grid = await tb.getGlobalVariable(key);
+            if (grid) {
+                this.log(`loadPlayerGrid: Loaded grid from ${key}`);
+                return grid as CellState[][];
+            }
+            this.log(`loadPlayerGrid: No grid found at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadPlayerGrid: Failed - ${e}`);
+            return null;
+        }
+    }
+
     // ==================== PRIVATE STATE ====================
 
     /** Multiplayer session state */
@@ -48,6 +189,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
     /** Result of evaluating incoming shot (to send back to opponent) */
     private incomingShotResult: ShotResult | null = null;
+
+    /** Current user index (0 or 1), set on turn start */
+    private currentUserIndex: number = -1;
 
     // ==================== LIFECYCLE ====================
 
@@ -119,6 +263,14 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     getTurnCount(): number {
         return this.mpState.turnCount;
+    }
+
+    /**
+     * Get current user index (0 or 1)
+     * Returns -1 if not yet determined
+     */
+    getCurrentUserIndex(): number {
+        return this.currentUserIndex;
     }
 
     /**
@@ -234,6 +386,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             previousShotResult: null
         };
         this.incomingShotResult = null;
+        this.currentUserIndex = -1;
         this.log('reset: State cleared');
     }
 
@@ -308,7 +461,8 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     private handleTurnStart(eventData: any): void {
         this.mpState.turnCount = eventData.turnCount || 0;
-        this.log(`handleTurnStart: turnCount=${this.mpState.turnCount}`);
+        this.currentUserIndex = eventData.currentUserIndex ?? -1;
+        this.log(`handleTurnStart: turnCount=${this.mpState.turnCount}, userIndex=${this.currentUserIndex}`);
 
         const prevVars = eventData.previousTurnVariables || {};
         this.log(`handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);

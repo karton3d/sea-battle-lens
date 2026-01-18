@@ -66,6 +66,9 @@ export interface GameState {
 
     // Winner
     winner: 'player' | 'opponent' | null;
+
+    // Setup tracking - true after first Start button press, ships are frozen
+    setupComplete: boolean;
 }
 
 // ==================== INTERFACES ====================

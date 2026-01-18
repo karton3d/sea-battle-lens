@@ -274,7 +274,8 @@ export class GameManager extends BaseScriptComponent {
             playerHits: 0,
             opponentHits: 0,
             totalObjectCells: TOTAL_OBJECT_CELLS,
-            winner: null
+            winner: null,
+            setupComplete: false
         };
 
         this.aiState = {
@@ -418,6 +419,23 @@ export class GameManager extends BaseScriptComponent {
 
     // ==================== UI UPDATES ====================
 
+    /**
+     * Get player label for multiplayer (e.g., "Player 0" or "Player 1")
+     */
+    private getPlayerLabel(): string {
+        if (this.state.mode !== 'multiplayer') {
+            return '';
+        }
+        const tbm = this.getTurnBasedManagerScript();
+        if (tbm) {
+            const index = tbm.getCurrentUserIndex();
+            if (index >= 0) {
+                return `Player ${index}`;
+            }
+        }
+        return '';
+    }
+
     updateStatus(message: string) {
         if (this.statusText) {
             this.statusText.text = message;
@@ -454,6 +472,14 @@ export class GameManager extends BaseScriptComponent {
     onStartTap() {
         this.log('Start button tapped');
 
+        // Mark setup as complete and hide reshuffle button - ships are now frozen
+        if (!this.state.setupComplete) {
+            this.state.setupComplete = true;
+            if (this.reshuffleButton) {
+                this.reshuffleButton.enabled = false;
+            }
+        }
+
         if (this.state.mode === 'single') {
             this.delayedCall(() => this.startGame(), this.screenTransitionDelay);
         } else {
@@ -463,6 +489,10 @@ export class GameManager extends BaseScriptComponent {
     }
 
     onReshuffleTap() {
+        // Only allow shuffle during initial setup, before first Start
+        if (this.state.setupComplete) {
+            return;
+        }
         if (this.state.phase !== 'setup' && this.state.phase !== 'setup_pending') {
             return;
         }
@@ -723,7 +753,7 @@ export class GameManager extends BaseScriptComponent {
      * Called when player confirms setup in multiplayer
      * Handles: initial setup, setup with pending shot
      */
-    private onMultiplayerSetupConfirmed(): void {
+    private async onMultiplayerSetupConfirmed(): Promise<void> {
         this.log('onMultiplayerSetupConfirmed');
 
         // Initialize turn handler if not done
@@ -733,10 +763,13 @@ export class GameManager extends BaseScriptComponent {
 
         const tbm = this.getTurnBasedManagerScript();
 
-        // Send our ship positions to TurnBasedManager
+        // Send our ship positions to TurnBasedManager and save to global variables
         if (tbm) {
             const shipPositions = this.serializeShipPositions(this.state.playerShips);
             tbm.setShipPositions(shipPositions);
+
+            // Persist ships to global variables
+            await tbm.savePlayerShips(shipPositions);
         }
 
         // Check if we have a pending shot to evaluate
@@ -822,33 +855,47 @@ export class GameManager extends BaseScriptComponent {
 
                 // After showing result, let player aim
                 this.delayedCall(() => {
-                    this.updateStatus("Your turn");
+                    const label = this.getPlayerLabel();
+                    this.updateStatus(label ? `${label} - Your turn` : "Your turn");
                     this.updateHint("Tap a cell to aim");
                 }, this.delayAfterShot);
             });
         } else {
             // No previous result to show, just go to aiming
             this.animateSceneHandle(true);
-            this.updateStatus("Your turn");
+            const label = this.getPlayerLabel();
+            this.updateStatus(label ? `${label} - Your turn` : "Your turn");
             this.updateHint("Tap a cell to aim");
         }
     }
 
     /**
      * Evaluate a shot on the player's grid
+     * Saves grid to global variables in multiplayer mode
      */
     private evaluateShotOnPlayerGrid(x: number, y: number): ShotResult {
         const hasShip = this.checkShipAtPosition(this.playerGridGenerator, x, y);
 
+        let result: ShotResult;
         if (hasShip) {
             this.state.playerGrid[x][y] = 'hit';
             this.state.opponentHits++;
             this.log(`Opponent hit at (${x}, ${y})! Total: ${this.state.opponentHits}/${TOTAL_OBJECT_CELLS}`);
-            return 'hit';
+            result = 'hit';
         } else {
             this.state.playerGrid[x][y] = 'empty';
-            return 'miss';
+            result = 'miss';
         }
+
+        // Persist grid to global variables in multiplayer
+        if (this.state.mode === 'multiplayer') {
+            const tbm = this.getTurnBasedManagerScript();
+            if (tbm) {
+                tbm.savePlayerGrid(this.state.playerGrid);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -878,11 +925,12 @@ export class GameManager extends BaseScriptComponent {
                 this.showPlayerGrid();
                 this.generatePlacements();
 
+                const label = this.getPlayerLabel();
                 if (hasPendingShot) {
-                    this.updateStatus("Incoming shot!");
+                    this.updateStatus(label ? `${label} - Incoming shot!` : "Incoming shot!");
                     this.updateHint("Place your objects, then tap Start");
                 } else {
-                    this.updateStatus("Your turn!");
+                    this.updateStatus(label ? `${label} - Your turn!` : "Your turn!");
                     this.updateHint("Place your objects, then tap Start");
                 }
             }
