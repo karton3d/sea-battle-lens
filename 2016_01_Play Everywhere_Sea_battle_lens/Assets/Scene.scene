@@ -1760,6 +1760,8 @@
     []
   Components:
     - !<own> 35b7d1a0-e1e1-4ea2-8aa5-ac6220b6da78
+    - !<own> 77ec99b3-88b0-4fa7-a361-41a3928bf472
+    - !<own> 920ce434-a704-4936-a7a2-7d926a033a09
 - !<SceneObject/5d63d4e1-b986-4678-b86c-41a837e8c4d3>
   PrefabRemaps:
     []
@@ -2160,6 +2162,39 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScreenTransform/77ec99b3-88b0-4fa7-a361-41a3928bf472>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: -1.000000
+    bottom: -1.000000
+    right: 1.000000
+    top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
 - !<ScriptComponent/7996db0b-7add-41b3-99ba-c28081b33c3e>
   PrefabRemaps:
     []
@@ -2731,6 +2766,22 @@
     []
   Components:
     - !<own> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
+- !<ScriptComponent/920ce434-a704-4936-a7a2-7d926a033a09>
+  PrefabRemaps:
+    []
+  Name: FireButtonUpInEditor
+  Enabled: true
+  ScriptAsset: !<reference> f590559c-08ae-4f2a-9bbb-aa209859167b
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      screenTransform: !<reference.ScreenTransform> 77ec99b3-88b0-4fa7-a361-41a3928bf472
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/94c2ec58-beb8-4632-a1e2-aa439c138c55>
   PrefabRemaps:
     []
@@ -3922,10 +3973,10 @@
   RawMode: true
   ForceBasic: true
   Anchor:
-    left: -1.000000
-    bottom: -1.000000
-    right: 1.000000
-    top: 1.000000
+    left: -0.200000
+    bottom: -0.800000
+    right: 0.200000
+    top: -0.570000
   Offset:
     left: 0.000000
     bottom: 0.000000
