@@ -174,6 +174,33 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         }
     }
 
+    /**
+     * Load player's own ship positions from global variables
+     * Used when reopening lens mid-session to restore state
+     */
+    async loadPlayerShips(): Promise<TurnData['shipPositions'] | null> {
+        if (!this.turnBased) {
+            this.logError('loadPlayerShips: Turn-Based component not ready');
+            return null;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getShipsKey(userIndex);
+            const ships = await tb.getGlobalVariable(key);
+            if (ships) {
+                this.log(`loadPlayerShips: Loaded ${(ships as any[]).length} ships from ${key}`);
+                return ships as TurnData['shipPositions'];
+            }
+            this.log(`loadPlayerShips: No ships found at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadPlayerShips: Failed - ${e}`);
+            return null;
+        }
+    }
+
     // ==================== PRIVATE STATE ====================
 
     /** Multiplayer session state */

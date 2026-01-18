@@ -904,9 +904,9 @@ export class GameManager extends BaseScriptComponent {
      *
      * Detection logic:
      * - turnCount === 0 → Player 1 (initiator) or fresh start → Show intro
-     * - turnCount > 0 → Player 2 (receiver) → Skip intro, go to setup
+     * - turnCount > 0 → Player 2 (receiver) → Skip intro, go to setup or gameplay
      */
-    onMultiplayerTurnStart(turnCount: number, hasPendingShot: boolean, previousShotResult: ShotResult | null): void {
+    async onMultiplayerTurnStart(turnCount: number, hasPendingShot: boolean, previousShotResult: ShotResult | null): Promise<void> {
         this.log(`onMultiplayerTurnStart: turn=${turnCount}, hasPending=${hasPendingShot}, prevResult=${previousShotResult}`);
 
         // Player 2 receiving - any turnCount > 0 means skip intro
@@ -915,8 +915,28 @@ export class GameManager extends BaseScriptComponent {
             this.state.mode = 'multiplayer';
             this.state.phase = hasPendingShot ? 'setup_pending' : 'setup';
 
-            // If we already have ships placed (subsequent turn), evaluate immediately
+            const tbm = this.getTurnBasedManagerScript();
+            const label = this.getPlayerLabel();
+
+            // Try to load ships from global variables (in case lens was reopened)
+            if (this.state.playerShips.length === 0 && tbm) {
+                const savedShips = await tbm.loadPlayerShips();
+                if (savedShips && savedShips.length > 0) {
+                    this.log(`Restored ${savedShips.length} ships from global variables`);
+                    // Generate grids first so ship visuals can be set
+                    this.generateGrids();
+                    this.restorePlayerShips(savedShips);
+                    this.state.setupComplete = true;
+                }
+            }
+
+            // If we have ships (from memory or restored), go directly to gameplay
             if (this.state.playerShips.length > 0) {
+                this.log('Ships found - skipping setup, going to gameplay');
+                // Hide shuffle button since setup is complete
+                if (this.reshuffleButton) {
+                    this.reshuffleButton.enabled = false;
+                }
                 this.onMultiplayerSetupConfirmed();
             } else {
                 // First time receiving - show setup
@@ -925,7 +945,6 @@ export class GameManager extends BaseScriptComponent {
                 this.showPlayerGrid();
                 this.generatePlacements();
 
-                const label = this.getPlayerLabel();
                 if (hasPendingShot) {
                     this.updateStatus(label ? `${label} - Incoming shot!` : "Incoming shot!");
                     this.updateHint("Place your objects, then tap Start");
@@ -1390,6 +1409,43 @@ export class GameManager extends BaseScriptComponent {
         const opponentScript = this.getGridScript(this.opponentGridGenerator);
         if (opponentScript && typeof opponentScript.setShipPositions === 'function') {
             opponentScript.setShipPositions(positions);
+        }
+    }
+
+    /**
+     * Restore player's own ship positions from saved data
+     * Used when lens reopens mid-session
+     */
+    private restorePlayerShips(positions: TurnData['shipPositions']): void {
+        if (!positions) return;
+
+        this.log(`restorePlayerShips: Restoring ${positions.length} ships`);
+
+        // Convert to ShipInfo array
+        this.state.playerShips = positions.map((pos, index) => {
+            const cells: Array<{x: number, y: number}> = [];
+            for (let i = 0; i < pos.length; i++) {
+                cells.push({
+                    x: pos.horizontal ? pos.x + i : pos.x,
+                    y: pos.horizontal ? pos.y : pos.y + i
+                });
+            }
+            return {
+                id: index,
+                length: pos.length,
+                cells: cells,
+                hitCells: 0,
+                destroyed: false
+            };
+        });
+
+        // Mark ships on the player grid
+        this.markShipsOnGrid(this.state.playerGrid, this.state.playerShips, true);
+
+        // Also set on the grid visual component
+        const playerScript = this.getGridScript(this.playerGridGenerator);
+        if (playerScript && typeof playerScript.setShipPositions === 'function') {
+            playerScript.setShipPositions(positions);
         }
     }
 
