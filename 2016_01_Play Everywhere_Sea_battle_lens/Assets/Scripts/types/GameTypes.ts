@@ -172,6 +172,16 @@ export interface PendingShot {
 }
 
 /**
+ * Shot history entry for tracking shots across turns
+ * Persisted to global variables to survive lens reopening
+ */
+export interface ShotHistoryEntry {
+    x: number;
+    y: number;
+    result: ShotResult;
+}
+
+/**
  * Multiplayer session state
  */
 export interface MultiplayerState {

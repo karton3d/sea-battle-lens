@@ -3,7 +3,7 @@
 import {
     GamePhase, TurnState, GameMode, CellState, ShotResult,
     ShipInfo, AIState, GameState, ITurnHandler, TurnData, PendingShot,
-    TOTAL_OBJECT_CELLS, GRID_SIZE
+    TOTAL_OBJECT_CELLS, GRID_SIZE, ShotHistoryEntry
 } from './types/GameTypes';
 
 @component
@@ -78,6 +78,10 @@ export class GameManager extends BaseScriptComponent {
     private mpSelectedAim: PendingShot | null = null;
     private mpPreviousShotCoords: PendingShot | null = null; // Where we shot last turn
 
+    // Shot history for multiplayer (persisted to global variables)
+    private outgoingShotHistory: ShotHistoryEntry[] = [];
+    private incomingShotHistory: ShotHistoryEntry[] = [];
+
     // Scene handle rotation tracking (for turn transitions)
     private currentHandleRotation: number = 0;
 
@@ -94,6 +98,28 @@ export class GameManager extends BaseScriptComponent {
 
     private logError(message: string): void {
         print(`[GameManager] ERROR: ${message}`);
+    }
+
+    /**
+     * Debug helper: Print a 3x3 area of the opponent grid around a cell
+     */
+    private debugPrintGridArea(centerX: number, centerY: number): void {
+        print(`[GM DEBUG] Opponent grid area around (${centerX}, ${centerY}):`);
+        for (let dy = -1; dy <= 1; dy++) {
+            let row = '';
+            for (let dx = -1; dx <= 1; dx++) {
+                const x = centerX + dx;
+                const y = centerY + dy;
+                if (x >= 0 && x < this.gridSize && y >= 0 && y < this.gridSize) {
+                    const state = this.state.opponentGrid[x][y];
+                    const abbrev = state === 'unknown' ? '?' : state === 'empty' ? 'E' : state === 'hit' ? 'H' : state.charAt(0).toUpperCase();
+                    row += `(${x},${y})=${abbrev} `;
+                } else {
+                    row += `(${x},${y})=X `;
+                }
+            }
+            print(`[GM DEBUG]   ${row}`);
+        }
     }
 
     onAwake() {
@@ -300,6 +326,8 @@ export class GameManager extends BaseScriptComponent {
 
         this.mpSelectedAim = null;
         this.mpPreviousShotCoords = null;
+        this.outgoingShotHistory = [];
+        this.incomingShotHistory = [];
     }
 
     createEmptyGrid(): CellState[][] {
@@ -863,17 +891,63 @@ export class GameManager extends BaseScriptComponent {
                     return;
                 }
 
-                // Delay AFTER showing result, then rotate to opponent grid and enter aiming phase
+                // Delay AFTER showing result, then check for previous shot result and enter aiming phase
                 this.delayedCall(() => {
-                    // Single rotation to opponent grid, then enter aiming phase
-                    this.animateSceneHandle(true, () => {
-                        this.state.phase = 'aiming';
-                        this.state.turn = 'player';
-                        const label = this.getPlayerLabel();
-                        this.updateStatus(label ? `${label} - Your turn` : "Your turn");
-                        this.updateHint("Tap a cell to aim");
-                        this.updateResult("");
-                    });
+                    // Check if we also have a previous shot result to show
+                    const previousResult = tbm ? tbm.getPreviousShotResult() : null;
+
+                    if (previousResult && this.mpPreviousShotCoords) {
+                        // We have a previous shot result - rotate to opponent grid and show it
+                        this.animateSceneHandle(true, () => {
+                            const shotX = this.mpPreviousShotCoords!.x;
+                            const shotY = this.mpPreviousShotCoords!.y;
+
+                            // Update opponent grid state
+                            this.state.opponentGrid[shotX][shotY] = previousResult === 'miss' ? 'empty' : 'hit';
+                            this.updateCellVisual(this.opponentGridGenerator, shotX, shotY, previousResult === 'miss' ? 'miss' : 'hit');
+
+                            if (previousResult !== 'miss') {
+                                this.state.playerHits++;
+                            }
+
+                            // Record in shot history
+                            this.addToOutgoingShotHistory(shotX, shotY, previousResult);
+
+                            // Save our view of opponent grid
+                            if (tbm) tbm.saveOpponentView(this.state.opponentGrid);
+
+                            this.updateStatus(previousResult === 'miss' ? "You missed!" : "You hit!");
+                            this.updateResult("");
+
+                            if (tbm) tbm.clearPreviousShotResult();
+                            this.mpPreviousShotCoords = null;
+
+                            // Check if we won
+                            if (this.checkWin('player')) {
+                                this.endGame('player');
+                                return;
+                            }
+
+                            // After showing result, enter aiming phase
+                            this.delayedCall(() => {
+                                this.state.phase = 'aiming';
+                                this.state.turn = 'player';
+                                const label = this.getPlayerLabel();
+                                this.updateStatus(label ? `${label} - Your turn` : "Your turn");
+                                this.updateHint("Tap a cell to aim");
+                            }, this.delayAfterShot);
+                        });
+                    } else {
+                        // No previous shot result, just rotate and enter aiming phase
+                        this.animateSceneHandle(true, () => {
+                            this.state.phase = 'aiming';
+                            this.state.turn = 'player';
+                            const label = this.getPlayerLabel();
+                            this.updateStatus(label ? `${label} - Your turn` : "Your turn");
+                            this.updateHint("Tap a cell to aim");
+                            this.updateResult("");
+                        });
+                    }
                 }, this.delayAfterShot);
             }, this.delayBeforeProcessingShot);
         } else {
@@ -914,6 +988,14 @@ export class GameManager extends BaseScriptComponent {
                 // Update hits count
                 if (previousResult !== 'miss') {
                     this.state.playerHits++;
+                }
+
+                // Record in shot history
+                this.addToOutgoingShotHistory(shotX, shotY, previousResult);
+
+                // Save our view of opponent grid
+                if (tbm) {
+                    tbm.saveOpponentView(this.state.opponentGrid);
                 }
 
                 this.updateStatus(previousResult === 'miss' ? "You missed!" : "You hit!");
@@ -972,7 +1054,60 @@ export class GameManager extends BaseScriptComponent {
             }
         }
 
+        // Record incoming shot in history
+        this.addToIncomingShotHistory(x, y, result);
+
         return result;
+    }
+
+    // ==================== SHOT HISTORY TRACKING ====================
+
+    /**
+     * Add a shot to outgoing history (our shots on opponent)
+     * Checks for duplicates and persists to global variables
+     */
+    private addToOutgoingShotHistory(x: number, y: number, result: ShotResult): void {
+        // Check for duplicate
+        const exists = this.outgoingShotHistory.some(s => s.x === x && s.y === y);
+        if (exists) {
+            this.log(`addToOutgoingShotHistory: Shot at (${x}, ${y}) already exists, skipping`);
+            return;
+        }
+
+        this.outgoingShotHistory.push({ x, y, result });
+        this.log(`addToOutgoingShotHistory: Added shot at (${x}, ${y}) = ${result}, total: ${this.outgoingShotHistory.length}`);
+
+        // Persist to global variables
+        if (this.state.mode === 'multiplayer') {
+            const tbm = this.getTurnBasedManagerScript();
+            if (tbm) {
+                tbm.saveOutgoingShotHistory(this.outgoingShotHistory);
+            }
+        }
+    }
+
+    /**
+     * Add a shot to incoming history (opponent's shots on us)
+     * Checks for duplicates and persists to global variables
+     */
+    private addToIncomingShotHistory(x: number, y: number, result: ShotResult): void {
+        // Check for duplicate
+        const exists = this.incomingShotHistory.some(s => s.x === x && s.y === y);
+        if (exists) {
+            this.log(`addToIncomingShotHistory: Shot at (${x}, ${y}) already exists, skipping`);
+            return;
+        }
+
+        this.incomingShotHistory.push({ x, y, result });
+        this.log(`addToIncomingShotHistory: Added shot at (${x}, ${y}) = ${result}, total: ${this.incomingShotHistory.length}`);
+
+        // Persist to global variables
+        if (this.state.mode === 'multiplayer') {
+            const tbm = this.getTurnBasedManagerScript();
+            if (tbm) {
+                tbm.saveIncomingShotHistory(this.incomingShotHistory);
+            }
+        }
     }
 
     /**
@@ -1141,8 +1276,13 @@ export class GameManager extends BaseScriptComponent {
             return;
         }
 
-        // Check if already shot
-        if (this.state.opponentGrid[x][y] !== 'unknown') {
+        // Check if already shot - with debug logging
+        const cellState = this.state.opponentGrid[x][y];
+        print(`[GM DEBUG] handleMultiplayerCellTap: Cell (${x}, ${y}) state = '${cellState}'`);
+
+        if (cellState !== 'unknown') {
+            print(`[GM DEBUG] BLOCKED: Cell is '${cellState}', not 'unknown'`);
+            this.debugPrintGridArea(x, y);
             this.updateResult("Already shot here!");
             return;
         }
@@ -1553,17 +1693,17 @@ export class GameManager extends BaseScriptComponent {
             this.log(`restoreGridStates: Opponent has landed ${hitsReceived} hits on us`);
         }
 
-        // Load opponent grid (our shots on them)
-        const opponentGrid = await tbm.loadOpponentGrid();
-        if (opponentGrid) {
-            this.log('restoreGridStates: Restoring opponent grid');
-            this.state.opponentGrid = opponentGrid;
+        // Load our VIEW of opponent grid (our outgoing shots - hit/miss/unknown only)
+        const opponentView = await tbm.loadOpponentView();
+        if (opponentView) {
+            this.log('restoreGridStates: Restoring opponent view');
+            this.state.opponentGrid = opponentView;
 
             // Count our hits and update visuals
             let ourHits = 0;
             for (let x = 0; x < this.gridSize; x++) {
                 for (let y = 0; y < this.gridSize; y++) {
-                    const cell = opponentGrid[x][y];
+                    const cell = opponentView[x][y];
                     if (cell === 'hit' || cell === 'destroyed') {
                         ourHits++;
                         this.updateCellVisual(this.opponentGridGenerator, x, y, 'hit');
@@ -1576,12 +1716,22 @@ export class GameManager extends BaseScriptComponent {
             this.log(`restoreGridStates: We have landed ${ourHits} hits on opponent`);
         }
 
-        // Also try to load opponent ships if available
-        const opponentShips = await tbm.loadOpponentShips();
-        if (opponentShips && opponentShips.length > 0) {
-            this.log(`restoreGridStates: Loaded ${opponentShips.length} opponent ships`);
-            this.setOpponentShipPositions(opponentShips);
+        // Load shot histories
+        const outgoingHistory = await tbm.loadOutgoingShotHistory();
+        if (outgoingHistory && outgoingHistory.length > 0) {
+            this.outgoingShotHistory = outgoingHistory;
+            this.log(`restoreGridStates: Restored ${outgoingHistory.length} outgoing shots from history`);
         }
+
+        const incomingHistory = await tbm.loadIncomingShotHistory();
+        if (incomingHistory && incomingHistory.length > 0) {
+            this.incomingShotHistory = incomingHistory;
+            this.log(`restoreGridStates: Restored ${incomingHistory.length} incoming shots from history`);
+        }
+
+        // NOTE: We do NOT load opponent ships in multiplayer.
+        // Opponent ship positions are secret - shot evaluation is done by the receiver.
+        // Loading them was causing 'object' values to appear in opponentGrid.
     }
 
     /**

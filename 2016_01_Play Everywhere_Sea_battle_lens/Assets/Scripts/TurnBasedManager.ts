@@ -2,7 +2,7 @@
 // Implements deferred shot evaluation: shots are evaluated by the RECEIVER, not sender
 
 import {
-    ITurnHandler, TurnData, ShotResult, PendingShot, MultiplayerState, GRID_SIZE, CellState
+    ITurnHandler, TurnData, ShotResult, PendingShot, MultiplayerState, GRID_SIZE, CellState, ShotHistoryEntry
 } from './types/GameTypes';
 
 @component
@@ -47,6 +47,28 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     private getGridKey(userIndex: number): string {
         return `player${userIndex}_grid`;
+    }
+
+    /**
+     * Get key for storing a player's VIEW of the opponent grid (their outgoing shots)
+     * This is separate from the opponent's actual grid to avoid leaking ship positions
+     */
+    private getOpponentViewKey(userIndex: number): string {
+        return `player${userIndex}_opponentview`;
+    }
+
+    /**
+     * Get key for storing a player's outgoing shot history (shots they fired at opponent)
+     */
+    private getOutgoingShotHistoryKey(userIndex: number): string {
+        return `player${userIndex}_outgoing_shots`;
+    }
+
+    /**
+     * Get key for storing a player's incoming shot history (shots received from opponent)
+     */
+    private getIncomingShotHistoryKey(userIndex: number): string {
+        return `player${userIndex}_incoming_shots`;
     }
 
     // ==================== PERSISTENT STORAGE API ====================
@@ -171,6 +193,152 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         } catch (e) {
             this.logError(`loadPlayerGrid: Failed - ${e}`);
             return null;
+        }
+    }
+
+    /**
+     * Save player's VIEW of opponent grid (their outgoing shots)
+     * This tracks hit/miss/unknown - never contains 'object' values
+     */
+    async saveOpponentView(grid: CellState[][]): Promise<void> {
+        if (!this.turnBased) {
+            this.logError('saveOpponentView: Turn-Based component not ready');
+            return;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getOpponentViewKey(userIndex);
+            await tb.setGlobalVariable(key, grid);
+            this.log(`saveOpponentView: Saved to ${key}`);
+        } catch (e) {
+            this.logError(`saveOpponentView: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load player's VIEW of opponent grid (their outgoing shots)
+     * Returns the player's OWN view, not the opponent's actual grid
+     */
+    async loadOpponentView(): Promise<CellState[][] | null> {
+        if (!this.turnBased) {
+            this.logError('loadOpponentView: Turn-Based component not ready');
+            return null;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getOpponentViewKey(userIndex);
+            const grid = await tb.getGlobalVariable(key);
+            if (grid) {
+                this.log(`loadOpponentView: Loaded from ${key}`);
+                return grid as CellState[][];
+            }
+            this.log(`loadOpponentView: No data found at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadOpponentView: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    // ==================== SHOT HISTORY PERSISTENCE ====================
+
+    /**
+     * Save player's outgoing shot history to global variables
+     * Called after each shot result is received
+     */
+    async saveOutgoingShotHistory(history: ShotHistoryEntry[]): Promise<void> {
+        if (!this.turnBased) {
+            this.logError('saveOutgoingShotHistory: Turn-Based component not ready');
+            return;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getOutgoingShotHistoryKey(userIndex);
+            await tb.setGlobalVariable(key, history);
+            this.log(`saveOutgoingShotHistory: Saved ${history.length} shots to ${key}`);
+        } catch (e) {
+            this.logError(`saveOutgoingShotHistory: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load player's outgoing shot history from global variables
+     * Used when reopening lens mid-session
+     */
+    async loadOutgoingShotHistory(): Promise<ShotHistoryEntry[]> {
+        if (!this.turnBased) {
+            this.logError('loadOutgoingShotHistory: Turn-Based component not ready');
+            return [];
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getOutgoingShotHistoryKey(userIndex);
+            const history = await tb.getGlobalVariable(key);
+            if (history && Array.isArray(history)) {
+                this.log(`loadOutgoingShotHistory: Loaded ${history.length} shots from ${key}`);
+                return history as ShotHistoryEntry[];
+            }
+            this.log(`loadOutgoingShotHistory: No history found at ${key}`);
+            return [];
+        } catch (e) {
+            this.logError(`loadOutgoingShotHistory: Failed - ${e}`);
+            return [];
+        }
+    }
+
+    /**
+     * Save player's incoming shot history to global variables
+     * Called after each incoming shot is evaluated
+     */
+    async saveIncomingShotHistory(history: ShotHistoryEntry[]): Promise<void> {
+        if (!this.turnBased) {
+            this.logError('saveIncomingShotHistory: Turn-Based component not ready');
+            return;
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getIncomingShotHistoryKey(userIndex);
+            await tb.setGlobalVariable(key, history);
+            this.log(`saveIncomingShotHistory: Saved ${history.length} shots to ${key}`);
+        } catch (e) {
+            this.logError(`saveIncomingShotHistory: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load player's incoming shot history from global variables
+     * Used when reopening lens mid-session
+     */
+    async loadIncomingShotHistory(): Promise<ShotHistoryEntry[]> {
+        if (!this.turnBased) {
+            this.logError('loadIncomingShotHistory: Turn-Based component not ready');
+            return [];
+        }
+
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = this.getIncomingShotHistoryKey(userIndex);
+            const history = await tb.getGlobalVariable(key);
+            if (history && Array.isArray(history)) {
+                this.log(`loadIncomingShotHistory: Loaded ${history.length} shots from ${key}`);
+                return history as ShotHistoryEntry[];
+            }
+            this.log(`loadIncomingShotHistory: No history found at ${key}`);
+            return [];
+        } catch (e) {
+            this.logError(`loadIncomingShotHistory: Failed - ${e}`);
+            return [];
         }
     }
 
