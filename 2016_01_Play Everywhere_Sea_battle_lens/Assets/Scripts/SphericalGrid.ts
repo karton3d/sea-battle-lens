@@ -690,6 +690,15 @@ export class SphericalGrid extends BaseScriptComponent {
      * Spawn marker at grid position
      */
     private spawnMarker(row: number, col: number, prefab: ObjectPrefab, type: string): void {
+        // Check if marker already exists at this position to avoid duplicates
+        const markerName = `Marker_${type}_${row}_${col}`;
+        for (const marker of this.placedMarkers) {
+            if (marker && marker.name === markerName) {
+                this.log(`Marker already exists at (${row}, ${col}), skipping`);
+                return;
+            }
+        }
+
         // Miss markers use missMarkerHeightOffset, hit markers use objectHeightOffset
         const heightOffset = type === 'miss' ? this.missMarkerHeightOffset : this.objectHeightOffset;
         const position = this.getCellWorldPosition(row, col, heightOffset);

@@ -1155,9 +1155,6 @@ export class GameManager extends BaseScriptComponent {
                     this.generateGrids();
                     this.restorePlayerShips(savedShips);
                     this.state.setupComplete = true;
-
-                    // Also load and restore grid states (hits/misses)
-                    await this.restoreGridStates(tbm);
                 }
             }
 
@@ -1168,6 +1165,13 @@ export class GameManager extends BaseScriptComponent {
                 if (this.reshuffleButton) {
                     this.reshuffleButton.enabled = false;
                 }
+
+                // Always restore grid states when resuming with existing ships
+                // This ensures hit/miss markers are shown even if ships were kept in memory
+                if (tbm && this.state.setupComplete) {
+                    await this.restoreGridStates(tbm);
+                }
+
                 this.onMultiplayerSetupConfirmed();
             } else {
                 // First time receiving - show setup

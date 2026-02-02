@@ -609,6 +609,15 @@ export class SeaBattleGrid extends BaseScriptComponent {
      * Marker uses its own prefab size (same as ships)
      */
     private spawnMarker(gridX: number, gridY: number, prefab: ObjectPrefab, type: string) {
+        // Check if marker already exists at this position to avoid duplicates
+        const markerName = `Marker_${type}_${gridX}_${gridY}`;
+        for (const marker of this.placedMarkers) {
+            if (marker && marker.name === markerName) {
+                print(`SeaBattleGrid: Marker already exists at (${gridX}, ${gridY}), skipping`);
+                return;
+            }
+        }
+
         // Get cell position and spawn marker above it
         const cellPos = this.gridToWorldPosition(gridX, gridY, 0);
 
