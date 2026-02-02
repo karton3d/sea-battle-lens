@@ -77,6 +77,9 @@ export class GameManager extends BaseScriptComponent {
     private mpSelectedAim: PendingShot | null = null;
     private mpPreviousShotCoords: PendingShot | null = null; // Where we shot last turn
 
+    // Scene handle rotation tracking (for turn transitions)
+    private currentHandleRotation: number = 0;
+
     // Guard
     private buttonsInitialized: boolean = false;
 
@@ -601,15 +604,15 @@ export class GameManager extends BaseScriptComponent {
     }
 
     /**
-     * Reset scene handle to player grid position (no animation)
+     * Reset scene handle to player grid rotation (no animation)
      */
     private resetSceneHandleToPlayerGrid(): void {
         if (!this.sceneHandle) return;
 
         const transform = this.sceneHandle.getTransform();
-        const currentPos = transform.getLocalPosition();
-        transform.setLocalPosition(new vec3(0, currentPos.y, currentPos.z));
-        this.log('Scene handle reset to player grid position');
+        this.currentHandleRotation = 0;
+        transform.setLocalRotation(quat.fromEulerAngles(0, 0, 0));
+        this.log('Scene handle reset to player grid rotation');
     }
 
     generatePlacements() {
@@ -1125,17 +1128,21 @@ export class GameManager extends BaseScriptComponent {
         }
 
         const transform = this.sceneHandle.getTransform();
-        const currentPos = transform.getLocalPosition();
-        const targetX = toPlayerTurn ? -300 : 0;
 
-        const start = { x: currentPos.x };
-        const end = { x: targetX };
+        // Rotate 180 degrees each turn switch (full 360 after two switches)
+        const startRotation = this.currentHandleRotation;
+        const targetRotation = this.currentHandleRotation + 180;
+        this.currentHandleRotation = targetRotation;
+
+        const start = { rotation: startRotation };
+        const end = { rotation: targetRotation };
 
         new TWEEN.Tween(start)
             .to(end, this.handleAnimDuration * 1000)
             .easing(TWEEN.Easing.Sinusoidal.InOut)
             .onUpdate(() => {
-                transform.setLocalPosition(new vec3(start.x, currentPos.y, currentPos.z));
+                const radians = start.rotation * (Math.PI / 180);
+                transform.setLocalRotation(quat.fromEulerAngles(0, radians, 0));
             })
             .onComplete(() => {
                 if (onComplete) {

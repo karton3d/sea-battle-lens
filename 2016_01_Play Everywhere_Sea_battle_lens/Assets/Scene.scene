@@ -2034,7 +2034,7 @@
   PrefabRemaps:
     []
   Name: RevealController
-  Enabled: true
+  Enabled: false
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -2072,7 +2072,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 300.000000, y: -0.000004, z: 0.000002}
+    Position: {x: -1.770630, y: -63.255981, z: 361.642761}
     Rotation: {x: -80.000015, y: 0.000000, z: 0.000000}
     Scale: {x: 1.250000, y: 1.250000, z: 1.250000}
     HasSegmentScaleCompensation: false
@@ -2294,9 +2294,9 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    Position: {x: 0.000000, y: -0.560010, z: -5.733442}
+    Rotation: {x: -10.000003, y: 0.000000, z: 0.000000}
+    Scale: {x: 0.032258, y: 0.032258, z: 0.032258}
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
@@ -2394,7 +2394,6 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
-    handleAnimDuration: true
     delayBeforeAI: true
     delayAfterAnimation: true
     delayAfterShot: true
@@ -2426,8 +2425,8 @@
       playAgainButton: !<reference.SceneObject> 0608ea05-e637-444e-b01e-82251b902bd8
       aiTurnHandler: !<reference.SceneObject> 581823b2-fac5-4e6f-b8e1-b1e1e670f9a6
       turnBasedManager: !<reference.SceneObject> 66334933-ef88-41b4-b726-adfa6667729c
-      sceneHandle: !<reference.SceneObject> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
-      handleAnimDuration: 0.500000
+      sceneHandle: !<reference.SceneObject> e46eba44-4d82-468c-883a-5c3653fbc2da
+      handleAnimDuration: !<float> 2.000000
       delayBeforeAI: !<float> 1.000000
       delayAfterAnimation: 0.300000
       delayAfterShot: !<float> 1.000000
@@ -3488,7 +3487,6 @@
     HasSegmentScaleCompensation: false
   Children:
     - !<own> e46eba44-4d82-468c-883a-5c3653fbc2da
-    - !<own> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
   Components:
     []
 - !<ScriptComponent/c1025a01-420f-46cf-8b5c-0cd8af2ec231>
@@ -4073,6 +4071,7 @@
     - !<own> 3c5a2a10-3e60-4f14-85ed-46330cb53f7d
     - !<own> 06991031-b0ed-4212-8e8c-fe74caf612f1
     - !<own> 922f7b20-5e3a-47aa-9034-7f3c9a61221b
+    - !<own> 7ce0f03e-e31c-4418-9f4b-b6c7ab89e88e
   Components:
     []
 - !<ScreenRegionComponent/e493a6cd-c8ce-44e0-8b97-38d55eebcc90>
@@ -4089,7 +4088,7 @@
   Enabled: true
   Layers: 1048576
   LocalTransform: !<TransformEntity>
-    Position: {x: -120.000000, y: 0.000000, z: 40.000000}
+    Position: {x: 2000.000000, y: 0.000000, z: 40.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
