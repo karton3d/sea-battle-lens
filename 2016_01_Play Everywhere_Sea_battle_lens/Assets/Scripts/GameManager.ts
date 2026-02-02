@@ -257,8 +257,16 @@ export class GameManager extends BaseScriptComponent {
         if (this.opponentGridGenerator) {
             const opponentScript = this.getGridScript(this.opponentGridGenerator);
             if (opponentScript) {
-                opponentScript.generate();
-                this.log('Opponent grid generated');
+                if (this.state.mode === 'multiplayer') {
+                    // Multiplayer: only generate grid cells, no ships
+                    // Ships are never visible - we only see hit/miss markers
+                    opponentScript.generateGrid();
+                    this.log('Opponent grid generated (cells only, no ships - multiplayer mode)');
+                } else {
+                    // Single-player: generate with AI ships for local hit detection
+                    opponentScript.generate();
+                    this.log('Opponent grid generated');
+                }
             }
         }
     }
@@ -491,7 +499,7 @@ export class GameManager extends BaseScriptComponent {
         }
     }
 
-    onReshuffleTap() {
+    async onReshuffleTap() {
         // Only allow shuffle during initial setup, before first Start
         if (this.state.setupComplete) {
             return;
@@ -520,6 +528,24 @@ export class GameManager extends BaseScriptComponent {
 
         if (this.state.mode === 'single') {
             this.state.opponentShips = this.generateShipPlacements();
+        }
+
+        // Reapply ship materials after reshuffle
+        if (playerScript && typeof playerScript.applyShipMaterials === 'function') {
+            if (this.state.mode === 'multiplayer') {
+                const tbm = this.getTurnBasedManagerScript();
+                let playerIndex = 0;
+                if (tbm) {
+                    this.log(`onReshuffleTap: Getting player index async...`);
+                    playerIndex = await tbm.getCurrentUserIndexAsync();
+                    this.log(`onReshuffleTap: Got playerIndex = ${playerIndex}`);
+                    if (playerIndex < 0) playerIndex = 0;
+                }
+                this.log(`onReshuffleTap: Applying materials for playerIndex = ${playerIndex}`);
+                playerScript.applyShipMaterials(playerIndex);
+            } else {
+                playerScript.applyShipMaterials(0);
+            }
         }
 
         this.updateStatus("New positions!");
@@ -596,6 +622,15 @@ export class GameManager extends BaseScriptComponent {
         this.showPlayerGrid();
 
         this.generatePlacements();
+
+        // Apply player 0 ship materials for single-player mode
+        if (this.state.mode === 'single') {
+            const playerScript = this.getGridScript(this.playerGridGenerator);
+            if (playerScript && typeof playerScript.applyShipMaterials === 'function') {
+                playerScript.applyShipMaterials(0);
+                this.log('Applied Player 0 ship materials (single-player)');
+            }
+        }
 
         this.updateStatus("Your objects are placed!");
         this.updateHint("Tap Start to begin");
@@ -773,6 +808,14 @@ export class GameManager extends BaseScriptComponent {
 
             // Persist ships to global variables
             await tbm.savePlayerShips(shipPositions);
+
+            // Apply player-specific ship materials
+            const playerIndex = tbm.getCurrentUserIndex();
+            const playerScript = this.getGridScript(this.playerGridGenerator);
+            if (playerScript && typeof playerScript.applyShipMaterials === 'function') {
+                playerScript.applyShipMaterials(playerIndex);
+                this.log(`Applied Player ${playerIndex} ship materials`);
+            }
         }
 
         // Check if we have a pending shot to evaluate
@@ -955,6 +998,17 @@ export class GameManager extends BaseScriptComponent {
                 this.generateGrids();
                 this.showPlayerGrid();
                 this.generatePlacements();
+
+                // Apply ship materials for Player 2's initial setup
+                if (tbm) {
+                    const playerIndex = await tbm.getCurrentUserIndexAsync();
+                    this.log(`Player 2 initial setup: playerIndex from async = ${playerIndex}`);
+                    const playerScript = this.getGridScript(this.playerGridGenerator);
+                    if (playerScript && typeof playerScript.applyShipMaterials === 'function') {
+                        playerScript.applyShipMaterials(playerIndex < 0 ? 0 : playerIndex);
+                        this.log(`Applied Player ${playerIndex} ship materials (initial setup)`);
+                    }
+                }
 
                 if (hasPendingShot) {
                     this.updateStatus(label ? `${label} - Incoming shot!` : "Incoming shot!");

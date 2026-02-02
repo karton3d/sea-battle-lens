@@ -43,6 +43,8 @@
     missMarkerHeightOffset: false
     missMarkerPrefab: false
     objectHeightOffset: false
+    player0ShipMaterial: false
+    player1ShipMaterial: false
     ship1Prefab: false
     ship2Prefab: false
     ship3Prefab: false
@@ -81,6 +83,8 @@
       showShipCells: false
       cellMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
       cellHighlightMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      player0ShipMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
+      player1ShipMaterial: !<reference.Material> 00000000-0000-0000-0000-000000000000
   ScriptTypes:
     -
       {}
@@ -108,3 +112,5 @@
     - // @input bool showShipCells
     - // @input Asset.Material cellMaterial
     - // @input Asset.Material cellHighlightMaterial
+    - "// @input Asset.Material player0ShipMaterial {\"hint\":\"Material for Player 0's ships\"}"
+    - "// @input Asset.Material player1ShipMaterial {\"hint\":\"Material for Player 1's ships\"}"

@@ -1519,6 +1519,7 @@
     gridCols: true
     curvature: true
     useRandomPlacement: true
+    autoGenerate: true
     debugMode: true
   ScriptTypesDefault:
     {}
@@ -1542,11 +1543,13 @@
       useRandomPlacement: true
       enableCellTapping: true
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-      autoGenerate: true
+      autoGenerate: false
       debugMode: false
       showShipCells: true
       cellMaterial: !<reference.Material> 5334bb50-5ba7-4c4b-b919-b353ece3a959
       cellHighlightMaterial: !<reference.Material> 873de1c1-731a-48ca-8139-822f9e4c79d1
+      player0ShipMaterial: !<reference.Material> 4a338c86-8604-4ad4-b688-799e7aada09e
+      player1ShipMaterial: !<reference.Material> 733c8dff-fed2-4cac-8f26-bd6b30e6ee34
   ScriptTypes:
     "":
       {}
@@ -2262,7 +2265,7 @@
     gridCols: true
     curvature: true
     useRandomPlacement: true
-    debugMode: true
+    autoGenerate: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -2285,11 +2288,13 @@
       useRandomPlacement: true
       enableCellTapping: true
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-      autoGenerate: true
-      debugMode: false
+      autoGenerate: false
+      debugMode: true
       showShipCells: true
       cellMaterial: !<reference.Material> 5334bb50-5ba7-4c4b-b919-b353ece3a959
       cellHighlightMaterial: !<reference.Material> 873de1c1-731a-48ca-8139-822f9e4c79d1
+      player0ShipMaterial: !<reference.Material> 4a338c86-8604-4ad4-b688-799e7aada09e
+      player1ShipMaterial: !<reference.Material> 733c8dff-fed2-4cac-8f26-bd6b30e6ee34
   ScriptTypes:
     "":
       {}
@@ -3898,14 +3903,14 @@
   Enabled: true
   ScriptAsset: !<reference> 461b4806-6035-4c9f-bab9-aa4b90492ed3
   ScriptInputsDefault:
-    debugMode: true
+    {}
   ScriptTypesDefault:
     {}
   ScriptInputs:
     "":
       turnBased: !<reference.ScriptComponent> 4bb104a3-70a0-4e0e-8e90-ea46214e05cb
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-      debugMode: false
+      debugMode: true
   ScriptTypes:
     "":
       {}

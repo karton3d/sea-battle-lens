@@ -301,6 +301,23 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     }
 
     /**
+     * Get current user index asynchronously from TurnBased component
+     * Use this during setup phase when cached value might not be set yet
+     */
+    async getCurrentUserIndexAsync(): Promise<number> {
+        const tb = this.turnBased as any;
+        this.log(`getCurrentUserIndexAsync: cached=${this.currentUserIndex}, fetching from TurnBased...`);
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            this.log(`getCurrentUserIndexAsync: TurnBased returned ${userIndex}`);
+            return userIndex ?? -1;
+        } catch (e) {
+            this.log(`getCurrentUserIndexAsync error: ${e}, falling back to cached=${this.currentUserIndex}`);
+            return this.currentUserIndex; // fallback to cached
+        }
+    }
+
+    /**
      * Check if there's a pending shot to evaluate
      */
     hasPendingShot(): boolean {
