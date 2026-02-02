@@ -858,6 +858,7 @@ export class GameManager extends BaseScriptComponent {
             this.showScreen('game');
             this.showPlayerGrid();
             this.showOpponentGrid();
+            this.restoreOpponentGridVisuals();
 
             this.updateStatus("Incoming shot!");
             this.updateHint("Processing...");
@@ -971,6 +972,9 @@ export class GameManager extends BaseScriptComponent {
         const previousResult = tbm ? tbm.getPreviousShotResult() : null;
 
         if (previousResult && this.mpPreviousShotCoords) {
+            // Restore all previous shot markers before rotating
+            this.restoreOpponentGridVisuals();
+
             // Show result of our previous shot on opponent grid
             this.animateSceneHandle(true, () => {
                 // Update opponent grid state
@@ -1021,6 +1025,7 @@ export class GameManager extends BaseScriptComponent {
             });
         } else {
             // No previous result to show, just go to aiming
+            this.restoreOpponentGridVisuals();
             this.animateSceneHandle(true);
             const label = this.getPlayerLabel();
             this.updateStatus(label ? `${label} - Your turn` : "Your turn");
@@ -1725,6 +1730,16 @@ export class GameManager extends BaseScriptComponent {
         if (outgoingHistory && outgoingHistory.length > 0) {
             this.outgoingShotHistory = outgoingHistory;
             this.log(`restoreGridStates: Restored ${outgoingHistory.length} outgoing shots from history`);
+
+            // Use shot history as backup to fill in opponent grid
+            // This ensures the grid state is correct even if opponentView wasn't saved
+            for (const shot of outgoingHistory) {
+                if (this.state.opponentGrid[shot.x][shot.y] === 'unknown') {
+                    this.state.opponentGrid[shot.x][shot.y] = shot.result === 'miss' ? 'empty' : 'hit';
+                    this.updateCellVisual(this.opponentGridGenerator, shot.x, shot.y, shot.result === 'miss' ? 'miss' : 'hit');
+                    this.log(`restoreGridStates: Filled grid (${shot.x}, ${shot.y}) from history = ${shot.result}`);
+                }
+            }
         }
 
         const incomingHistory = await tbm.loadIncomingShotHistory();
@@ -1736,6 +1751,50 @@ export class GameManager extends BaseScriptComponent {
         // NOTE: We do NOT load opponent ships in multiplayer.
         // Opponent ship positions are secret - shot evaluation is done by the receiver.
         // Loading them was causing 'object' values to appear in opponentGrid.
+    }
+
+    /**
+     * Restore opponent grid visuals from current state (for ongoing gameplay)
+     * Used when entering aiming phase to show all previous shot markers
+     * Uses both opponentGrid state AND shot history for redundancy
+     */
+    private restoreOpponentGridVisuals(): void {
+        this.log('restoreOpponentGridVisuals: Spawning markers for all previous shots');
+
+        let markerCount = 0;
+
+        // First, use opponentGrid state if available
+        if (this.state.opponentGrid) {
+            for (let x = 0; x < this.gridSize; x++) {
+                for (let y = 0; y < this.gridSize; y++) {
+                    const cell = this.state.opponentGrid[x][y];
+                    if (cell === 'hit' || cell === 'destroyed') {
+                        this.updateCellVisual(this.opponentGridGenerator, x, y, 'hit');
+                        markerCount++;
+                    } else if (cell === 'empty') {
+                        this.updateCellVisual(this.opponentGridGenerator, x, y, 'miss');
+                        markerCount++;
+                    }
+                }
+            }
+        }
+
+        // Also use shot history as backup (updates state AND spawns markers)
+        if (this.outgoingShotHistory && this.outgoingShotHistory.length > 0) {
+            this.log(`restoreOpponentGridVisuals: Processing ${this.outgoingShotHistory.length} shots from history`);
+            for (const shot of this.outgoingShotHistory) {
+                // Update state if not already set
+                if (this.state.opponentGrid[shot.x][shot.y] === 'unknown') {
+                    this.state.opponentGrid[shot.x][shot.y] = shot.result === 'miss' ? 'empty' : 'hit';
+                    this.log(`restoreOpponentGridVisuals: Updated grid (${shot.x}, ${shot.y}) = ${shot.result}`);
+                }
+                // Spawn marker (duplicate guard in GridGenerator will prevent doubles)
+                this.updateCellVisual(this.opponentGridGenerator, shot.x, shot.y, shot.result === 'miss' ? 'miss' : 'hit');
+                markerCount++;
+            }
+        }
+
+        this.log(`restoreOpponentGridVisuals: Spawned ${markerCount} markers`);
     }
 
     /**
