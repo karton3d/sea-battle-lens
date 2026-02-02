@@ -63,6 +63,15 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Enable debug logging */
     @input debugMode: boolean = false;
 
+    /** Show ship cells with green highlight */
+    @input showShipCells: boolean = false;
+
+    /** Default cell material */
+    @input cellMaterial: Material;
+
+    /** Highlighted cell material (green) */
+    @input cellHighlightMaterial: Material;
+
     // ==================== PRIVATE STATE ====================
 
     /** Grid cells [row][col] -> SceneObject */
@@ -203,6 +212,11 @@ export class SphericalGrid extends BaseScriptComponent {
 
         this.clearShips();
         this.initShipGrid();
+
+        // Reset cell materials before placing new ships
+        if (this.showShipCells && this.cellMaterial) {
+            this.resetCellMaterials();
+        }
 
         if (this.useRandomPlacement) {
             const success = this.placeShipsRandomly();
@@ -402,6 +416,30 @@ export class SphericalGrid extends BaseScriptComponent {
         }
     }
 
+    // ==================== CELL MATERIAL ====================
+
+    /**
+     * Set material on a cell
+     */
+    private setCellMaterial(cell: SceneObject, material: Material): void {
+        const renderMesh = cell.getComponent("Component.RenderMeshVisual") as RenderMeshVisual;
+        if (renderMesh && material) {
+            renderMesh.clearMaterials();
+            renderMesh.addMaterial(material);
+        }
+    }
+
+    /**
+     * Reset all cell materials to default
+     */
+    private resetCellMaterials(): void {
+        for (const row of this.gridCells2D) {
+            for (const cell of row) {
+                if (cell) this.setCellMaterial(cell, this.cellMaterial);
+            }
+        }
+    }
+
     // ==================== SHIP PLACEMENT ====================
 
     /**
@@ -455,10 +493,15 @@ export class SphericalGrid extends BaseScriptComponent {
     private canPlaceShip(row: number, col: number, length: number, horizontal: boolean): boolean {
         for (let i = 0; i < length; i++) {
             const r = horizontal ? row : row + i;
-            const c = horizontal ? (col + i) % this.gridCols : col; // Wrap around longitude
+            const c = horizontal ? col + i : col;
 
             // Check row bounds (can't wrap latitude)
             if (r < 0 || r >= this.gridRows) {
+                return false;
+            }
+
+            // Check column bounds (no wrapping)
+            if (c < 0 || c >= this.gridCols) {
                 return false;
             }
 
@@ -471,7 +514,12 @@ export class SphericalGrid extends BaseScriptComponent {
             for (let dr = -1; dr <= 1; dr++) {
                 for (let dc = -1; dc <= 1; dc++) {
                     const nr = r + dr;
-                    const nc = (c + dc + this.gridCols) % this.gridCols; // Wrap longitude
+                    const nc = c + dc;
+
+                    // Skip out-of-bounds neighbors
+                    if (nc < 0 || nc >= this.gridCols) {
+                        continue;
+                    }
 
                     if (nr >= 0 && nr < this.gridRows) {
                         if (this.shipGrid[nr][nc]) {
@@ -499,16 +547,34 @@ export class SphericalGrid extends BaseScriptComponent {
         const cells: Array<{row: number, col: number}> = [];
         for (let i = 0; i < length; i++) {
             const r = horizontal ? row : row + i;
-            const c = horizontal ? (col + i) % this.gridCols : col;
+            const c = horizontal ? col + i : col;
             this.shipGrid[r][c] = true;
             cells.push({row: r, col: c});
+
+            // Highlight cell if enabled
+            if (this.showShipCells && this.cellHighlightMaterial && this.gridCells2D[r] && this.gridCells2D[r][c]) {
+                this.setCellMaterial(this.gridCells2D[r][c], this.cellHighlightMaterial);
+            }
         }
 
         // Calculate ship center position
-        const midIndex = Math.floor(length / 2);
-        const centerRow = cells[midIndex].row;
-        const centerCol = cells[midIndex].col;
-        const position = this.getCellWorldPosition(centerRow, centerCol, this.objectHeightOffset);
+        let position: vec3;
+        if (length % 2 === 0) {
+            // Even length: average position between two middle cells
+            const midIndex1 = length / 2 - 1;
+            const midIndex2 = length / 2;
+            const pos1 = this.getCellWorldPosition(cells[midIndex1].row, cells[midIndex1].col, this.objectHeightOffset);
+            const pos2 = this.getCellWorldPosition(cells[midIndex2].row, cells[midIndex2].col, this.objectHeightOffset);
+            position = new vec3(
+                (pos1.x + pos2.x) / 2,
+                (pos1.y + pos2.y) / 2,
+                (pos1.z + pos2.z) / 2
+            );
+        } else {
+            // Odd length: use middle cell
+            const midIndex = Math.floor(length / 2);
+            position = this.getCellWorldPosition(cells[midIndex].row, cells[midIndex].col, this.objectHeightOffset);
+        }
 
         // Get parent
         let parent: SceneObject;
@@ -526,7 +592,8 @@ export class SphericalGrid extends BaseScriptComponent {
         transform.setLocalPosition(position);
 
         // Rotate to face outward and align with grid direction
-        const rotation = this.getCellRotation(centerRow, centerCol);
+        const rotationCellIndex = Math.floor(length / 2);
+        const rotation = this.getCellRotation(cells[rotationCellIndex].row, cells[rotationCellIndex].col);
         transform.setLocalRotation(rotation);
 
         // Additional rotation for vertical ships
