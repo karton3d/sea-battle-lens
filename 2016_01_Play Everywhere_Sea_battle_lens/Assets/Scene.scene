@@ -1828,7 +1828,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: -80.000015, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: -80.000031, z: -90.000000}
     Scale: {x: 1.250000, y: 1.250000, z: 1.250000}
     HasSegmentScaleCompensation: false
   Children:
@@ -2079,7 +2079,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: -1.770630, y: -63.255981, z: 361.642761}
-    Rotation: {x: -80.000015, y: 0.000000, z: 0.000000}
+    Rotation: {x: -0.000000, y: 80.000000, z: 90.000000}
     Scale: {x: 1.250000, y: 1.250000, z: 1.250000}
     HasSegmentScaleCompensation: false
   Children:
@@ -2407,8 +2407,8 @@
     aiDelay: true
     debugMode: true
     delayBeforeAI: true
-    delayAfterAnimation: true
     delayAfterShot: true
+    delayBeforeProcessingShot: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -2440,8 +2440,9 @@
       sceneHandle: !<reference.SceneObject> e46eba44-4d82-468c-883a-5c3653fbc2da
       handleAnimDuration: !<float> 2.000000
       delayBeforeAI: !<float> 1.000000
-      delayAfterAnimation: 0.300000
+      delayAfterAnimation: !<float> 1.000000
       delayAfterShot: !<float> 1.000000
+      delayBeforeProcessingShot: !<float> 1.000000
   ScriptTypes:
     "":
       {}

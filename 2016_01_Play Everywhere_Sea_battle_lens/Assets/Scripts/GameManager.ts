@@ -63,6 +63,7 @@ export class GameManager extends BaseScriptComponent {
     @input delayBeforeAI: number = 1.0;
     @input delayAfterAnimation: number = 0.3;
     @input delayAfterShot: number = 1.0;
+    @input delayBeforeProcessingShot: number = 1.0;
 
     // Game state
     private state: GameState;
@@ -286,7 +287,8 @@ export class GameManager extends BaseScriptComponent {
             opponentHits: 0,
             totalObjectCells: TOTAL_OBJECT_CELLS,
             winner: null,
-            setupComplete: false
+            setupComplete: false,
+            pendingIncomingShot: null
         };
 
         this.aiState = {
@@ -818,38 +820,62 @@ export class GameManager extends BaseScriptComponent {
             }
         }
 
-        // Check if we have a pending shot to evaluate
-        if (tbm && tbm.hasPendingShot()) {
-            const pendingShot = tbm.getPendingShot();
-            this.log(`Evaluating pending shot at (${pendingShot.x}, ${pendingShot.y})`);
+        // Check if we have a pending shot to evaluate (use stored state, not TBM which may have changed)
+        print(`[GM DEBUG] onMultiplayerSetupConfirmed: pendingIncomingShot = ${JSON.stringify(this.state.pendingIncomingShot)}`);
+        if (this.state.pendingIncomingShot) {
+            const pendingShot = this.state.pendingIncomingShot;
+            this.log(`Pending shot at (${pendingShot.x}, ${pendingShot.y}) - will process after delay`);
 
-            // Evaluate the shot against our grid
-            const result = this.evaluateShotOnPlayerGrid(pendingShot.x, pendingShot.y);
-
-            // Tell TurnBasedManager the result (to send back to opponent)
-            tbm.setIncomingShotResult(result);
-            tbm.clearPendingShot();
-
-            // Show the result on our grid
+            // Show game screen (still on player grid from setup - NO rotation needed)
             this.showScreen('game');
             this.showPlayerGrid();
             this.showOpponentGrid();
-            this.animateSceneHandle(false); // Show player grid
 
-            this.updateCellVisual(this.playerGridGenerator, pendingShot.x, pendingShot.y, result === 'miss' ? 'miss' : 'hit');
-            this.updateStatus(result === 'miss' ? "Friend missed!" : "Friend hit!");
-            this.updateResult(`Shot at (${pendingShot.x}, ${pendingShot.y})`);
+            this.updateStatus("Incoming shot!");
+            this.updateHint("Processing...");
 
-            // Check if we lost
-            if (this.checkWin('opponent')) {
-                this.endGame('opponent');
-                return;
-            }
+            // Delay BEFORE processing (let user see incoming shot notification)
+            this.delayedCall(async () => {
+                this.log(`Evaluating pending shot at (${pendingShot.x}, ${pendingShot.y})`);
 
-            // After delay, transition to aiming phase
-            this.delayedCall(() => {
-                this.transitionToAimingPhase();
-            }, this.delayAfterShot);
+                // Evaluate the shot against our grid
+                const result = this.evaluateShotOnPlayerGrid(pendingShot.x, pendingShot.y);
+
+                // Tell TurnBasedManager the result (to send back to opponent)
+                if (tbm) {
+                    tbm.setIncomingShotResult(result);
+                    tbm.clearPendingShot();
+                    // Also clear from global variable so it doesn't get processed again
+                    await tbm.clearOpponentPendingShot();
+                }
+
+                // Clear our stored pending shot
+                this.state.pendingIncomingShot = null;
+
+                // Show the result visually on player grid (no rotation - already on player grid)
+                this.updateCellVisual(this.playerGridGenerator, pendingShot.x, pendingShot.y, result === 'miss' ? 'miss' : 'hit');
+                this.updateStatus(result === 'miss' ? "Friend missed!" : "Friend hit!");
+                this.updateResult(`Shot at (${pendingShot.x}, ${pendingShot.y})`);
+
+                // Check if we lost
+                if (this.checkWin('opponent')) {
+                    this.endGame('opponent');
+                    return;
+                }
+
+                // Delay AFTER showing result, then rotate to opponent grid and enter aiming phase
+                this.delayedCall(() => {
+                    // Single rotation to opponent grid, then enter aiming phase
+                    this.animateSceneHandle(true, () => {
+                        this.state.phase = 'aiming';
+                        this.state.turn = 'player';
+                        const label = this.getPlayerLabel();
+                        this.updateStatus(label ? `${label} - Your turn` : "Your turn");
+                        this.updateHint("Tap a cell to aim");
+                        this.updateResult("");
+                    });
+                }, this.delayAfterShot);
+            }, this.delayBeforeProcessingShot);
         } else {
             // No pending shot - this is Player 1's first turn
             this.showScreen('game');
@@ -958,6 +984,7 @@ export class GameManager extends BaseScriptComponent {
      * - turnCount > 0 → Player 2 (receiver) → Skip intro, go to setup or gameplay
      */
     async onMultiplayerTurnStart(turnCount: number, hasPendingShot: boolean, previousShotResult: ShotResult | null): Promise<void> {
+        print(`[GM DEBUG] >>> onMultiplayerTurnStart CALLED: turn=${turnCount}, hasPending=${hasPendingShot}, prevResult=${previousShotResult}`);
         this.log(`onMultiplayerTurnStart: turn=${turnCount}, hasPending=${hasPendingShot}, prevResult=${previousShotResult}`);
 
         // Player 2 receiving - any turnCount > 0 means skip intro
@@ -968,6 +995,21 @@ export class GameManager extends BaseScriptComponent {
 
             const tbm = this.getTurnBasedManagerScript();
             const label = this.getPlayerLabel();
+
+            // Store pending shot in our state (TBM state may change before setup is confirmed)
+            print(`[GM DEBUG] onMultiplayerTurnStart: hasPendingShot=${hasPendingShot}, tbm=${!!tbm}`);
+            if (hasPendingShot && tbm) {
+                const shot = tbm.getPendingShot();
+                print(`[GM DEBUG] tbm.getPendingShot() returned: ${JSON.stringify(shot)}`);
+                if (shot) {
+                    this.state.pendingIncomingShot = { x: shot.x, y: shot.y };
+                    print(`[GM DEBUG] Stored pending incoming shot: (${shot.x}, ${shot.y})`);
+                } else {
+                    print(`[GM DEBUG] shot was null/undefined despite hasPendingShot=true`);
+                }
+            } else {
+                print(`[GM DEBUG] Skipped storing shot - hasPendingShot=${hasPendingShot}, tbm=${!!tbm}`);
+            }
 
             // Try to load ships from global variables (in case lens was reopened)
             if (this.state.playerShips.length === 0 && tbm) {

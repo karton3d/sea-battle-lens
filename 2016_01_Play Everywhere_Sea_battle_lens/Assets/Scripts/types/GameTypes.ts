@@ -69,6 +69,9 @@ export interface GameState {
 
     // Setup tracking - true after first Start button press, ships are frozen
     setupComplete: boolean;
+
+    // Pending incoming shot from opponent (stored when turn received, used when setup confirmed)
+    pendingIncomingShot: { x: number; y: number } | null;
 }
 
 // ==================== INTERFACES ====================

@@ -201,6 +201,63 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         }
     }
 
+    // ==================== PENDING SHOT (Global Variables) ====================
+
+    /**
+     * Save pending shot to global variable when firing
+     * This is more reliable than turn variables
+     */
+    async savePendingShot(x: number, y: number): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `pendingShot_${userIndex}`;
+            await tb.setGlobalVariable(key, { x, y });
+            print(`[TBM DEBUG] savePendingShot: Saved shot (${x}, ${y}) to ${key}`);
+        } catch (e) {
+            this.logError(`savePendingShot: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load pending shot from opponent's global variable
+     */
+    async loadPendingShotFromOpponent(): Promise<{x: number, y: number} | null> {
+        if (!this.turnBased) return null;
+        const tb = this.turnBased as any;
+        try {
+            const opponentIndex = await tb.getOtherUserIndex();
+            const key = `pendingShot_${opponentIndex}`;
+            const shot = await tb.getGlobalVariable(key);
+            if (shot && typeof shot.x === 'number' && typeof shot.y === 'number') {
+                print(`[TBM DEBUG] loadPendingShotFromOpponent: Found shot (${shot.x}, ${shot.y}) from ${key}`);
+                return { x: shot.x, y: shot.y };
+            }
+            print(`[TBM DEBUG] loadPendingShotFromOpponent: No shot found at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadPendingShotFromOpponent: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Clear opponent's pending shot after processing
+     */
+    async clearOpponentPendingShot(): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            const opponentIndex = await tb.getOtherUserIndex();
+            const key = `pendingShot_${opponentIndex}`;
+            await tb.setGlobalVariable(key, null);
+            print(`[TBM DEBUG] clearOpponentPendingShot: Cleared ${key}`);
+        } catch (e) {
+            this.logError(`clearOpponentPendingShot: Failed - ${e}`);
+        }
+    }
+
     // ==================== PRIVATE STATE ====================
 
     /** Multiplayer session state */
@@ -440,7 +497,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Submit turn with selected aim
      * Called when player taps "Send" button
      */
-    submitSelectedAim(isGameOver: boolean = false, winner: 'player' | 'opponent' | null = null): void {
+    async submitSelectedAim(isGameOver: boolean = false, winner: 'player' | 'opponent' | null = null): Promise<void> {
         print(`[TurnBasedManager] submitSelectedAim called`);
         print(`[TurnBasedManager] selectedAim: ${this.mpState.selectedAim ? `(${this.mpState.selectedAim.x}, ${this.mpState.selectedAim.y})` : 'NULL'}`);
         print(`[TurnBasedManager] turnBased: ${this.turnBased ? 'SET' : 'NULL'}`);
@@ -457,12 +514,15 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
         const tb = this.turnBased as any;
         const { x, y } = this.mpState.selectedAim;
-        print(`[TurnBasedManager] submitSelectedAim: Sending aim (${x}, ${y})`);
+        print(`[TBM DEBUG] submitSelectedAim: Sending aim (${x}, ${y})`);
+        print(`[TBM DEBUG] submitSelectedAim: tb.setCurrentTurnVariable exists = ${typeof tb.setCurrentTurnVariable}`);
 
         // Set turn variables
+        print(`[TBM DEBUG] Setting shotX=${x}, shotY=${y}`);
         tb.setCurrentTurnVariable('shotX', x);
         tb.setCurrentTurnVariable('shotY', y);
         tb.setCurrentTurnVariable('isGameOver', isGameOver);
+        print(`[TBM DEBUG] Turn variables set`);
 
         if (winner) {
             tb.setCurrentTurnVariable('winner', winner);
@@ -487,6 +547,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             tb.setIsFinalTurn(true);
         }
 
+        // Save pending shot to global variable (more reliable than turn variables)
+        await this.savePendingShot(x, y);
+
         // End turn - triggers Snap capture
         print(`[TurnBasedManager] About to call endTurn...`);
         if (typeof tb.endTurn === 'function') {
@@ -503,22 +566,33 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
     /**
      * Handle turn start callback from Turn-Based component
      */
-    private handleTurnStart(eventData: any): void {
+    private async handleTurnStart(eventData: any): Promise<void> {
+        print(`[TBM DEBUG] >>> handleTurnStart CALLED`);
         this.mpState.turnCount = eventData.turnCount || 0;
         this.currentUserIndex = eventData.currentUserIndex ?? -1;
+        print(`[TBM DEBUG] handleTurnStart: turnCount=${this.mpState.turnCount}, userIndex=${this.currentUserIndex}`);
         this.log(`handleTurnStart: turnCount=${this.mpState.turnCount}, userIndex=${this.currentUserIndex}`);
 
         const prevVars = eventData.previousTurnVariables || {};
+        print(`[TBM DEBUG] handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);
         this.log(`handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);
 
         // First turn (turnCount=0) - Player 1 initiates, no previous data
-        if (this.mpState.turnCount === 0 || Object.keys(prevVars).length === 0) {
+        if (this.mpState.turnCount === 0) {
+            print(`[TBM DEBUG] handleTurnStart: First turn (turnCount=0), no incoming data`);
             this.log('handleTurnStart: First turn, no incoming data');
             this.notifyGameManagerTurnStart(false, null);
             return;
         }
 
-        // Parse incoming data
+        // Try to load pending shot from global variable (more reliable than turn variables)
+        const pendingShot = await this.loadPendingShotFromOpponent();
+        if (pendingShot) {
+            this.mpState.pendingShot = pendingShot;
+            print(`[TBM DEBUG] handleTurnStart: Loaded pending shot from global var: (${pendingShot.x}, ${pendingShot.y})`);
+        }
+
+        // Parse any other incoming data from turn variables
         this.parseIncomingTurnData(prevVars);
     }
 
@@ -546,10 +620,12 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
         // Extract opponent's aim (pending shot for us to evaluate)
         // Handle both number and string types from Turn-Based component
+        print(`[TBM DEBUG] parseIncomingTurnData: vars.shotX=${vars.shotX} (${typeof vars.shotX}), vars.shotY=${vars.shotY} (${typeof vars.shotY})`);
         const shotX = typeof vars.shotX === 'number' ? vars.shotX :
                       typeof vars.shotX === 'string' ? parseInt(vars.shotX, 10) : NaN;
         const shotY = typeof vars.shotY === 'number' ? vars.shotY :
                       typeof vars.shotY === 'string' ? parseInt(vars.shotY, 10) : NaN;
+        print(`[TBM DEBUG] parseIncomingTurnData: parsed shotX=${shotX}, shotY=${shotY}`);
 
         if (!isNaN(shotX) && !isNaN(shotY) && shotX >= 0 && shotX < GRID_SIZE && shotY >= 0 && shotY < GRID_SIZE) {
             this.mpState.pendingShot = {
@@ -572,6 +648,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
         // Notify GameManager
         const hasPending = this.mpState.pendingShot !== null;
+        print(`[TBM DEBUG] parseIncomingTurnData: hasPending=${hasPending}, pendingShot=${JSON.stringify(this.mpState.pendingShot)}`);
         this.notifyGameManagerTurnStart(hasPending, this.mpState.previousShotResult);
     }
 

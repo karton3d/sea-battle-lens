@@ -32,6 +32,7 @@
     delayAfterAnimation: false
     delayAfterShot: false
     delayBeforeAI: false
+    delayBeforeProcessingShot: false
     fireButton: false
     gameOverScreen: false
     gameScreen: false
@@ -90,6 +91,7 @@
       delayBeforeAI: !<float> 1.000000
       delayAfterAnimation: 0.300000
       delayAfterShot: !<float> 1.000000
+      delayBeforeProcessingShot: !<float> 1.000000
   ScriptTypes:
     -
       {}
@@ -121,3 +123,4 @@
     - // @input float delayBeforeAI = 1
     - // @input float delayAfterAnimation = 0.3
     - // @input float delayAfterShot = 1
+    - // @input float delayBeforeProcessingShot = 1
