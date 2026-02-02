@@ -1,0 +1,11 @@
+- !<AnimationAsset/b1948fd6-faf9-40dc-9faf-d7eff40dd5c2>
+  PackagePath: ""
+  AnimationPropertiesLayers:
+    {}
+  AnimationCurvePropertiesLayers:
+    {}
+  Events:
+    - time: -340282346638528859811704183484516925440.000000
+      value: BEGIN
+    - time: 340282346638528859811704183484516925440.000000
+      value: END
