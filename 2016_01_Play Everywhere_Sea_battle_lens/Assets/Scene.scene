@@ -354,7 +354,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 30.966461, y: 0.000000, z: -32.238152}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -398,7 +398,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: -2.656921, z: -0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: -0.000000}
     Rotation: {x: 90.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
@@ -608,7 +608,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 90.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -793,7 +793,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.514435, y: 0.000000, z: 0.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1158,7 +1158,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.514435, y: 0.000000, z: 0.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1334,8 +1334,8 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 1.011141}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -1523,7 +1523,6 @@
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-    - !<own> a0e42477-4f5b-437b-a60d-29e398251c8e
     - !<own> 581823b2-fac5-4e6f-b8e1-b1e1e670f9a6
   Components:
     []
@@ -1614,7 +1613,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 90.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -1869,6 +1868,31 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScriptComponent/45ead286-ced2-4d6d-a144-dbe5063a968a>
+  PrefabRemaps:
+    []
+  Name: ShipAssets
+  Enabled: true
+  ScriptAsset: !<reference> 479867a9-f888-4b16-b674-deff8c66c2b0
+  ScriptInputsDefault:
+    {}
+  ScriptTypesDefault:
+    {}
+  ScriptInputs:
+    "":
+      single1: !<reference.SceneObject> 557a4535-76d5-42e0-8da2-150725e4e09d
+      single2: !<reference.SceneObject> 3707431c-504c-429c-8b82-83f36e8d2154
+      single3: !<reference.SceneObject> e90d63a7-2096-4ef5-8ade-78440debd430
+      single4: !<reference.SceneObject> 05276692-8bc3-441a-bd2b-93ba0da02368
+      double1: !<reference.SceneObject> 89150ea0-f209-45f7-91d5-366537e3849d
+      double2: !<reference.SceneObject> 88cb5c31-cc15-4020-88e6-338a40024d00
+      double3: !<reference.SceneObject> 133fefcd-5586-4eec-8492-73193791833d
+      triple1: !<reference.SceneObject> 7d381b35-26cd-4998-b4bc-575fafca4a73
+      triple2: !<reference.SceneObject> 45fd4480-0c52-4fad-b8cf-145058223470
+      quad1: !<reference.SceneObject> 682d37df-38c1-4ea3-80dd-e6570a149fed
+  ScriptTypes:
+    "":
+      {}
 - !<SceneObject/45fd4480-0c52-4fad-b8cf-145058223470>
   PrefabRemaps:
     - 0cd0ae83-5445-4446-8655-abfd6ae9988b: 264a1b98-4ca3-4237-41d4-b59aa7d6f543
@@ -1971,10 +1995,7 @@
   ScriptInputs:
     "":
       cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
-      ship1Prefab: !<reference.ObjectPrefab> 8434345a-8c3d-440d-9d3a-97f50b8751c1
-      ship2Prefab: !<reference.ObjectPrefab> d0b91458-d381-4616-9572-000be64ad078
-      ship3Prefab: !<reference.ObjectPrefab> 27c3ec53-6f98-4c2a-9d46-4b641fc68355
-      ship4Prefab: !<reference.ObjectPrefab> cd5891c5-49ab-490e-a7d4-a531e5df0fcb
+      shipAssets: !<MappingBased.AssignableType> 45ead286-ced2-4d6d-a144-dbe5063a968a
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
       aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
@@ -1982,7 +2003,7 @@
       gridCols: !<float> 10.000000
       cellSpacing: !<float> 11.000000
       curvature: !<float> 0.000000
-      objectHeightOffset: !<float> 11.000000
+      objectHeightOffset: !<float> 5.000000
       missMarkerHeightOffset: !<float> 6.000000
       gridParent: !<reference.SceneObject> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
       useRandomPlacement: true
@@ -2448,21 +2469,6 @@
     - !<own> edcb4d9e-6872-452b-8a58-751fc0aa899c
   Components:
     []
-- !<SceneObject/5fcf10d6-beb4-45ac-89a9-aa3b90a5fa93>
-  PrefabRemaps:
-    []
-  Name: OpponentGrid
-  Enabled: false
-  Layers: 1
-  LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    HasSegmentScaleCompensation: false
-  Children:
-    []
-  Components:
-    - !<own> bb3877f3-94c1-4ba5-a5c1-b96b37c8fd63
 - !<RenderMeshVisual/6192e7e9-ebe1-4e1f-8d7b-5a2a5b50fb82>
   PrefabRemaps:
     []
@@ -2675,7 +2681,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.514435, y: 0.000000, z: 0.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -2705,7 +2711,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: -57.579315, y: 0.000000, z: -11.338488}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -2762,21 +2768,6 @@
     []
   Components:
     []
-- !<SceneObject/6d34475f-5e98-4c4f-8784-cd2dc3dda9a5>
-  PrefabRemaps:
-    []
-  Name: PlayerGrid
-  Enabled: false
-  Layers: 1
-  LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    HasSegmentScaleCompensation: false
-  Children:
-    []
-  Components:
-    - !<own> 8d6c6b8c-7d3e-487d-b2ee-aff4aaf727c3
 - !<SceneObject/7388daa5-18a1-454f-9547-ce848b9e9e1b>
   PrefabRemaps:
     []
@@ -2947,10 +2938,7 @@
   ScriptInputs:
     "":
       cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
-      ship1Prefab: !<reference.ObjectPrefab> b1690c10-e44e-4076-96a3-62e988632aaf
-      ship2Prefab: !<reference.ObjectPrefab> 856c15d0-1abd-4d91-90ca-61df1075db7e
-      ship3Prefab: !<reference.ObjectPrefab> 8cd27437-e213-4f33-8363-d231a552519c
-      ship4Prefab: !<reference.ObjectPrefab> 7829ed20-49e3-4782-aea3-3c6be28be806
+      shipAssets: !<MappingBased.AssignableType> 45ead286-ced2-4d6d-a144-dbe5063a968a
       hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
       missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
       aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
@@ -2958,8 +2946,8 @@
       gridCols: !<float> 10.000000
       cellSpacing: !<float> 11.000000
       curvature: !<float> 0.000000
-      objectHeightOffset: !<float> 11.000000
-      missMarkerHeightOffset: !<float> 0.000000
+      objectHeightOffset: !<float> 5.000000
+      missMarkerHeightOffset: !<float> 6.000000
       gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
       useRandomPlacement: true
       enableCellTapping: true
@@ -3005,7 +2993,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -37.054413, y: 0.000000, z: 53.956924}
+    Position: {x: -74.243805, y: 0.000000, z: 50.322525}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -3563,7 +3551,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: -0.910858, y: 0.000000, z: 49.874413}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -3653,42 +3641,6 @@
     []
   Components:
     - !<own> 8177dc1b-60db-4815-98ca-548ccded18e5
-- !<ScriptComponent/8d6c6b8c-7d3e-487d-b2ee-aff4aaf727c3>
-  PrefabRemaps:
-    []
-  Name: GridGenerator
-  Enabled: true
-  ScriptAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
-  ScriptInputsDefault:
-    aimMarkerPrefab: true
-    gridSize: true
-    shipHeightOffset: true
-    useRandomPlacement: true
-    autoGenerate: true
-  ScriptTypesDefault:
-    {}
-  ScriptInputs:
-    "":
-      cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
-      ship1Prefab: !<reference.ObjectPrefab> ce41e3db-dc4d-4888-ad54-2d1f10ebaa6c
-      ship2Prefab: !<reference.ObjectPrefab> bc16e651-2e5b-4428-97ce-829eee1dd589
-      ship3Prefab: !<reference.ObjectPrefab> 4f181c7a-1b03-45cc-b0b1-3efcf25cf639
-      ship4Prefab: !<reference.ObjectPrefab> d41f1311-1520-4662-a9d0-bdbf2c7768b9
-      hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
-      missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
-      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
-      gridSize: !<float> 10.000000
-      cellSize: !<float> 10.000000
-      cellSpacing: !<float> 1.000000
-      gridParent: !<reference.SceneObject> 5d63d4e1-b986-4678-b86c-41a837e8c4d3
-      shipHeightOffset: 0.500000
-      useRandomPlacement: true
-      enableCellTapping: true
-      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-      autoGenerate: false
-  ScriptTypes:
-    "":
-      {}
 - !<SceneObject/8eb5e4e5-0ce5-48bb-9118-d914603fb626>
   PrefabRemaps:
     []
@@ -3783,7 +3735,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.613789}
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 0.613921, y: 0.613921, z: 0.613921}
     HasSegmentScaleCompensation: false
@@ -4066,28 +4018,12 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.499689, y: 0.000000, z: 0.000444}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: 6.000000}
+    Rotation: {x: -30.000000, y: 0.000000, z: 90.000000}
     Scale: {x: 6.000000, y: 6.000000, z: 6.000000}
     HasSegmentScaleCompensation: false
   Children:
     - !<own> 36293ad5-338d-4d69-b3e2-f03487eeee21
-  Components:
-    []
-- !<SceneObject/a0e42477-4f5b-437b-a60d-29e398251c8e>
-  PrefabRemaps:
-    []
-  Name: Grids
-  Enabled: true
-  Layers: 1
-  LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    HasSegmentScaleCompensation: false
-  Children:
-    - !<own> 6d34475f-5e98-4c4f-8784-cd2dc3dda9a5
-    - !<own> 5fcf10d6-beb4-45ac-89a9-aa3b90a5fa93
   Components:
     []
 - !<Canvas/a22362b3-ae68-4c5e-b9c0-3ac11bdffdea>
@@ -4213,7 +4149,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 90.000000, y: -0.000000, z: 180.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -4562,42 +4498,6 @@
   BlendNormals: false
   BlendShapes:
     {}
-- !<ScriptComponent/bb3877f3-94c1-4ba5-a5c1-b96b37c8fd63>
-  PrefabRemaps:
-    []
-  Name: GridGenerator
-  Enabled: true
-  ScriptAsset: !<reference> 5352443a-f2d1-440a-8c20-e127a6c4a717
-  ScriptInputsDefault:
-    aimMarkerPrefab: true
-    gridSize: true
-    shipHeightOffset: true
-    useRandomPlacement: true
-    autoGenerate: true
-  ScriptTypesDefault:
-    {}
-  ScriptInputs:
-    "":
-      cellPrefab: !<reference.ObjectPrefab> 3952b59d-bc59-46b4-8b4d-4f3ab956ae86
-      ship1Prefab: !<reference.ObjectPrefab> 8434345a-8c3d-440d-9d3a-97f50b8751c1
-      ship2Prefab: !<reference.ObjectPrefab> d0b91458-d381-4616-9572-000be64ad078
-      ship3Prefab: !<reference.ObjectPrefab> 27c3ec53-6f98-4c2a-9d46-4b641fc68355
-      ship4Prefab: !<reference.ObjectPrefab> cd5891c5-49ab-490e-a7d4-a531e5df0fcb
-      hitMarkerPrefab: !<reference.ObjectPrefab> 821bef71-ac9e-4f8f-aa27-e8b58904f465
-      missMarkerPrefab: !<reference.ObjectPrefab> 0b7fc77f-130f-4315-83b0-79ae7161035f
-      aimMarkerPrefab: !<reference.ObjectPrefab> 00000000-0000-0000-0000-000000000000
-      gridSize: !<float> 10.000000
-      cellSize: !<float> 10.000000
-      cellSpacing: !<float> 1.000000
-      gridParent: !<reference.SceneObject> 6cf058c0-dc06-4b76-a646-df9ee194c2c5
-      shipHeightOffset: 0.500000
-      useRandomPlacement: true
-      enableCellTapping: true
-      gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
-      autoGenerate: false
-  ScriptTypes:
-    "":
-      {}
 - !<SceneObject/bb63588e-918d-476f-b481-0c46bf2e7747>
   PrefabRemaps:
     - 57206112-615f-4347-8e66-fa86533f1ee4: 08ae27c5-1dd1-45b0-84bb-9d733858f486
@@ -4715,7 +4615,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 22.739376, z: -258.449707}
-    Rotation: {x: 70.414925, y: -0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: -0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -5037,7 +4937,7 @@
     - !<own> 682d37df-38c1-4ea3-80dd-e6570a149fed
     - !<own> 5f6c281e-dc26-4a2d-99bb-e0ea4dcccef9
   Components:
-    []
+    - !<own> 45ead286-ced2-4d6d-a144-dbe5063a968a
 - !<RenderMeshVisual/cca06909-4a42-48c8-90a3-899a38968a01>
   PrefabRemaps:
     []
@@ -5085,8 +4985,8 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: -3.642666, z: 1.839779}
-    Rotation: {x: -59.686928, y: 0.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: 1.839779}
+    Rotation: {x: -30.000000, y: 0.000000, z: 90.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -5540,8 +5440,8 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -0.509548, y: 0.000000, z: 0.000000}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Position: {x: 0.000000, y: 0.000000, z: 5.000000}
+    Rotation: {x: -30.000000, y: 3.639269, z: 90.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:
@@ -5746,7 +5646,7 @@
   Layers: 1
   LocalTransform: !<TransformEntity>
     Position: {x: -0.500000, y: 0.000000, z: 0.000000}
-    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
     HasSegmentScaleCompensation: false
   Children:

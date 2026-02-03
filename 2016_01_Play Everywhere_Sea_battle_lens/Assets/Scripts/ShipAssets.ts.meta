@@ -1,0 +1,71 @@
+- !<AssetImportMetadata/cb19cc50-42e2-455e-90a8-29f919f12e61>
+  ImportedAssetIds:
+    TypeScriptAsset: !<reference> 479867a9-f888-4b16-b674-deff8c66c2b0
+  ImporterName: TypeScriptAssetImporter
+  PrimaryAsset: !<reference> 479867a9-f888-4b16-b674-deff8c66c2b0
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    TypeScriptAsset: !<own> 14176624-a4a9-4ada-b1e6-0e774d662f51
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<TypeScriptAssetData/14176624-a4a9-4ada-b1e6-0e774d662f51>
+  SvgIcon: ""
+  SetupScript:
+    code: ""
+  Description: ""
+  VersionMajor: 0
+  VersionMinor: 0
+  VersionPatch: 0
+  ComponentUid: dc877a54-8bc7-475d-9768-57a5bb7e6e46
+  ExportUid: 00000000-0000-0000-0000-000000000000
+  PackagePolicy: CanBeUnpacked
+  ScriptInputsHidden:
+    double1: false
+    double2: false
+    double3: false
+    quad1: false
+    single1: false
+    single2: false
+    single3: false
+    single4: false
+    triple1: false
+    triple2: false
+  ScriptTypesHidden:
+    {}
+  ReadMe: !<reference> 00000000-0000-0000-0000-000000000000
+  DeclarationFile: !<reference> 00000000-0000-0000-0000-000000000000
+  Tags:
+    []
+  Attachments:
+    []
+  DefaultScriptInputs:
+    - single1: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      single2: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      single3: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      single4: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      double1: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      double2: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      double3: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      triple1: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      triple2: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+      quad1: !<reference.SceneObject> 00000000-0000-0000-0000-000000000000
+  ScriptTypes:
+    -
+      {}
+  InputLines:
+    - // @input SceneObject single1
+    - // @input SceneObject single2
+    - // @input SceneObject single3
+    - // @input SceneObject single4
+    - // @input SceneObject double1
+    - // @input SceneObject double2
+    - // @input SceneObject double3
+    - // @input SceneObject triple1
+    - // @input SceneObject triple2
+    - // @input SceneObject quad1

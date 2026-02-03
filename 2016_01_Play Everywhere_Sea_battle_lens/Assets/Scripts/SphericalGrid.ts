@@ -1,6 +1,8 @@
 // Spherical Grid - Places cells on a sphere surface using lat/lon coordinates
 // Creates a globe-like grid for the battleship game
 
+import {ShipAssets} from "Scripts/ShipAssets";
+
 @component
 export class SphericalGrid extends BaseScriptComponent {
 
@@ -9,11 +11,8 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Prefab for grid cell */
     @input cellPrefab: ObjectPrefab;
 
-    /** Ship prefabs (1-4 cells length) */
-    @input ship1Prefab: ObjectPrefab;
-    @input ship2Prefab: ObjectPrefab;
-    @input ship3Prefab: ObjectPrefab;
-    @input ship4Prefab: ObjectPrefab;
+    /** Ship assets component (holds all 10 individual ship prefabs) */
+    @input shipAssets: ShipAssets;
 
     /** Marker prefabs for hit/miss visualization */
     @input hitMarkerPrefab: ObjectPrefab;
@@ -91,6 +90,9 @@ export class SphericalGrid extends BaseScriptComponent {
 
     /** Ship occupancy grid [row][col] -> boolean */
     private shipGrid: boolean[][] = [];
+
+    /** Track how many ships of each length have been placed (for unique prefab selection) */
+    private shipPlacementIndex: { [length: number]: number } = {};
 
     /** Visibility state */
     private isVisible: boolean = false;
@@ -316,7 +318,7 @@ export class SphericalGrid extends BaseScriptComponent {
     // ==================== GRID GENERATION ====================
 
     /**
-     * Initialize ship occupancy grid
+     * Initialize ship occupancy grid and reset placement counters
      */
     private initShipGrid(): void {
         this.shipGrid = [];
@@ -326,6 +328,9 @@ export class SphericalGrid extends BaseScriptComponent {
                 this.shipGrid[row][col] = false;
             }
         }
+
+        // Reset ship placement index counters
+        this.shipPlacementIndex = { 1: 0, 2: 0, 3: 0, 4: 0 };
     }
 
     /**
@@ -537,9 +542,9 @@ export class SphericalGrid extends BaseScriptComponent {
      * Place a ship on the grid
      */
     private placeShip(row: number, col: number, length: number, horizontal: boolean): SceneObject | null {
-        const prefab = this.getShipPrefab(length);
-        if (!prefab) {
-            this.logError(`No prefab for ship length ${length}`);
+        const ship = this.getShip(length);
+        if (!ship) {
+            this.logError(`No ship for length ${length}`);
             return null;
         }
 
@@ -584,23 +589,25 @@ export class SphericalGrid extends BaseScriptComponent {
             parent = this.getSceneObject();
         }
 
-        // Create ship
-        const ship = prefab.instantiate(parent);
-        ship.name = `Ship_${length}_at_${row}_${col}_${horizontal ? "H" : "V"}`;
+        // Reparent ship and position it
+        ship.setParent(parent);
+        ship.enabled = true;
 
         const transform = ship.getTransform();
         transform.setLocalPosition(position);
 
-        // Rotate to face outward and align with grid direction
-        const rotationCellIndex = Math.floor(length / 2);
-        const rotation = this.getCellRotation(cells[rotationCellIndex].row, cells[rotationCellIndex].col);
-        transform.setLocalRotation(rotation);
+        // Rotate to face outward and align with grid direction (skip for single-cell ships)
+        if (length > 1) {
+            const rotationCellIndex = Math.floor(length / 2);
+            const rotation = this.getCellRotation(cells[rotationCellIndex].row, cells[rotationCellIndex].col);
+            transform.setLocalRotation(rotation);
 
-        // Additional rotation for vertical ships
-        if (!horizontal) {
-            const currentRot = transform.getLocalRotation();
-            const verticalAdjust = quat.fromEulerAngles(0, 0, Math.PI / 2);
-            transform.setLocalRotation(currentRot.multiply(verticalAdjust));
+            // Additional rotation for vertical ships
+            if (!horizontal) {
+                const currentRot = transform.getLocalRotation();
+                const verticalAdjust = quat.fromEulerAngles(0, 0, Math.PI / 2);
+                transform.setLocalRotation(currentRot.multiply(verticalAdjust));
+            }
         }
 
         this.placedShips.push(ship);
@@ -632,16 +639,24 @@ export class SphericalGrid extends BaseScriptComponent {
     }
 
     /**
-     * Get ship prefab by length
+     * Get ship SceneObject by length (uses ShipAssets for unique ships)
      */
-    private getShipPrefab(length: number): ObjectPrefab | null {
-        switch (length) {
-            case 1: return this.ship1Prefab;
-            case 2: return this.ship2Prefab;
-            case 3: return this.ship3Prefab;
-            case 4: return this.ship4Prefab;
-            default: return null;
+    private getShip(length: number): SceneObject | null {
+        if (!this.shipAssets) {
+            this.logError('ShipAssets not assigned');
+            return null;
         }
+
+        // Get current index for this ship length and increment for next use
+        const index = this.shipPlacementIndex[length] || 0;
+        this.shipPlacementIndex[length] = index + 1;
+
+        const ship = this.shipAssets.getShip(length, index);
+        if (!ship) {
+            this.logError(`No ship for length ${length} at index ${index}`);
+        }
+
+        return ship;
     }
 
     // ==================== MARKERS ====================
@@ -703,7 +718,7 @@ export class SphericalGrid extends BaseScriptComponent {
 
     private clearShips(): void {
         for (const ship of this.placedShips) {
-            if (ship) ship.destroy();
+            if (ship) ship.enabled = false;
         }
         this.placedShips = [];
     }
