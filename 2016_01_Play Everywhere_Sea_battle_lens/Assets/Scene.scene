@@ -353,7 +353,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 30.966476, y: 0.000000, z: 16.569607}
+    Position: {x: 30.966461, y: 0.000000, z: -32.238152}
     Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -592,7 +592,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -38.488617, y: 0.000000, z: -52.335014}
+    Position: {x: -3.712250, y: 0.000000, z: -9.754913}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1352,7 +1352,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 24.235798}
+    Position: {x: 30.096283, y: 0.000000, z: 21.464916}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -1886,7 +1886,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -20.427557, y: 0.000000, z: 26.615997}
+    Position: {x: -55.989227, y: 0.000000, z: 25.450569}
     Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -2255,7 +2255,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 30.570107, y: 0.000000, z: 0.000000}
+    Position: {x: 31.047211, y: 0.000000, z: 52.578991}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -2706,7 +2706,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Position: {x: -57.579315, y: 0.000000, z: -11.338488}
     Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -3009,7 +3009,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: -34.141056, y: 0.000000, z: 0.000000}
+    Position: {x: -37.054413, y: 0.000000, z: 53.956924}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -3544,7 +3544,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 28.164925, y: 0.000000, z: -34.157013}
+    Position: {x: -4.638184, y: 0.000000, z: 22.813126}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -3566,7 +3566,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 0.000000, y: 0.000000, z: -32.571953}
+    Position: {x: -0.910858, y: 0.000000, z: 49.874413}
     Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
@@ -5029,7 +5029,6 @@
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
   Children:
-    - !<own> 682d37df-38c1-4ea3-80dd-e6570a149fed
     - !<own> 557a4535-76d5-42e0-8da2-150725e4e09d
     - !<own> 3707431c-504c-429c-8b82-83f36e8d2154
     - !<own> e90d63a7-2096-4ef5-8ade-78440debd430
@@ -5039,6 +5038,7 @@
     - !<own> 133fefcd-5586-4eec-8492-73193791833d
     - !<own> 7d381b35-26cd-4998-b4bc-575fafca4a73
     - !<own> 45fd4480-0c52-4fad-b8cf-145058223470
+    - !<own> 682d37df-38c1-4ea3-80dd-e6570a149fed
     - !<own> 5f6c281e-dc26-4a2d-99bb-e0ea4dcccef9
   Components:
     []
@@ -5562,7 +5562,7 @@
   Enabled: true
   Layers: 1
   LocalTransform: !<TransformEntity>
-    Position: {x: 51.077446, y: 0.000000, z: -16.157204}
+    Position: {x: 28.988800, y: 0.000000, z: -7.331583}
     Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
     Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
     HasSegmentScaleCompensation: false
