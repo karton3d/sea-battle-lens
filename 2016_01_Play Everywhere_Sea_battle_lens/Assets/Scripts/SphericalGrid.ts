@@ -72,16 +72,6 @@ export class SphericalGrid extends BaseScriptComponent {
     /** Highlighted cell material (green) */
     @input cellHighlightMaterial: Material;
 
-    /** Material for Player 0's ships */
-    @input
-    @hint("Material for Player 0's ships")
-    player0ShipMaterial: Material;
-
-    /** Material for Player 1's ships */
-    @input
-    @hint("Material for Player 1's ships")
-    player1ShipMaterial: Material;
-
     // ==================== PRIVATE STATE ====================
 
     /** Grid cells [row][col] -> SceneObject */
@@ -447,36 +437,6 @@ export class SphericalGrid extends BaseScriptComponent {
             for (const cell of row) {
                 if (cell) this.setCellMaterial(cell, this.cellMaterial);
             }
-        }
-    }
-
-    /**
-     * Apply ship materials based on player index
-     * @param playerIndex 0 for Player 0, 1 for Player 1
-     */
-    applyShipMaterials(playerIndex: number): void {
-        const material = playerIndex === 0 ? this.player0ShipMaterial : this.player1ShipMaterial;
-        if (!material) return;
-
-        for (const ship of this.placedShips) {
-            this.applyMaterialToObject(ship, material);
-        }
-    }
-
-    /**
-     * Apply material to a SceneObject and all its children
-     */
-    private applyMaterialToObject(obj: SceneObject, material: Material): void {
-        const renderMesh = obj.getComponent("Component.RenderMeshVisual") as RenderMeshVisual;
-        if (renderMesh) {
-            renderMesh.clearMaterials();
-            renderMesh.addMaterial(material);
-        }
-
-        // Also apply to children (ship prefabs may have child meshes)
-        const childCount = obj.getChildrenCount();
-        for (let i = 0; i < childCount; i++) {
-            this.applyMaterialToObject(obj.getChild(i), material);
         }
     }
 
