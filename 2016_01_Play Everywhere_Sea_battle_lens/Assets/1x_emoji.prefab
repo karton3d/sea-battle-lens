@@ -1,0 +1,74 @@
+- !<ObjectPrefab/38f09a70-347a-411e-9dca-4c5506182181>
+  PackagePath: ""
+  objects:
+    - !<own> f355e92f-29d5-42e7-b4ad-e46e2b931fdf
+  LazyLoading: false
+  RetainAssets: true
+- !<SceneObject/17b397e0-99f0-46c3-957e-49beb18ecd7d>
+  PrefabRemaps:
+    []
+  Name: emoji
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: -0.509548, y: 0.000000, z: 0.000000}
+    Rotation: {x: -90.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 52a85a64-92d5-4a1e-a748-349f05b581bf
+  Components:
+    []
+- !<SceneObject/52a85a64-92d5-4a1e-a748-349f05b581bf>
+  PrefabRemaps:
+    []
+  Name: emoji | Geometric
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.613789}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 0.613921, y: 0.613921, z: 0.613921}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 8678e0b7-01d3-4262-b5b5-df1c1fff591a
+- !<RenderMeshVisual/8678e0b7-01d3-4262-b5b5-df1c1fff591a>
+  PrefabRemaps:
+    []
+  Name: component_0
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 5dc8db7d-ec5f-4d32-8d77-f22779e57ef6
+  Mesh: !<reference> 4f6830e0-3cba-45f6-a3ab-d3511876bb9d
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<SceneObject/f355e92f-29d5-42e7-b4ad-e46e2b931fdf>
+  PrefabRemaps:
+    - 17b397e0-99f0-46c3-957e-49beb18ecd7d: 17b397e0-99f0-46c3-6a81-b6414e713282
+    - 52a85a64-92d5-4a1e-a748-349f05b581bf: 52a85a64-92d5-4a1e-58b7-cb60fa4a7e40
+    - 8678e0b7-01d3-4262-b5b5-df1c1fff591a: 8678e0b7-01d3-4262-4a4a-20e3e000a6e5
+    - f355e92f-29d5-42e7-b4ad-e46e2b931fdf: f355e92f-29d5-42e7-4b52-1b91d46ce020
+  Name: 1x_emoji
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 30.570107, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 17b397e0-99f0-46c3-957e-49beb18ecd7d
+  Components:
+    []

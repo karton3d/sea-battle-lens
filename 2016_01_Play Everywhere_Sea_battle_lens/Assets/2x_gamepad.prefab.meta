@@ -1,0 +1,164 @@
+- !<AssetImportMetadata/aca1f964-33e3-4f77-b370-9c9f1a4eb1e4>
+  ImportedAssetIds:
+    ObjectPrefab: !<reference> f1089f38-3e7e-4be7-97e0-2d465debad6d
+  ImporterName: ObjectPrefabImporter
+  PrimaryAsset: !<reference> f1089f38-3e7e-4be7-97e0-2d465debad6d
+  PackageType: NotAPackage
+  LegacyPackagePolicy: ~
+  ExtraData:
+    {}
+  AssetDataMap:
+    ObjectPrefab: !<own> 4075d820-889f-4b1e-a9e3-9f516dcd6690
+  DependentFiles:
+    []
+  ImporterSettings: !<AssetImporterSettings>
+    {}
+  CompressionSettings: !<own> 00000000-0000-0000-0000-000000000000
+- !<SceneObject/37a70dae-35b1-40e3-7b0e-a0eb24b9e765>
+  PrefabRemaps:
+    []
+  Name: 1
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> 68de68b5-340a-409f-68a2-08d6b239704a
+    - !<own> 7b1e88d3-0c27-49e7-6c41-d44106575d96
+- !<ObjectPrefabAssetData/4075d820-889f-4b1e-a9e3-9f516dcd6690>
+  Prototype: !<ObjectOwner/75f0b044-9d58-44b7-ad1c-eba276f7ea35>
+    PackagePath: ""
+    objects:
+      - !<own> 5a2f5b79-42de-451f-7309-fe7432a101e6
+- !<SceneObject/5a2f5b79-42de-451f-7309-fe7432a101e6>
+  PrefabRemaps:
+    []
+  Name: 2x_gamepad
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: -38.488617, y: 0.000000, z: -52.335014}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> f5375dbc-b4df-4554-7a70-dbfea1f9c329
+  Components:
+    []
+- !<RenderMeshVisual/68de68b5-340a-409f-68a2-08d6b239704a>
+  PrefabRemaps:
+    []
+  Name: component_0
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 7cbc3ad5-174a-49ab-a779-e6c4e9532816
+  Mesh: !<reference> af8187ee-3997-4f6d-b824-1f1c9de6bf6f
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<RenderMeshVisual/7b1e88d3-0c27-49e7-6c41-d44106575d96>
+  PrefabRemaps:
+    []
+  Name: component_1
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> fd9a75f6-b2a9-4189-af3a-dd653b20aaff
+  Mesh: !<reference> 9edd5482-27e3-4206-b2f6-f54748c5e87b
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<RenderMeshVisual/9985e48d-eee3-4d54-6625-e986ca1a1147>
+  PrefabRemaps:
+    []
+  Name: component_3
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> fd9a75f6-b2a9-4189-af3a-dd653b20aaff
+  Mesh: !<reference> e7aef2a8-a2fb-46ad-b4ae-d85dfb1c4cf2
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<RenderMeshVisual/b04beabf-6902-4ec4-5990-b52a8188d448>
+  PrefabRemaps:
+    []
+  Name: component_2
+  Enabled: true
+  RenderOrder: 0
+  StretchMode: Stretch
+  VerticalAlignment: Center
+  HorizontalAlignment: Center
+  MeshShadowMode: None
+  ShadowColor: {x: 1.000000, y: 1.000000, z: 1.000000, w: 1.000000}
+  ShadowDensity: 1.000000
+  Materials:
+    - !<reference> 7cbc3ad5-174a-49ab-a779-e6c4e9532816
+  Mesh: !<reference> 07dfa7e3-33f5-496d-94d4-f435e3da7ee6
+  Skin: !<reference> 00000000-0000-0000-0000-000000000000
+  BlendShapesEnabled: true
+  BlendNormals: false
+  BlendShapes:
+    {}
+- !<SceneObject/f5375dbc-b4df-4554-7a70-dbfea1f9c329>
+  PrefabRemaps:
+    []
+  Name: gamepad
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 10.000000, y: 10.000000, z: 10.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    - !<own> 37a70dae-35b1-40e3-7b0e-a0eb24b9e765
+    - !<own> fbdcb46c-9477-4077-7f6f-045c580228e8
+  Components:
+    []
+- !<SceneObject/fbdcb46c-9477-4077-7f6f-045c580228e8>
+  PrefabRemaps:
+    []
+  Name: 2
+  Enabled: true
+  Layers: 1
+  LocalTransform: !<TransformEntity>
+    Position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    Scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    HasSegmentScaleCompensation: false
+  Children:
+    []
+  Components:
+    - !<own> b04beabf-6902-4ec4-5990-b52a8188d448
+    - !<own> 9985e48d-eee3-4d54-6625-e986ca1a1147
