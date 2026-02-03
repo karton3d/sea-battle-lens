@@ -172,6 +172,8 @@ export class GameManager extends BaseScriptComponent {
         // Get TurnBasedManager and submit
         const tbm = this.getTurnBasedManagerScript();
         if (tbm) {
+            // Persist our shot coords to global vars so they survive lens reopen
+            tbm.saveOwnPreviousShotCoords(this.mpSelectedAim.x, this.mpSelectedAim.y);
             tbm.setSelectedAim(this.mpSelectedAim.x, this.mpSelectedAim.y);
             tbm.submitSelectedAim(false, null);
         }
@@ -607,6 +609,8 @@ export class GameManager extends BaseScriptComponent {
         // Get TurnBasedManager and submit
         const tbm = this.getTurnBasedManagerScript();
         if (tbm) {
+            // Persist our shot coords to global vars so they survive lens reopen
+            tbm.saveOwnPreviousShotCoords(this.mpSelectedAim.x, this.mpSelectedAim.y);
             tbm.setSelectedAim(this.mpSelectedAim.x, this.mpSelectedAim.y);
             tbm.submitSelectedAim(false, null);
         }
@@ -873,6 +877,8 @@ export class GameManager extends BaseScriptComponent {
                 // Tell TurnBasedManager the result (to send back to opponent)
                 if (tbm) {
                     tbm.setIncomingShotResult(result);
+                    // Also save to global variable so opponent can read it on lens reopen
+                    await tbm.saveOpponentShotResult(result);
                     tbm.clearPendingShot();
                     // Also clear from global variable so it doesn't get processed again
                     await tbm.clearOpponentPendingShot();
@@ -897,6 +903,8 @@ export class GameManager extends BaseScriptComponent {
                     // Check if we also have a previous shot result to show
                     const previousResult = tbm ? tbm.getPreviousShotResult() : null;
 
+                    print(`[DEBUG] onMultiplayerSetupConfirmed delayed: previousResult=${previousResult}, mpPreviousShotCoords=${JSON.stringify(this.mpPreviousShotCoords)}`);
+
                     if (previousResult && this.mpPreviousShotCoords) {
                         // We have a previous shot result - rotate to opponent grid and show it
                         this.animateSceneHandle(true, () => {
@@ -920,7 +928,11 @@ export class GameManager extends BaseScriptComponent {
                             this.updateStatus(previousResult === 'miss' ? "You missed!" : "You hit!");
                             this.updateResult("");
 
-                            if (tbm) tbm.clearPreviousShotResult();
+                            if (tbm) {
+                                tbm.clearPreviousShotResult();
+                                tbm.clearOwnPreviousShotCoords();
+                                tbm.clearOwnPreviousShotResult();
+                            }
                             this.mpPreviousShotCoords = null;
 
                             // Check if we won
@@ -971,6 +983,8 @@ export class GameManager extends BaseScriptComponent {
         const tbm = this.getTurnBasedManagerScript();
         const previousResult = tbm ? tbm.getPreviousShotResult() : null;
 
+        print(`[DEBUG] transitionToAimingPhase: previousResult=${previousResult}, mpPreviousShotCoords=${JSON.stringify(this.mpPreviousShotCoords)}`);
+
         if (previousResult && this.mpPreviousShotCoords) {
             // Restore all previous shot markers before rotating
             this.restoreOpponentGridVisuals();
@@ -994,10 +1008,14 @@ export class GameManager extends BaseScriptComponent {
                     this.state.playerHits++;
                 }
 
+                print(`[DEBUG] Shot result saved: (${shotX}, ${shotY}) = ${previousResult}`);
+                print(`[DEBUG] opponentGrid[${shotX}][${shotY}] is now = ${this.state.opponentGrid[shotX][shotY]}`);
+
                 // Record in shot history
                 this.addToOutgoingShotHistory(shotX, shotY, previousResult);
 
                 // Save our view of opponent grid
+                print(`[DEBUG] About to save opponentView, tbm=${!!tbm}`);
                 if (tbm) {
                     tbm.saveOpponentView(this.state.opponentGrid);
                 }
@@ -1007,6 +1025,8 @@ export class GameManager extends BaseScriptComponent {
 
                 if (tbm) {
                     tbm.clearPreviousShotResult();
+                    tbm.clearOwnPreviousShotCoords();
+                    tbm.clearOwnPreviousShotResult();
                 }
                 this.mpPreviousShotCoords = null;
 
@@ -1025,6 +1045,7 @@ export class GameManager extends BaseScriptComponent {
             });
         } else {
             // No previous result to show, just go to aiming
+            print(`[DEBUG] transitionToAimingPhase: No previous result, skipping save logic`);
             this.restoreOpponentGridVisuals();
             this.animateSceneHandle(true);
             const label = this.getPlayerLabel();
@@ -1081,13 +1102,17 @@ export class GameManager extends BaseScriptComponent {
 
         this.outgoingShotHistory.push({ x, y, result });
         this.log(`addToOutgoingShotHistory: Added shot at (${x}, ${y}) = ${result}, total: ${this.outgoingShotHistory.length}`);
+        print(`[DEBUG] addToOutgoingShotHistory: mode=${this.state.mode}, total=${this.outgoingShotHistory.length}`);
 
         // Persist to global variables
         if (this.state.mode === 'multiplayer') {
             const tbm = this.getTurnBasedManagerScript();
+            print(`[DEBUG] addToOutgoingShotHistory: tbm=${!!tbm}, calling saveOutgoingShotHistory`);
             if (tbm) {
                 tbm.saveOutgoingShotHistory(this.outgoingShotHistory);
             }
+        } else {
+            print(`[DEBUG] addToOutgoingShotHistory: NOT multiplayer, skipping save`);
         }
     }
 
@@ -1173,8 +1198,13 @@ export class GameManager extends BaseScriptComponent {
 
                 // Always restore grid states when resuming with existing ships
                 // This ensures hit/miss markers are shown even if ships were kept in memory
+                print(`[DEBUG] onMultiplayerTurnStart: tbm=${!!tbm}, setupComplete=${this.state.setupComplete}`);
                 if (tbm && this.state.setupComplete) {
+                    print(`[DEBUG] onMultiplayerTurnStart: About to call restoreGridStates`);
                     await this.restoreGridStates(tbm);
+                    print(`[DEBUG] onMultiplayerTurnStart: restoreGridStates completed`);
+                } else {
+                    print(`[DEBUG] onMultiplayerTurnStart: SKIPPED restoreGridStates - condition failed!`);
                 }
 
                 this.onMultiplayerSetupConfirmed();
@@ -1703,8 +1733,19 @@ export class GameManager extends BaseScriptComponent {
         }
 
         // Load our VIEW of opponent grid (our outgoing shots - hit/miss/unknown only)
+        print(`[DEBUG] restoreGridStates: CALLED`);
         const opponentView = await tbm.loadOpponentView();
+        print(`[DEBUG] restoreGridStates: opponentView = ${opponentView ? 'EXISTS' : 'NULL'}`);
         if (opponentView) {
+            // Count non-unknown cells
+            let nonUnknown = 0;
+            for (let x = 0; x < this.gridSize; x++) {
+                for (let y = 0; y < this.gridSize; y++) {
+                    if (opponentView[x][y] !== 'unknown') nonUnknown++;
+                }
+            }
+            print(`[DEBUG] restoreGridStates: opponentView has ${nonUnknown} non-unknown cells`);
+
             this.log('restoreGridStates: Restoring opponent view');
             this.state.opponentGrid = opponentView;
 
@@ -1727,6 +1768,7 @@ export class GameManager extends BaseScriptComponent {
 
         // Load shot histories
         const outgoingHistory = await tbm.loadOutgoingShotHistory();
+        print(`[DEBUG] restoreGridStates: outgoingHistory = ${outgoingHistory ? outgoingHistory.length : 'NULL'} shots`);
         if (outgoingHistory && outgoingHistory.length > 0) {
             this.outgoingShotHistory = outgoingHistory;
             this.log(`restoreGridStates: Restored ${outgoingHistory.length} outgoing shots from history`);
@@ -1751,6 +1793,25 @@ export class GameManager extends BaseScriptComponent {
         // NOTE: We do NOT load opponent ships in multiplayer.
         // Opponent ship positions are secret - shot evaluation is done by the receiver.
         // Loading them was causing 'object' values to appear in opponentGrid.
+
+        // Load our own previous shot coords (for showing result when lens reopens)
+        const ownPrevShot = await tbm.loadOwnPreviousShotCoords();
+        if (ownPrevShot) {
+            this.mpPreviousShotCoords = { x: ownPrevShot.x, y: ownPrevShot.y };
+            print(`[DEBUG] restoreGridStates: Restored mpPreviousShotCoords = (${ownPrevShot.x}, ${ownPrevShot.y})`);
+        } else {
+            print(`[DEBUG] restoreGridStates: No ownPrevShot to restore`);
+        }
+
+        // Load our own previous shot result (saved by opponent after they evaluated it)
+        const ownPrevResult = await tbm.loadOwnPreviousShotResult();
+        if (ownPrevResult) {
+            // Store in TBM's mpState so getPreviousShotResult() returns it
+            tbm.setPreviousShotResult(ownPrevResult);
+            print(`[DEBUG] restoreGridStates: Restored previousShotResult = ${ownPrevResult}`);
+        } else {
+            print(`[DEBUG] restoreGridStates: No ownPrevResult to restore`);
+        }
     }
 
     /**
@@ -1760,6 +1821,17 @@ export class GameManager extends BaseScriptComponent {
      */
     private restoreOpponentGridVisuals(): void {
         this.log('restoreOpponentGridVisuals: Spawning markers for all previous shots');
+        print(`[DEBUG] restoreOpponentGridVisuals: CALLED`);
+        print(`[DEBUG] restoreOpponentGridVisuals: outgoingShotHistory.length = ${this.outgoingShotHistory?.length || 0}`);
+
+        // Dump first few cells of opponentGrid
+        let sample = '';
+        for (let x = 0; x < 3; x++) {
+            for (let y = 0; y < 3; y++) {
+                sample += `(${x},${y})=${this.state.opponentGrid?.[x]?.[y] || 'N/A'} `;
+            }
+        }
+        print(`[DEBUG] restoreOpponentGridVisuals: grid sample: ${sample}`);
 
         let markerCount = 0;
 

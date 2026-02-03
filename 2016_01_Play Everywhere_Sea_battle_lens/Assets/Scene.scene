@@ -1939,7 +1939,6 @@
     curvature: true
     useRandomPlacement: true
     autoGenerate: true
-    debugMode: true
   ScriptTypesDefault:
     {}
   ScriptInputs:
@@ -1963,7 +1962,7 @@
       enableCellTapping: true
       gameManager: !<reference.SceneObject> 8bca6923-60b6-4d5c-a180-4515d8ecc600
       autoGenerate: false
-      debugMode: false
+      debugMode: true
       showShipCells: true
       cellMaterial: !<reference.Material> 5334bb50-5ba7-4c4b-b919-b353ece3a959
       cellHighlightMaterial: !<reference.Material> 873de1c1-731a-48ca-8139-822f9e4c79d1
@@ -3122,7 +3121,6 @@
   ScriptInputsDefault:
     gridSize: true
     aiDelay: true
-    debugMode: true
     delayBeforeAI: true
     delayAfterShot: true
     delayBeforeProcessingShot: true
@@ -3133,7 +3131,7 @@
       gridSize: !<float> 10.000000
       aiDelay: !<float> 1000.000000
       screenTransitionDelay: 0.200000
-      debugMode: false
+      debugMode: true
       playerGridGenerator: !<reference.SceneObject> c4de2354-7ef6-4e37-9688-b9f59c9b65b8
       opponentGridGenerator: !<reference.SceneObject> e0568f64-3225-4059-a8f6-20a080dcf39f
       introScreen: !<reference.SceneObject> 2ad497af-e8ce-4dde-958d-857383ec56a9

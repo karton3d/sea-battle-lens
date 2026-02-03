@@ -201,6 +201,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * This tracks hit/miss/unknown - never contains 'object' values
      */
     async saveOpponentView(grid: CellState[][]): Promise<void> {
+        print(`[DEBUG TBM] saveOpponentView: CALLED`);
         if (!this.turnBased) {
             this.logError('saveOpponentView: Turn-Based component not ready');
             return;
@@ -210,9 +211,12 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         try {
             const userIndex = await tb.getCurrentUserIndex();
             const key = this.getOpponentViewKey(userIndex);
+            print(`[DEBUG TBM] saveOpponentView: Saving to key=${key}`);
             await tb.setGlobalVariable(key, grid);
+            print(`[DEBUG TBM] saveOpponentView: SUCCESS`);
             this.log(`saveOpponentView: Saved to ${key}`);
         } catch (e) {
+            print(`[DEBUG TBM] saveOpponentView: FAILED - ${e}`);
             this.logError(`saveOpponentView: Failed - ${e}`);
         }
     }
@@ -231,7 +235,9 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         try {
             const userIndex = await tb.getCurrentUserIndex();
             const key = this.getOpponentViewKey(userIndex);
+            print(`[DEBUG TBM] loadOpponentView: key=${key}`);
             const grid = await tb.getGlobalVariable(key);
+            print(`[DEBUG TBM] loadOpponentView: result=${grid ? 'HAS DATA' : 'NULL'}`);
             if (grid) {
                 this.log(`loadOpponentView: Loaded from ${key}`);
                 return grid as CellState[][];
@@ -251,6 +257,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      * Called after each shot result is received
      */
     async saveOutgoingShotHistory(history: ShotHistoryEntry[]): Promise<void> {
+        print(`[DEBUG TBM] saveOutgoingShotHistory: CALLED with ${history.length} shots`);
         if (!this.turnBased) {
             this.logError('saveOutgoingShotHistory: Turn-Based component not ready');
             return;
@@ -260,9 +267,12 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         try {
             const userIndex = await tb.getCurrentUserIndex();
             const key = this.getOutgoingShotHistoryKey(userIndex);
+            print(`[DEBUG TBM] saveOutgoingShotHistory: Saving to key=${key}`);
             await tb.setGlobalVariable(key, history);
+            print(`[DEBUG TBM] saveOutgoingShotHistory: SUCCESS`);
             this.log(`saveOutgoingShotHistory: Saved ${history.length} shots to ${key}`);
         } catch (e) {
+            print(`[DEBUG TBM] saveOutgoingShotHistory: FAILED - ${e}`);
             this.logError(`saveOutgoingShotHistory: Failed - ${e}`);
         }
     }
@@ -282,6 +292,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             const userIndex = await tb.getCurrentUserIndex();
             const key = this.getOutgoingShotHistoryKey(userIndex);
             const history = await tb.getGlobalVariable(key);
+            print(`[DEBUG TBM] loadOutgoingShotHistory: result=${history ? (history.length + ' shots') : 'NULL'}`);
             if (history && Array.isArray(history)) {
                 this.log(`loadOutgoingShotHistory: Loaded ${history.length} shots from ${key}`);
                 return history as ShotHistoryEntry[];
@@ -423,6 +434,121 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
             print(`[TBM DEBUG] clearOpponentPendingShot: Cleared ${key}`);
         } catch (e) {
             this.logError(`clearOpponentPendingShot: Failed - ${e}`);
+        }
+    }
+
+    // ==================== OWN PREVIOUS SHOT COORDS ====================
+
+    /**
+     * Save our own previous shot coordinates (so we can restore them on lens reopen)
+     * This is different from pendingShot - this tracks WHERE WE SHOT, not incoming shots
+     */
+    async saveOwnPreviousShotCoords(x: number, y: number): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `ownPrevShot_${userIndex}`;
+            await tb.setGlobalVariable(key, { x, y });
+            print(`[DEBUG TBM] saveOwnPreviousShotCoords: Saved (${x}, ${y}) to ${key}`);
+        } catch (e) {
+            this.logError(`saveOwnPreviousShotCoords: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load our own previous shot coordinates
+     */
+    async loadOwnPreviousShotCoords(): Promise<{x: number, y: number} | null> {
+        if (!this.turnBased) return null;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `ownPrevShot_${userIndex}`;
+            const shot = await tb.getGlobalVariable(key);
+            if (shot && typeof shot.x === 'number' && typeof shot.y === 'number') {
+                print(`[DEBUG TBM] loadOwnPreviousShotCoords: Found (${shot.x}, ${shot.y}) from ${key}`);
+                return { x: shot.x, y: shot.y };
+            }
+            print(`[DEBUG TBM] loadOwnPreviousShotCoords: No data at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadOwnPreviousShotCoords: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Clear our own previous shot coordinates (after processing result)
+     */
+    async clearOwnPreviousShotCoords(): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `ownPrevShot_${userIndex}`;
+            await tb.setGlobalVariable(key, null);
+            print(`[DEBUG TBM] clearOwnPreviousShotCoords: Cleared ${key}`);
+        } catch (e) {
+            this.logError(`clearOwnPreviousShotCoords: Failed - ${e}`);
+        }
+    }
+
+    // ==================== SHOT RESULT PERSISTENCE ====================
+
+    /**
+     * Save opponent's shot result to their global variable (so they can read it on reopen)
+     * Called after evaluating incoming shot - saves result for the OPPONENT to read
+     */
+    async saveOpponentShotResult(result: ShotResult): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            // Save to OPPONENT's key (they will read this)
+            const opponentIndex = await tb.getOtherUserIndex();
+            const key = `player${opponentIndex}_lastShotResult`;
+            await tb.setGlobalVariable(key, result);
+            print(`[DEBUG TBM] saveOpponentShotResult: Saved ${result} to ${key}`);
+        } catch (e) {
+            this.logError(`saveOpponentShotResult: Failed - ${e}`);
+        }
+    }
+
+    /**
+     * Load our own previous shot result (saved by opponent after they evaluated it)
+     */
+    async loadOwnPreviousShotResult(): Promise<ShotResult | null> {
+        if (!this.turnBased) return null;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `player${userIndex}_lastShotResult`;
+            const result = await tb.getGlobalVariable(key);
+            if (result) {
+                print(`[DEBUG TBM] loadOwnPreviousShotResult: Found ${result} from ${key}`);
+                return result as ShotResult;
+            }
+            print(`[DEBUG TBM] loadOwnPreviousShotResult: No data at ${key}`);
+            return null;
+        } catch (e) {
+            this.logError(`loadOwnPreviousShotResult: Failed - ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Clear our own previous shot result (after it's been displayed)
+     */
+    async clearOwnPreviousShotResult(): Promise<void> {
+        if (!this.turnBased) return;
+        const tb = this.turnBased as any;
+        try {
+            const userIndex = await tb.getCurrentUserIndex();
+            const key = `player${userIndex}_lastShotResult`;
+            await tb.setGlobalVariable(key, null);
+            print(`[DEBUG TBM] clearOwnPreviousShotResult: Cleared ${key}`);
+        } catch (e) {
+            this.logError(`clearOwnPreviousShotResult: Failed - ${e}`);
         }
     }
 
@@ -570,6 +696,7 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     setIncomingShotResult(result: ShotResult): void {
         this.incomingShotResult = result;
+        print(`[DEBUG TBM] setIncomingShotResult: CALLED with ${result}`);
         this.log(`setIncomingShotResult: ${result}`);
     }
 
@@ -608,6 +735,14 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
      */
     getPreviousShotResult(): ShotResult | null {
         return this.mpState.previousShotResult;
+    }
+
+    /**
+     * Set previous shot result (used when restoring from global variables)
+     */
+    setPreviousShotResult(result: ShotResult): void {
+        this.mpState.previousShotResult = result;
+        print(`[DEBUG TBM] setPreviousShotResult: ${result}`);
     }
 
     /**
@@ -697,10 +832,13 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         }
 
         // Send result of opponent's previous shot (if we evaluated one)
+        print(`[DEBUG TBM] submitSelectedAim: incomingShotResult = ${this.incomingShotResult}`);
         if (this.incomingShotResult) {
             tb.setCurrentTurnVariable('incomingShotResult', this.incomingShotResult);
             this.log(`submitSelectedAim: Including incomingShotResult=${this.incomingShotResult}`);
             this.incomingShotResult = null;
+        } else {
+            print(`[DEBUG TBM] submitSelectedAim: NOT including incomingShotResult (null)`);
         }
 
         // Include ship positions on first turn
@@ -743,6 +881,8 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
 
         const prevVars = eventData.previousTurnVariables || {};
         print(`[TBM DEBUG] handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);
+        print(`[TBM DEBUG] handleTurnStart: prevVars.incomingShotResult = ${prevVars.incomingShotResult}`);
+        print(`[TBM DEBUG] handleTurnStart: full prevVars = ${JSON.stringify(prevVars)}`);
         this.log(`handleTurnStart: prevVars keys: ${Object.keys(prevVars).join(', ')}`);
 
         // First turn (turnCount=0) - Player 1 initiates, no previous data
@@ -781,9 +921,12 @@ export class TurnBasedManager extends BaseScriptComponent implements ITurnHandle
         }
 
         // Extract result of OUR previous shot (opponent tells us what happened)
+        print(`[DEBUG TBM] parseIncomingTurnData: vars.incomingShotResult = ${vars.incomingShotResult}`);
         if (vars.incomingShotResult) {
             this.mpState.previousShotResult = vars.incomingShotResult as ShotResult;
             this.log(`parseIncomingTurnData: Our previous shot result: ${this.mpState.previousShotResult}`);
+        } else {
+            print(`[DEBUG TBM] parseIncomingTurnData: NO incomingShotResult in turn vars!`);
         }
 
         // Extract opponent's aim (pending shot for us to evaluate)
