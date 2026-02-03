@@ -439,6 +439,39 @@
   BlendNormals: false
   BlendShapes:
     {}
+- !<ScreenTransform/0c91fda4-262d-4723-ac1d-5e7f1035cea9>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: -0.900000
+    bottom: -0.999999
+    right: -0.100000
+    top: -0.800000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
 - !<RenderMeshVisual/0cd0ae83-5445-4446-8655-abfd6ae9988b>
   PrefabRemaps:
     []
@@ -512,7 +545,7 @@
   PrefabRemaps:
     []
   Name: SetupScreen
-  Enabled: false
+  Enabled: true
   Layers: 1048576
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -1369,13 +1402,9 @@
   ScriptInputsDefault:
     interactable: true
     renderOrderOverride: true
-    useColors: true
     normalColor: true
     pressedColor: true
     disabledColor: true
-    useTextures: true
-    normalTexture: true
-    pressedTexture: true
     disabledTexture: true
     editAnimations: true
     animation: true
@@ -1408,7 +1437,6 @@
     onPressDownFunctionNames: true
     onPressUpFunctionNames: true
     onPressFunctionNames: true
-    editConnections: true
     backgroundPrefab: true
     foregroundPrefab: true
     textPrefab: true
@@ -1422,15 +1450,14 @@
     "":
       interactable: true
       renderOrderOverride: 0
-      text: |2-
-         Start
-      useColors: true
+      text: ""
+      useColors: false
       normalColor: !<Vec4> {x: 0.999207, y: 0.988861, z: 0.016327, w: 1.000000}
       pressedColor: !<Vec4> {x: 0.664225, y: 0.664240, z: 0.664225, w: 1.000000}
       disabledColor: !<Vec4> {x: 0.500000, y: 0.500000, z: 0.500000, w: 0.500000}
-      useTextures: false
-      normalTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
-      pressedTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      useTextures: true
+      normalTexture: !<reference.Texture> 938f27da-c1cc-4673-8218-3627ae11d605
+      pressedTexture: !<reference.Texture> 938f27da-c1cc-4673-8218-3627ae11d605
       disabledTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
       editAnimations: false
       animation: 0
@@ -1472,7 +1499,7 @@
         []
       onPressFunctionNames: !<string[]>
         []
-      editConnections: false
+      editConnections: true
       backgroundPrefab: !<reference.ObjectPrefab> 4f0a228a-39b3-4881-a54f-19c250823938
       foregroundPrefab: !<reference.ObjectPrefab> aa5233d8-b9fb-45d5-a4b4-9c3115fc1073
       textPrefab: !<reference.ObjectPrefab> 12501a3e-2e0b-432e-9fcd-287695978948
@@ -1995,10 +2022,10 @@
   RawMode: true
   ForceBasic: true
   Anchor:
-    left: -0.499991
-    bottom: -0.563085
-    right: 0.491525
-    top: -0.382369
+    left: -0.900000
+    bottom: -0.999999
+    right: -0.100000
+    top: -0.800000
   Offset:
     left: 0.000000
     bottom: 0.000000
@@ -2183,9 +2210,9 @@
     top: 1.000000
   Offset:
     left: 0.000000
-    bottom: -0.000011
+    bottom: 0.000002
     right: 0.000000
-    top: -48.069012
+    top: -48.069000
 - !<SceneObject/52cd4115-3da9-4b5d-8ef5-80358e364637>
   PrefabRemaps:
     []
@@ -3190,13 +3217,9 @@
   ScriptInputsDefault:
     interactable: true
     renderOrderOverride: true
-    useColors: true
     normalColor: true
     pressedColor: true
     disabledColor: true
-    useTextures: true
-    normalTexture: true
-    pressedTexture: true
     disabledTexture: true
     editAnimations: true
     animation: true
@@ -3229,7 +3252,6 @@
     onPressDownFunctionNames: true
     onPressUpFunctionNames: true
     onPressFunctionNames: true
-    editConnections: true
     backgroundPrefab: true
     foregroundPrefab: true
     textPrefab: true
@@ -3243,14 +3265,14 @@
     "":
       interactable: true
       renderOrderOverride: 0
-      text: Shuffle
-      useColors: true
+      text: ""
+      useColors: false
       normalColor: !<Vec4> {x: 0.999207, y: 0.988861, z: 0.016327, w: 1.000000}
       pressedColor: !<Vec4> {x: 0.664225, y: 0.664240, z: 0.664225, w: 1.000000}
       disabledColor: !<Vec4> {x: 0.500000, y: 0.500000, z: 0.500000, w: 0.500000}
-      useTextures: false
-      normalTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
-      pressedTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
+      useTextures: true
+      normalTexture: !<reference.Texture> 81d6762f-9b14-4416-b9f4-870ef9da5f27
+      pressedTexture: !<reference.Texture> 81d6762f-9b14-4416-b9f4-870ef9da5f27
       disabledTexture: !<reference.Texture> 00000000-0000-0000-0000-000000000000
       editAnimations: false
       animation: 0
@@ -3292,7 +3314,7 @@
         []
       onPressFunctionNames: !<string[]>
         []
-      editConnections: false
+      editConnections: true
       backgroundPrefab: !<reference.ObjectPrefab> 4f0a228a-39b3-4881-a54f-19c250823938
       foregroundPrefab: !<reference.ObjectPrefab> aa5233d8-b9fb-45d5-a4b4-9c3115fc1073
       textPrefab: !<reference.ObjectPrefab> 12501a3e-2e0b-432e-9fcd-287695978948
@@ -3686,7 +3708,7 @@
     []
   Components:
     - !<own> 16ca599b-f064-47e7-adde-085e9d29f839
-    - !<own> f820935b-1dc5-44e8-a139-f42dc2ee8ebc
+    - !<own> 0c91fda4-262d-4723-ac1d-5e7f1035cea9
 - !<SceneObject/8f10c034-73f8-445d-a460-02848550090b>
   PrefabRemaps:
     []
@@ -3847,6 +3869,39 @@
     bottom: -1.000000
     right: 1.000000
     top: 1.000000
+  Offset:
+    left: 0.000000
+    bottom: 0.000000
+    right: 0.000000
+    top: 0.000000
+- !<ScreenTransform/961b0b7b-ce9b-4254-8e10-9a142eab3622>
+  PrefabRemaps:
+    []
+  Name: Screen Transform
+  Enabled: true
+  IsAdvanced: false
+  Constraints:
+    pinToLeft: false
+    pinToTop: false
+    pinToRight: false
+    pinToBottom: false
+    fixedWidth: false
+    fixedHeight: false
+    deactivatedFixedSprite: false
+    deactivatedFixedPivot: false
+  Pivot: {x: 0.000000, y: 0.000000}
+  Transform:
+    position: {x: 0.000000, y: 0.000000, z: 0.000000}
+    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
+    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
+    hasSegmentScaleCompensation: false
+  RawMode: true
+  ForceBasic: true
+  Anchor:
+    left: 0.100000
+    bottom: -1.000000
+    right: 0.900000
+    top: -0.800000
   Offset:
     left: 0.000000
     bottom: 0.000000
@@ -4126,7 +4181,7 @@
   PrefabRemaps:
     []
   Name: Reshuffle
-  Enabled: false
+  Enabled: true
   Layers: 1048576
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -4324,7 +4379,7 @@
   PrefabRemaps:
     []
   Name: StartBtn
-  Enabled: false
+  Enabled: true
   Layers: 1048576
   LocalTransform: !<TransformEntity>
     Position: {x: 0.000000, y: 0.000000, z: 0.000000}
@@ -4394,7 +4449,7 @@
     []
   Components:
     - !<own> a90be38a-4713-4733-8c7c-8f4d34bfa6e1
-    - !<own> d0e63be3-5188-46f8-bbc1-8e35a9e7cd58
+    - !<own> 961b0b7b-ce9b-4254-8e10-9a142eab3622
 - !<RenderMeshVisual/b3e7811f-9832-4994-b70b-fe6cf970af92>
   PrefabRemaps:
     []
@@ -5007,39 +5062,6 @@
   BlendNormals: false
   BlendShapes:
     {}
-- !<ScreenTransform/d0e63be3-5188-46f8-bbc1-8e35a9e7cd58>
-  PrefabRemaps:
-    []
-  Name: Screen Transform
-  Enabled: true
-  IsAdvanced: false
-  Constraints:
-    pinToLeft: false
-    pinToTop: false
-    pinToRight: false
-    pinToBottom: true
-    fixedWidth: false
-    fixedHeight: true
-    deactivatedFixedSprite: false
-    deactivatedFixedPivot: false
-  Pivot: {x: 0.000000, y: 0.000000}
-  Transform:
-    position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    hasSegmentScaleCompensation: false
-  RawMode: true
-  ForceBasic: true
-  Anchor:
-    left: -0.499999
-    bottom: -1.000000
-    right: 0.499999
-    top: -1.000000
-  Offset:
-    left: 0.000000
-    bottom: 21.626385
-    right: 0.000000
-    top: 101.626381
 - !<RenderMeshVisual/d0fbe5fa-78a0-4753-84f1-d3c55f246a88>
   PrefabRemaps:
     []
@@ -5374,7 +5396,7 @@
     pinToLeft: false
     pinToTop: false
     pinToRight: false
-    pinToBottom: true
+    pinToBottom: false
     fixedWidth: false
     fixedHeight: false
     deactivatedFixedSprite: false
@@ -5388,15 +5410,15 @@
   RawMode: true
   ForceBasic: true
   Anchor:
-    left: -0.500000
+    left: 0.100000
     bottom: -1.000000
-    right: 0.500000
-    top: -0.625230
+    right: 0.900000
+    top: -0.800000
   Offset:
     left: 0.000000
-    bottom: 137.022980
+    bottom: 0.000000
     right: 0.000000
-    top: -0.000008
+    top: 0.000000
 - !<SceneObject/dc4b1a45-d8b7-496a-bf5d-befdad5b9ac1>
   PrefabRemaps:
     []
@@ -5720,39 +5742,6 @@
   Components:
     - !<own> 8618a091-eccb-46e8-ab63-6b68f1ce2041
     - !<own> 16cc5f39-5a49-48e1-b4c2-d838fab5429d
-- !<ScreenTransform/f820935b-1dc5-44e8-a139-f42dc2ee8ebc>
-  PrefabRemaps:
-    []
-  Name: Screen Transform
-  Enabled: true
-  IsAdvanced: false
-  Constraints:
-    pinToLeft: false
-    pinToTop: false
-    pinToRight: false
-    pinToBottom: true
-    fixedWidth: false
-    fixedHeight: true
-    deactivatedFixedSprite: false
-    deactivatedFixedPivot: false
-  Pivot: {x: 0.000000, y: 0.000000}
-  Transform:
-    position: {x: 0.000000, y: 0.000000, z: 0.000000}
-    rotation: {x: 0.000000, y: 0.000000, z: 0.000000}
-    scale: {x: 1.000000, y: 1.000000, z: 1.000000}
-    hasSegmentScaleCompensation: false
-  RawMode: true
-  ForceBasic: true
-  Anchor:
-    left: -0.500000
-    bottom: -1.000000
-    right: 0.500000
-    top: -1.000000
-  Offset:
-    left: 0.000000
-    bottom: 112.838066
-    right: 0.000000
-    top: 192.838074
 - !<SceneObject/faacde85-aaa9-46c6-892a-54b503360c8d>
   PrefabRemaps:
     []
